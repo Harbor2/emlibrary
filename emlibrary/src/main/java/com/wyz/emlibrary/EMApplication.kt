@@ -3,7 +3,7 @@ package com.wyz.emlibrary
 import android.app.Application
 import android.content.Context
 
-class MyApplication : Application() {
+class EMApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -11,9 +11,9 @@ class MyApplication : Application() {
     }
 
     companion object {
-        private lateinit var instance: MyApplication
+        private lateinit var instance: EMApplication
 
-        fun getInstance(): MyApplication {
+        fun getInstance(): EMApplication {
             return instance
         }
 

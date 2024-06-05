@@ -46,7 +46,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.Harbor2"
                 artifactId = "emlibrary"
-                version = "1.0.6"
+                version = "1.0.7"
             }
         }
     }

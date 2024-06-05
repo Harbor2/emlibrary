@@ -17,12 +17,12 @@ public class EMUtil {
     public static int getDimenPixelSize(int dimenId) {
         float pxDim = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
-                dimenId, MyApplication.Companion.getAppContext().getResources().getDisplayMetrics());
+                dimenId, EMApplication.Companion.getAppContext().getResources().getDisplayMetrics());
         return Math.round(pxDim);
     }
 
     public static int getColor(int colorId) {
-        return MyApplication.Companion.getAppContext().getColor(colorId);
+        return EMApplication.Companion.getAppContext().getColor(colorId);
     }
 
     /**
