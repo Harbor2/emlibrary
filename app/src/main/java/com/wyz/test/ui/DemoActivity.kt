@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.wyz.app.R
 import com.wyz.app.databinding.ActivityDemoBinding
-import com.wyz.emlibrary.EMManager
+import com.wyz.emlibrary.em.EMManager
 
 class DemoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDemoBinding

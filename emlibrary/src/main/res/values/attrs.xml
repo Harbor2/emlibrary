@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 圆角imageview -->
+    <declare-styleable name="RoundedImageView">
+        <attr name="riCornerRadius" format="dimension" />
+        <attr name="riTopLeftRadius" format="dimension" />
+        <attr name="riTopRightRadius" format="dimension" />
+        <attr name="riBottomLeftRadius" format="dimension" />
+        <attr name="riBottomRightRadius" format="dimension" />
+    </declare-styleable>
+
+    <!-- 圆角view -->
+    <declare-styleable name="RoundedCornerView">
+        <attr name="rcCornerRadius" format="dimension" />
+        <attr name="rcViewColor" format="color"/>
+    </declare-styleable>
+
+    <!-- 圆形进度条 -->
+    <declare-styleable name="CircularProgressView">
+        <attr name="cpbTrackColor" format="color" />
+        <attr name="cpbProgressColor" format="color" />
+        <attr name="cpbTrackThickness" format="dimension" />
+        <attr name="cpbProgressThickness" format="dimension" />
+        <attr name="cpbProgress" format="integer" />
+    </declare-styleable>
+</resources>

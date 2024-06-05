@@ -1,7 +1,7 @@
 package com.wyz.test
 
 import android.app.Application
-import com.wyz.emlibrary.EMLibrary
+import com.wyz.emlibrary.em.EMLibrary
 
 class MyApplication : Application() {
 
