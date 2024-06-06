@@ -177,6 +177,24 @@ public class EMClient {
     }
 
     /**
+     * 获取选择态色背景Drawable
+     */
+    public static Drawable getSelectedListColorBackGround(Drawable backGround, int normalId, int selectedId, int height) {
+        EMDrawable emDrawable = EMClient.getBackEMDrawable(backGround);
+        emDrawable.release();
+        GradientDrawable normalDrawable = emDrawable.convertToCornerGradientDrawable(height);
+        normalDrawable.setColor(getColor(normalId));
+        normalDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.INSTANCE.getAlphaColor(emDrawable.getBorderColor(), emDrawable.getBorderAlpha()));
+        GradientDrawable pressDrawable = emDrawable.convertToCornerGradientDrawable(height);
+        pressDrawable.setColor(getColor(selectedId));
+        pressDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.INSTANCE.getAlphaColor(emDrawable.getBorderColor(), emDrawable.getBorderAlpha()));
+        StateListDrawable sd = new StateListDrawable();
+        sd.addState(new int[]{android.R.attr.state_selected}, pressDrawable);
+        sd.addState(new int[]{}, normalDrawable);
+        return sd;
+    }
+
+    /**
      * 获取边框颜色类型Drawable
      */
     public static Drawable getBorderColorBackGround(Drawable background, int colorId) {

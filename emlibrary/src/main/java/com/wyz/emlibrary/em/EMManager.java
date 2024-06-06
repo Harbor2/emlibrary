@@ -146,7 +146,7 @@ public class EMManager {
      * @param normalId 正常态背景颜色id
      * @param pressId 点击态背景颜色id
      */
-    public void setBackGroundSelectorColor(final int normalId, final int pressId) {
+    public void setBackGroundPressedColor(final int normalId, final int pressId) {
         if (fromView == null) {
             return;
         }
@@ -155,6 +155,25 @@ public class EMManager {
             public void run() {
                 fromView.setClickable(true);
                 backGroundDrawable = EMClient.getStateListColorBackGround(backGroundDrawable, normalId, pressId, fromView.getMeasuredHeight());
+                fromView.setBackgroundDrawable(backGroundDrawable);
+            }
+        });
+    }
+
+    /**
+     * 需要放到最后使用，否则可能后面设置的参数不会生效，设置选择态色背景
+     * 和selected属性相关
+     * @param normalId
+     * @param selectedId
+     */
+    public void setBackGroundSelectColor(int normalId, int selectedId) {
+        if (fromView == null) {
+            return;
+        }
+        fromView.post(new Runnable() {
+            @Override
+            public void run() {
+                backGroundDrawable = EMClient.getSelectedListColorBackGround(backGroundDrawable, normalId, selectedId, fromView.getMeasuredHeight());
                 fromView.setBackgroundDrawable(backGroundDrawable);
             }
         });
