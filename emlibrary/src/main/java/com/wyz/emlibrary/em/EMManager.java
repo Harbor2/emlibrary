@@ -12,12 +12,9 @@ import com.wyz.emlibrary.util.EMUtil;
 
 /**
  * EM为ElementsMaven的缩写，意为元素专家，期望能够提升大家对UI的效率！
- *
  * EMManager为元素库管理类，实际处理的类为EMClient，EMManager封装了一些使用元素库编码相关的API，
  * 如设置元素库编码规定的文字颜色、字体大小、字形（加粗）、行间距等
- * （特别说明：强烈建议文字相关的设置使用无Padding的EMTextView来达到UE最佳效果。）
  * 如设置元素库编码规定的纯色类背景色、蒙层类背景色、圆角、阴影等。
- *
  * 例子：
  * 设置文字元素编码：
  * EMManager.from(textView)
@@ -25,12 +22,6 @@ import com.wyz.emlibrary.util.EMUtil;
  *     .setTextStyle(R.string.F_X02)
  *     .setTextSize(R.dimen.T_X06)
  *     .setTextLinePadding(R.dimen.M_T_X002);
- *
- * 设置纯色背景元素编码：
- * EMManager.from(view)
- *     .setCorner(R.string.J_X07)
- *     .setShadow(R.array.S_O_X004)
- *     .setBackGroundColor(R.color.CAM_X0112);
  */
 
 public class EMManager {
@@ -187,7 +178,6 @@ public class EMManager {
 
     /**
      * 设置纯色背景，例：#XXXXXXXX
-     * @param colorString
      */
     public void setBackGroundColorString(String colorString) {
         if (fromView == null) {
@@ -204,7 +194,7 @@ public class EMManager {
 
     /**
      * 根据元素库编码设置渐变色（最多传入两个色值）
-     * @param colorIds
+     * @param colorIds 色值id array
      * @param direction 详情{@link Direction#BOTTOM}
      */
     public void setGradientColor(int[] colorIds, Direction direction) {
@@ -222,7 +212,6 @@ public class EMManager {
     /**
      * 设置卡片圆角类型
      * @param cardType 详情{@link CardRoundType#CARD_ALL}
-     * @return
      */
     public EMManager setCardType(CardRoundType cardType) {
         if (fromView == null) {
@@ -351,7 +340,7 @@ public class EMManager {
 
     /**
      * 根据元素库编码设置边框宽度
-     * @param dimenId
+     * @param dimenId 单位dp
      */
     public EMManager setBorderWidth(int dimenId) {
         if (fromView == null) {
@@ -363,7 +352,7 @@ public class EMManager {
 
     /**
      * 图片盖色
-     * @param colorId
+     * @param colorId 色值id
      */
     public EMManager setImagePureColor(int colorId) {
         if (!(fromView instanceof ImageView)) {
@@ -387,7 +376,6 @@ public class EMManager {
 
     /**
      * 设置开启绘制模式（View.LAYER_TYPE_HARDWARE、View.LAYER_TYPE_SOFTWARE）
-     * @param layerType
      */
     public EMManager setLayerType(int layerType) {
         if (fromView == null) {

@@ -30,7 +30,6 @@ import java.util.Objects;
 
 /**
  * 控件外部阴影(投影)效果，不改变控件大小，需要预留间距
- *
  * *---------------------
  * |方法名|描述|
  * |:---|:---:|
@@ -178,8 +177,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     private View.OnLayoutChangeListener mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
         @Override
         public void onLayoutChange(final View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            if (v.getBackground() instanceof EMDrawable) {
-                EMDrawable emDrawable = (EMDrawable) v.getBackground();
+            if (v.getBackground() instanceof EMDrawable emDrawable) {
                 mShadowRadius = emDrawable.mShadowRadius;
                 mOffsetX = emDrawable.mOffsetX;
                 mOffsetY = emDrawable.mOffsetY;
@@ -242,15 +240,12 @@ public class EMDrawable extends Drawable implements Cloneable {
     }
 
     public static EMDrawable make() {
-        EMDrawable shadowHelper = new EMDrawable();
-        return shadowHelper;
+        return new EMDrawable();
     }
 
     /**
      * 阴影类型：圆角或圆形
      * 取值是{SHAPE_ROUND, SHAPE_CIRCLE}
-     * @param mShape
-     * @return
      */
     public EMDrawable setShape(@Shape int mShape) {
         if (this.mShape == mShape) {
@@ -263,8 +258,6 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 设置阴影方向
      * 取值是{ALL, LEFT,TOP, RIGHT, BOTTOM, NO_TOP, NO_BOTTOM}
-     * @param mShadowSide
-     * @return
      */
     public EMDrawable setShadowSide(@ShadowSide int mShadowSide) {
         if (this.mShadowSide == mShadowSide) {
@@ -277,25 +270,23 @@ public class EMDrawable extends Drawable implements Cloneable {
     private void updateRealShapeRadius() {
         System.arraycopy(mShapeRadius, 0, this.mRealShapeRadius, 0, Math.min(mRealShapeRadius.length, 8));
         switch (mCardRoundType) {
-            case CARD_TOP:
+            case CARD_TOP -> {
                 for (int i = 4; i < 8; i++) {
                     mRealShapeRadius[i] = 0;
                 }
-                break;
-            case CARD_BOTTOM:
+            }
+            case CARD_BOTTOM -> {
                 for (int i = 0; i < 4; i++) {
                     mRealShapeRadius[i] = 0;
                 }
-                break;
-            case CARD_ALL:
-            default:
+            }
+            default -> {
+            }
         }
     }
 
     /**
      * 设置卡片圆角半径范围
-     * @param type
-     * @return
      */
     public EMDrawable setCardRoundType(CardRoundType type) {
         if (this.mCardRoundType == type) {
@@ -308,8 +299,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置阴影圆角半径
-     * @param ShapeRadius
-     * @return
      */
     public EMDrawable setShapeRadius(float ShapeRadius) {
         Arrays.fill(this.mShapeRadius, ShapeRadius);
@@ -319,8 +308,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置阴影圆角半径
-     * @param ShapeRadius
-     * @return
      */
     public EMDrawable setShapeRadius(float[] ShapeRadius) {
         if (Arrays.equals(this.mShapeRadius, ShapeRadius)) {
@@ -335,7 +322,6 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**`
      * 设置阴影颜色
      * @param shadowColor  例：R.color.colorPrimary
-     * @return
      */
     public EMDrawable setShadowColor(int shadowColor) {
         if (this.mShadowColor == shadowColor) {
@@ -348,8 +334,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 阴影的模糊距离（阴影模糊宽度）
-     * @param shadowRadius
-     * @return
      */
     public EMDrawable setShadowRadius(int shadowRadius) {
         if (this.mShadowRadius == shadowRadius) {
@@ -362,8 +346,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 阴影x偏移(右偏移)
-     * @param offsetX
-     * @return
      */
     public EMDrawable setOffsetX(int offsetX) {
         if (this.mOffsetX == offsetX) {
@@ -376,8 +358,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 阴影y偏移(下偏移)
-     * @param offsetY
-     * @return
      */
     public EMDrawable setOffsetY(int offsetY) {
         if (this.mOffsetX == offsetY) {
@@ -390,8 +370,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 边框颜色
-     * @param borderColor
-     * @return
      */
     public EMDrawable setBorderColor(int borderColor) {
         if (this.mBorderColor == borderColor) {
@@ -403,8 +381,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 边框透明度
-     * @param borderAlpha
-     * @return
      */
     public EMDrawable setBorderAlpha(float borderAlpha) {
         if (this.mBorderAlpha == borderAlpha) {
@@ -416,8 +392,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 边框宽度
-     * @param borderWidth
-     * @return
      */
     public EMDrawable setBorderWidth(float borderWidth) {
         if (this.mBorderWidth == borderWidth) {
@@ -429,7 +403,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置背景颜色 例：R.color.colorPrimary
-     * @return
      */
     public EMDrawable setBgColor(int bgColor) {
         if (this.mBgColor.length == 1 && this.mBgColor[0] == bgColor) {
@@ -442,7 +415,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置渐变背景颜色数组
-     * @return
      */
     public EMDrawable setBgColor(int[] bgColor) {
         if (Arrays.equals(this.mBgColor, bgColor)) {
@@ -454,7 +426,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置渐变背景位置数组
-     * @return
      */
     public EMDrawable setPositions(float[] positions) {
         if (Arrays.equals(this.mPositions, positions)) {
@@ -466,7 +437,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 设置渐变背景位置数组
-     * @return
      */
     public EMDrawable setDirection(Direction direction) {
         if (this.mDirection.equals(direction)) {
@@ -477,7 +447,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     }
 
     @Override
-    protected void onBoundsChange(Rect bounds) {
+    protected void onBoundsChange(@NonNull Rect bounds) {
         super.onBoundsChange(bounds);
         int len = mRealShapeRadius.length;
         for (int i = 0; i < len; i++) {
@@ -517,36 +487,26 @@ public class EMDrawable extends Drawable implements Cloneable {
      * 获取渐变的起点坐标
      */
     private PointF getGradientStartPoint(RectF rectF, Direction direction) {
-        switch (direction) {
-            case TOP:
-                return new PointF(rectF.width() / 2, rectF.top);
-            case BOTTOM:
-                return new PointF(rectF.width() / 2, rectF.bottom);
-            case RIGHT:
-                return new PointF(rectF.right, rectF.height() / 2);
-            case LEFT:
-                return new PointF(rectF.left, rectF.height() / 2);
-            default:
-                return new PointF();
-        }
+        return switch (direction) {
+            case TOP -> new PointF(rectF.width() / 2, rectF.top);
+            case BOTTOM -> new PointF(rectF.width() / 2, rectF.bottom);
+            case RIGHT -> new PointF(rectF.right, rectF.height() / 2);
+            case LEFT -> new PointF(rectF.left, rectF.height() / 2);
+            default -> new PointF();
+        };
     }
 
     /**
      * 获取渐变的终点坐标
      */
     private PointF getGradientEndPoint(RectF rectF, Direction direction) {
-        switch (direction) {
-            case TOP:
-                return new PointF(rectF.width() / 2, rectF.bottom);
-            case BOTTOM:
-                return new PointF(rectF.width() / 2, rectF.top);
-            case RIGHT:
-                return new PointF(rectF.left, rectF.height() / 2);
-            case LEFT:
-                return new PointF(rectF.right, rectF.height() / 2);
-            default:
-                return new PointF();
-        }
+        return switch (direction) {
+            case TOP -> new PointF(rectF.width() / 2, rectF.bottom);
+            case BOTTOM -> new PointF(rectF.width() / 2, rectF.top);
+            case RIGHT -> new PointF(rectF.left, rectF.height() / 2);
+            case LEFT -> new PointF(rectF.right, rectF.height() / 2);
+            default -> new PointF();
+        };
     }
 
     /**
@@ -556,43 +516,40 @@ public class EMDrawable extends Drawable implements Cloneable {
         if (mPositions == null || mPositions.length < 1) {
             return false;
         }
-        if (mPositions[mPositions.length - 1] < 1) {
-            return true;
-        }
-        return false;
+        return mPositions[mPositions.length - 1] < 1;
     }
 
     private void dealHalfGradient(float[] copyShapeRadius, float[] copyPosition) {
         //开始一半渐变的适配
         switch (mDirection) {
-            case TOP:
+            case TOP -> {
                 mRect.bottom = mRect.top + mRect.height() * mPositions[mPositions.length - 1];
                 copyShapeRadius[4] = 0f;
                 copyShapeRadius[5] = 0f;
                 copyShapeRadius[6] = 0f;
                 copyShapeRadius[7] = 0f;
-                break;
-            case BOTTOM:
+            }
+            case BOTTOM -> {
                 mRect.top = mRect.bottom - mRect.height() * mPositions[mPositions.length - 1];
                 copyShapeRadius[0] = 0f;
                 copyShapeRadius[1] = 0f;
                 copyShapeRadius[2] = 0f;
                 copyShapeRadius[3] = 0f;
-                break;
-            case RIGHT:
+            }
+            case RIGHT -> {
                 mRect.left = mRect.right - mRect.width() * mPositions[mPositions.length - 1];
                 copyShapeRadius[0] = 0f;
                 copyShapeRadius[1] = 0f;
                 copyShapeRadius[6] = 0f;
                 copyShapeRadius[7] = 0f;
-                break;
-            case LEFT:
+            }
+            case LEFT -> {
                 mRect.right = mRect.left + mRect.width() * mPositions[mPositions.length - 1];
                 copyShapeRadius[2] = 0f;
                 copyShapeRadius[3] = 0f;
                 copyShapeRadius[4] = 0f;
                 copyShapeRadius[5] = 0f;
-                break;
+            }
         }
         copyPosition[copyPosition.length - 1] = 1.0f;
     }
@@ -669,7 +626,6 @@ public class EMDrawable extends Drawable implements Cloneable {
 
     /**
      * 不透明性
-     * @return
      */
     @Override
     public int getOpacity() {
@@ -754,6 +710,7 @@ public class EMDrawable extends Drawable implements Cloneable {
         return mBorderAlpha;
     }
 
+    @NonNull
     @Override
     public Object clone() {
         EMDrawable drawable = null;
