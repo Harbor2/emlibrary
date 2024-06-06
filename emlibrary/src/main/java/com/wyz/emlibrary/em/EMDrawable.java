@@ -22,6 +22,9 @@ import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.wyz.emlibrary.util.EMUtil;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -734,7 +737,7 @@ public class EMDrawable extends Drawable implements Cloneable {
         int len = mBgColor.length;
         int[] alphaBgColor = new int[len];
         for (int i = 0; i < len; i++) {
-            alphaBgColor[i] = EMUtil.getAlphaColor(mBgColor[i], mAlpha);
+            alphaBgColor[i] = EMUtil.INSTANCE.getAlphaColor(mBgColor[i], mAlpha);
         }
         return alphaBgColor;
     }

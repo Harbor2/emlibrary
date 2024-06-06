@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.wyz.emlibrary.util.EMUtil;
+
 /**
  * EM为ElementsMaven的缩写，意为元素专家，期望能够提升大家对UI的效率！
  *
@@ -131,6 +133,7 @@ public class EMManager {
         if (!(fromView instanceof TextView)) {
             return this;
         }
+        fromView.setClickable(true);
         ((TextView)fromView).setTextColor(EMClient.getTextSelectorColor(normalColorId, pressColorId));
         return this;
     }
@@ -159,6 +162,7 @@ public class EMManager {
         fromView.post(new Runnable() {
             @Override
             public void run() {
+                fromView.setClickable(true);
                 backGroundDrawable = EMClient.getStateListColorBackGround(backGroundDrawable, normalId, pressId, fromView.getMeasuredHeight());
                 fromView.setBackgroundDrawable(backGroundDrawable);
             }
@@ -272,7 +276,7 @@ public class EMManager {
         if (!(fromView instanceof TextView)) {
             return this;
         }
-        ((TextView) fromView).setShadowLayer(EMUtil.getDimenPixelSize(shadowRadius), EMUtil.getDimenPixelSize(offX), EMUtil.getDimenPixelSize(offY), shadowColorId);
+        ((TextView) fromView).setShadowLayer(EMUtil.INSTANCE.dp2px(shadowRadius), EMUtil.INSTANCE.dp2px(offX), EMUtil.INSTANCE.dp2px(offY), shadowColorId);
         return this;
     }
 

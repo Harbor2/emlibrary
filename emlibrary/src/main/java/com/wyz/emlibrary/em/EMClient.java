@@ -6,6 +6,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 
+import com.wyz.emlibrary.util.EMUtil;
+
 /**
  * EM为ElementsMaven的缩写，意为元素专家，期望能够提升大家对UI的效率！
  *
@@ -22,7 +24,7 @@ public class EMClient {
      * @return
      */
     public static int getColor(int colorId) {
-        return EMUtil.getColor(colorId);
+        return EMUtil.INSTANCE.getColor(colorId);
     }
 
     /**
@@ -31,7 +33,7 @@ public class EMClient {
      * @return
      */
     public static int getDimen(int dimenId) {
-        return EMUtil.getDimenPixelSize(dimenId);
+        return EMUtil.INSTANCE.dp2px(dimenId);
     }
 
 
@@ -119,7 +121,7 @@ public class EMClient {
      */
     public static Drawable getColorBackGround(Drawable background, String colorString) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable.setBgColor(EMUtil.getColor(colorString));
+        return drawable.setBgColor(EMUtil.INSTANCE.getColor(colorString));
     }
 
     /**
@@ -169,9 +171,9 @@ public class EMClient {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
                 .setShadowColor(shadowColorId)
-                .setShadowRadius(EMUtil.getDimenPixelSize(shadowRadius))
-                .setOffsetX(EMUtil.getDimenPixelSize(offX))
-                .setOffsetY(EMUtil.getDimenPixelSize(offY))
+                .setShadowRadius(EMUtil.INSTANCE.dp2px(shadowRadius))
+                .setOffsetX(EMUtil.INSTANCE.dp2px(offX))
+                .setOffsetY(EMUtil.INSTANCE.dp2px(offY))
                 .dealShadow(view);
     }
 
@@ -209,10 +211,10 @@ public class EMClient {
         emDrawable.release();
         GradientDrawable normalDrawable = emDrawable.convertToCornerGradientDrawable(height);
         normalDrawable.setColor(getColor(normalId));
-        normalDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.getAlphaColor(emDrawable.getBorderColor(), emDrawable.getBorderAlpha()));
+        normalDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.INSTANCE.getAlphaColor(emDrawable.getBorderColor(), emDrawable.getBorderAlpha()));
         GradientDrawable pressDrawable = emDrawable.convertToCornerGradientDrawable(height);
         pressDrawable.setColor(getColor(pressId));
-        pressDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.getAlphaColor(emDrawable.getBorderColor(), EMUtil.RESOURCE_ALPHA_PRESS * emDrawable.getBorderAlpha()));
+        pressDrawable.setStroke((int)emDrawable.getBorderWidth(), EMUtil.INSTANCE.getAlphaColor(emDrawable.getBorderColor(), EMUtil.INSTANCE.RESOURCE_ALPHA_PRESS * emDrawable.getBorderAlpha()));
         StateListDrawable sd = new StateListDrawable();
         sd.addState(new int[]{android.R.attr.state_pressed}, pressDrawable);
         sd.addState(new int[]{}, normalDrawable);
@@ -280,7 +282,7 @@ public class EMClient {
         int len = Math.min(EMIds.length, 4);
         float[] dimens = new float[8];
         for (int i = 0; i < len; i++) {
-            float dimen = EMUtil.getDimenPixelSize(EMIds[i]);
+            float dimen = EMUtil.INSTANCE.dp2px(EMIds[i]);
             dimens[i * 2] = dimen;
             dimens[i * 2 + 1] = dimen;
         }
