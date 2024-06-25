@@ -360,7 +360,7 @@ public class EMDrawable extends Drawable implements Cloneable {
      * 阴影y偏移(下偏移)
      */
     public EMDrawable setOffsetY(int offsetY) {
-        if (this.mOffsetX == offsetY) {
+        if (this.mOffsetY == offsetY) {
             return this;
         }
         this.mOffsetY = offsetY;
