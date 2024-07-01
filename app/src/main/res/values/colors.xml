@@ -13,4 +13,6 @@
     <color name="white_80">#CCFFFFFF</color>
     <color name="primary_color">#303030</color>
     <color name="transparent">#00000000</color>
+    <color name="btn_main_color_30">#4D1AC167</color>
+    <color name="red">#FF5500</color>
 </resources>
