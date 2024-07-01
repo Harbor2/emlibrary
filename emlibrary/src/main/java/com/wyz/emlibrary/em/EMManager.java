@@ -93,7 +93,7 @@ public class EMManager {
      * 设置文本行间距
      * @param dimenId 单位dp
      */
-    public EMManager setTextLinePadding(int dimenId) {
+    public EMManager setTextLinePadding(float dimenId) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
@@ -244,12 +244,16 @@ public class EMManager {
      * 根据元素库编码设置圆角[10,10,10,10] 可以和{@link CardRoundType}搭配使用
      * @param cornerDim 圆角大小数组，单位dp
      */
-    public EMManager setCorner(int[] cornerDim) {
+    public EMManager setCorner(float[] cornerDim) {
         if (fromView == null) {
             return this;
         }
         backGroundDrawable = EMClient.getCornerBackGround(backGroundDrawable, cornerDim);
         return this;
+    }
+
+    public EMManager setCorner(float cornerDim) {
+        return setCorner(new float[]{cornerDim, cornerDim, cornerDim, cornerDim});
     }
 
     /**
@@ -261,7 +265,7 @@ public class EMManager {
      *   .setShadow(R.color.black, 10, 0, 0)
      *   .setBackGroundColor(R.color.btn_main_color)
      */
-    public EMManager setShadow(int shadowColorId, int shadowRadius, int offX, int offY) {
+    public EMManager setShadow(int shadowColorId, float shadowRadius, float offX, float offY) {
         if (fromView == null) {
             return this;
         }
@@ -280,11 +284,11 @@ public class EMManager {
     /**
      * 根据编码设置文本外阴影，整个文字背景都会添加阴影
      */
-    public EMManager setTextShadow(int shadowColorId, int shadowRadius, int offX, int offY) {
+    public EMManager setTextShadow(int shadowColorId, float shadowRadius, float offX, float offY) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
-        ((TextView) fromView).setShadowLayer(EMUtil.INSTANCE.dp2px(shadowRadius), EMUtil.INSTANCE.dp2px(offX), EMUtil.INSTANCE.dp2px(offY), shadowColorId);
+        ((TextView) fromView).setShadowLayer(EMUtil.INSTANCE.dp2px(shadowRadius), EMUtil.INSTANCE.dp2px(offX), EMUtil.INSTANCE.dp2px(offY), EMUtil.INSTANCE.getColor(shadowColorId));
         return this;
     }
 
@@ -361,7 +365,7 @@ public class EMManager {
      * 根据元素库编码设置边框宽度
      * @param dimenId 单位dp
      */
-    public EMManager setBorderWidth(int dimenId) {
+    public EMManager setBorderWidth(float dimenId) {
         if (fromView == null) {
             return this;
         }

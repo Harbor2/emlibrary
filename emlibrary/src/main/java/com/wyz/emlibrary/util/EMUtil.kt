@@ -26,12 +26,12 @@ object EMUtil {
         return dm.heightPixels
     }
 
-    fun dp2px(dpVal: Float): Int {
-        return (dpVal * getApplication().resources.displayMetrics.density).toInt()
+    fun dp2px(dpVal: Float): Float {
+        return (dpVal * getApplication().resources.displayMetrics.density)
     }
 
-    fun px2dp(pxVal: Float): Int {
-        return (pxVal / getApplication().resources.displayMetrics.density).toInt()
+    fun px2dp(pxVal: Float): Float {
+        return (pxVal / getApplication().resources.displayMetrics.density)
     }
 
     fun getColor(colorId: Int): Int {

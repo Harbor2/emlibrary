@@ -25,7 +25,7 @@ public class EMClient {
     /**
      * 获取dimen资源 像素长度
      */
-    public static int getDimen(int dimenId) {
+    public static float getDimen(float dimenId) {
         return EMUtil.INSTANCE.dp2px(dimenId);
     }
 
@@ -122,7 +122,7 @@ public class EMClient {
     /**
      * 获取圆角背景Drawable
      */
-    public static Drawable getCornerBackGround(Drawable background, int[] cornerDim) {
+    public static Drawable getCornerBackGround(Drawable background, float[] cornerDim) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable.setShapeRadius(EMClient.getRoundDimens(cornerDim));
     }
@@ -130,10 +130,10 @@ public class EMClient {
     /**
      * 获取阴影背景Drawable
      */
-    public static Drawable getShadowBackGround(View view, Drawable background, int shadowColorId, int shadowRadius, int offX, int offY) {
+    public static Drawable getShadowBackGround(View view, Drawable background, int shadowColorId, float shadowRadius, float offX, float offY) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
-                .setShadowColor(shadowColorId)
+                .setShadowColor(EMUtil.INSTANCE.getColor(shadowColorId))
                 .setShadowRadius(EMUtil.INSTANCE.dp2px(shadowRadius))
                 .setOffsetX(EMUtil.INSTANCE.dp2px(offX))
                 .setOffsetY(EMUtil.INSTANCE.dp2px(offY))
@@ -221,7 +221,7 @@ public class EMClient {
     /**
      * 获取边框宽度类型Drawable
      */
-    public static Drawable getBorderWidthBackGround(Drawable background, int dimenId) {
+    public static Drawable getBorderWidthBackGround(Drawable background, float dimenId) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable.setBorderWidth(getDimen(dimenId));
     }
@@ -237,7 +237,7 @@ public class EMClient {
     /**
      * 解析dimen资源名字数组获取圆角dimen资源数组
      */
-    private static float[] getRoundDimens(int[] EMIds) {
+    private static float[] getRoundDimens(float[] EMIds) {
         int len = Math.min(EMIds.length, 4);
         float[] dimens = new float[8];
         for (int i = 0; i < len; i++) {

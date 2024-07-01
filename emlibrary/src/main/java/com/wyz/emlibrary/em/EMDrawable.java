@@ -89,7 +89,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 阴影模糊半径（宽度），越大越模糊
      */
-    private int mShadowRadius;
+    private float mShadowRadius;
 
     /**
      * 阴影颜色
@@ -114,12 +114,12 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 阴影x偏移(右偏移)
      */
-    private int mOffsetX;
+    private float mOffsetX;
 
     /**
      * 阴影y偏移(下偏移)
      */
-    private int mOffsetY;
+    private float mOffsetY;
 
     /**
      * 背景颜色，默认透明
@@ -335,7 +335,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 阴影的模糊距离（阴影模糊宽度）
      */
-    public EMDrawable setShadowRadius(int shadowRadius) {
+    public EMDrawable setShadowRadius(float shadowRadius) {
         if (this.mShadowRadius == shadowRadius) {
             return this;
         }
@@ -347,7 +347,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 阴影x偏移(右偏移)
      */
-    public EMDrawable setOffsetX(int offsetX) {
+    public EMDrawable setOffsetX(float offsetX) {
         if (this.mOffsetX == offsetX) {
             return this;
         }
@@ -359,7 +359,7 @@ public class EMDrawable extends Drawable implements Cloneable {
     /**
      * 阴影y偏移(下偏移)
      */
-    public EMDrawable setOffsetY(int offsetY) {
+    public EMDrawable setOffsetY(float offsetY) {
         if (this.mOffsetY == offsetY) {
             return this;
         }
