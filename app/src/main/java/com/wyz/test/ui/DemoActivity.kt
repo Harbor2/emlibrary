@@ -57,11 +57,12 @@ class DemoActivity : AppCompatActivity() {
             .setTextSize(20)
             .setTextStr("结束")
             .setTextStyle(Typeface.BOLD)
-            .setBorderWidth(1.5f)
-            .setBorderColor(R.color.red)
+
+        EMManager.from(binding.containerBtnEnd)
+            .setBorderWidth(1f)
+            .setBorderColor(R.color.white)
             .setCorner(floatArrayOf( 20f, 15f, 10f, 5f))
-            .setShadow(R.color.btn_main_color_30, 10f, 0f, 4f)
-            .setBackGroundColor(R.color.purple_500)
-//            .setBackGroundSelectColor(R.color.purple_500, R.color.purple_200)
+            .setShadow(R.color.btn_main_color_80, 10f, 0f, 6f)
+            .setBackGroundColor(R.color.btn_main_color)
     }
 }
