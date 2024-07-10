@@ -258,6 +258,10 @@ public class EMManager {
 
     /**
      * 根据元素库编码设置外阴影(不可以和press一起使用,如设置边框可在外面设置)
+     * ⚠️ shadowRadius需要大于off
+     * 如果外层嵌套布局则嵌套布局和里面的布局需要添加相反margin
+     * 如果单独使用需要添加相反margin和相反的二倍相反padding
+     * 具体为啥。。不清楚后期研究
      *  EMManager.from(binding.tvTest)
      *   .setCorner(intArrayOf(4, 8, 12, 16))
      *   .setBorderColor(R.color.white)
