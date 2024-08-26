@@ -8,7 +8,11 @@ enum class Direction {
     LEFT,
     RIGHT,
     TOP,
-    BOTTOM
+    BOTTOM,
+    LEFT_BOTTOM,
+    RIGHT_BOTTOM,
+    RIGHT_TOP,
+    LEFT_TOP
 }
 
 /**

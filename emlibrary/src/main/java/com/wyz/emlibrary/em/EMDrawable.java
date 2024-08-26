@@ -462,11 +462,11 @@ public class EMDrawable extends Drawable implements Cloneable {
         mPath.addRoundRect(mRect, mRealShapeRadius, Path.Direction.CW);
         mCopyPositions = mPositions.clone();
         float[] copyRealShapeRadius = mRealShapeRadius.clone();
-        if (mBgColor != null && mBgColor.length > 1) {
-            if (isHalfGradient()) {
-                dealHalfGradient(copyRealShapeRadius, mCopyPositions);
-            }
-        }
+//        if (mBgColor != null && mBgColor.length > 1) {
+//            if (isHalfGradient()) {
+//                dealHalfGradient(copyRealShapeRadius, mCopyPositions);
+//            }
+//        }
         mBackgroundPath.reset();
         mBackgroundPath.addRoundRect(mRect, copyRealShapeRadius, Path.Direction.CW);
 
@@ -488,10 +488,14 @@ public class EMDrawable extends Drawable implements Cloneable {
      */
     private PointF getGradientStartPoint(RectF rectF, Direction direction) {
         return switch (direction) {
-            case TOP -> new PointF(rectF.width() / 2, rectF.top);
-            case BOTTOM -> new PointF(rectF.width() / 2, rectF.bottom);
-            case RIGHT -> new PointF(rectF.right, rectF.height() / 2);
-            case LEFT -> new PointF(rectF.left, rectF.height() / 2);
+            case LEFT -> new PointF(rectF.left, rectF.top);
+            case LEFT_BOTTOM -> new PointF(rectF.left, rectF.bottom);
+            case TOP -> new PointF(rectF.left, rectF.top);
+            case RIGHT_BOTTOM -> new PointF(rectF.right, rectF.bottom);
+            case RIGHT -> new PointF(rectF.right, rectF.top);
+            case RIGHT_TOP -> new PointF(rectF.right, rectF.top);
+            case BOTTOM -> new PointF(rectF.left, rectF.bottom);
+            case LEFT_TOP -> new PointF(rectF.left, rectF.top);
             default -> new PointF();
         };
     }
@@ -501,10 +505,14 @@ public class EMDrawable extends Drawable implements Cloneable {
      */
     private PointF getGradientEndPoint(RectF rectF, Direction direction) {
         return switch (direction) {
-            case TOP -> new PointF(rectF.width() / 2, rectF.bottom);
-            case BOTTOM -> new PointF(rectF.width() / 2, rectF.top);
-            case RIGHT -> new PointF(rectF.left, rectF.height() / 2);
-            case LEFT -> new PointF(rectF.right, rectF.height() / 2);
+            case LEFT -> new PointF(rectF.right, rectF.top);
+            case LEFT_BOTTOM -> new PointF(rectF.right, rectF.top);
+            case TOP -> new PointF(rectF.left, rectF.bottom);
+            case RIGHT_BOTTOM -> new PointF(rectF.left, rectF.top);
+            case RIGHT -> new PointF(rectF.left, rectF.top);
+            case RIGHT_TOP -> new PointF(rectF.left, rectF.bottom);
+            case BOTTOM -> new PointF(rectF.left, rectF.top);
+            case LEFT_TOP -> new PointF(rectF.right, rectF.bottom);
             default -> new PointF();
         };
     }
