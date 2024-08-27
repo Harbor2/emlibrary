@@ -299,7 +299,25 @@ public class EMManager {
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradienPositionsColor(int[] colors, float[] positions, Direction direction) {
+    public void setGradientPositionsColor(int[] colors, float[] positions, Direction direction) {
+        if (fromView == null) {
+            return;
+        }
+        if (colors.length != positions.length) {
+            return;
+        }
+        Drawable drawable = EMClient.getGradientPositionsBackGround(backGroundDrawable, colors, positions, direction);
+        if (drawable == null) {
+            return;
+        }
+        backGroundDrawable = drawable;
+        fromView.setBackgroundDrawable(backGroundDrawable);
+    }
+
+    /**
+     * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
+     */
+    public void setGradientPositionsColorStr(String[] colors, float[] positions, Direction direction) {
         if (fromView == null) {
             return;
         }

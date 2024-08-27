@@ -22,6 +22,10 @@ public class EMClient {
         return EMUtil.INSTANCE.getColor(colorId);
     }
 
+    public static int getColor(String colorString) {
+        return EMUtil.INSTANCE.getColor(colorString);
+    }
+
     /**
      * 获取dimen资源 像素长度
      */
@@ -158,6 +162,14 @@ public class EMClient {
                 .setDirection(direction);
     }
 
+    public static Drawable getGradientPositionsBackGround(Drawable background, String[] colors, float[] positions, Direction direction) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable
+                .setBgColor(getGradientColorByRGB(colors))
+                .setPositions(positions)
+                .setDirection(direction);
+    }
+
     /**
      * 获取选择态色背景Drawable（边框只支持自动点击态）
      */
@@ -257,6 +269,15 @@ public class EMClient {
             colorIds[i] = getColor(colorIds[i]);
         }
         return colorIds;
+    }
+
+    private static int[] getGradientColorByRGB(String[] colorIds) {
+        int len = colorIds.length;
+        int[] colorIdArray = new int[len];
+        for (int i = 0; i < len; i++) {
+            colorIdArray[i] = getColor(colorIds[i]);
+        }
+        return colorIdArray;
     }
 
 }
