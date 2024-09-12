@@ -1,10 +1,8 @@
 package com.wyz.test.ui
 
-import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import com.wyz.app.R
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.em.Direction
 import com.wyz.emlibrary.em.EMManager
@@ -32,7 +30,7 @@ class DemoActivity : AppCompatActivity() {
     private fun initView() {
         EMManager.from(binding.gradientView)
             .setCorner(6f)
-            .setGradientPositionsColorStr(
+            .setGradientPositionsColor(
                 arrayOf("#ffeecc", "#eeccff", "#ccffee", "#ffcece"),
                 floatArrayOf(0f, 0.33f, 0.66f ,1f),
                 Direction.LEFT_TOP

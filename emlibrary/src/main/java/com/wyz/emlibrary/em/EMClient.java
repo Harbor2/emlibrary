@@ -115,6 +115,21 @@ public class EMClient {
                 .setDirection(direction);
     }
 
+    public static Drawable getGradientColorBackGround(Drawable background, Direction direction, String[] colors) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable
+                .setBgColor(getGradientColorByRGB(colors))
+                .setDirection(direction);
+    }
+
+    public static Drawable getGradientRealColorBackGround(Drawable background,
+                                                      Direction direction, int[] colorIds) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable
+                .setBgColor(colorIds)
+                .setDirection(direction);
+    }
+
     /**
      * 获取圆角卡片类型Drawable
      */
@@ -144,6 +159,16 @@ public class EMClient {
                 .dealShadow(view);
     }
 
+    public static Drawable getShadowBackGround(View view, Drawable background, String shadowColorStr, float shadowRadius, float offX, float offY) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable
+                .setShadowColor(EMUtil.INSTANCE.getColor(shadowColorStr))
+                .setShadowRadius(EMUtil.INSTANCE.dp2px(shadowRadius))
+                .setOffsetX(EMUtil.INSTANCE.dp2px(offX))
+                .setOffsetY(EMUtil.INSTANCE.dp2px(offY))
+                .dealShadow(view);
+    }
+
 
     /**
      * 获取渐变背景Drawable
@@ -166,6 +191,14 @@ public class EMClient {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
                 .setBgColor(getGradientColorByRGB(colors))
+                .setPositions(positions)
+                .setDirection(direction);
+    }
+
+    public static Drawable getGradientPositionsRealColorBackGround(Drawable background, int[] colors, float[] positions, Direction direction) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable
+                .setBgColor(colors)
                 .setPositions(positions)
                 .setDirection(direction);
     }
@@ -212,6 +245,14 @@ public class EMClient {
     public static Drawable getBorderColorBackGround(Drawable background, int colorId) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable.setBorderColor(getColor(colorId));
+    }
+
+    /**
+     * 获取边框颜色类型Drawable
+     */
+    public static Drawable getBorderColorBackGround(Drawable background, String colorStr) {
+        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
+        return drawable.setBorderColor(getColor(colorStr));
     }
 
     /**
