@@ -3,6 +3,9 @@ package com.wyz.emlibrary.util
 import android.content.Context
 import android.graphics.Color
 import com.wyz.emlibrary.em.EMLibrary.getApplication
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object EMUtil {
     /**
@@ -68,5 +71,69 @@ object EMUtil {
         alpha2 = alpha2 shl 24
         mColor = mColor and 0x00FFFFFF
         return mColor or alpha2
+    }
+
+    /**
+     * 格式化小数
+     */
+    fun formatDecimalNumPoint(floatNum: Float, point: Int): Float {
+        return String.format("%.{$point}f", floatNum).trimEnd('0').trimEnd('.').toFloat()
+    }
+
+    fun formatDecimalNumPoint(doubleNum: Double, point: Int): Float {
+        return String.format("%.{$point}f", doubleNum).trimEnd('0').trimEnd('.').toFloat()
+    }
+
+    /**
+     * 格式化时间戳
+     *
+     * @param timestamp 时间戳
+     * @param pattern 日期格式
+     *
+     * yyyy-MM-dd：2024-09-13
+     * yyyy/MM/dd：2024/09/13
+     * dd-MM-yyyy：13-09-2024
+     * MM/dd/yyyy：09/13/2024
+     * HH:mm:ss：10:35:23
+     * yyyy-MM-dd HH:mm:ss：2024-09-13 10:35:23
+     */
+    fun formatDateFromTimestamp(pattern: String, timestamp: Long = System.currentTimeMillis(), locale: Locale = Locale.CHINA): String {
+        // 创建 SimpleDateFormat 实例，传入日期格式
+        val sdf = SimpleDateFormat(pattern, locale)
+        // 将时间戳转换为 Date 对象
+        val date = Date(timestamp)
+        // 返回格式化后的日期字符串
+        return sdf.format(date)
+    }
+
+    /**
+     * 文件大小单位格式化
+     */
+    fun formatBytesSize(bytes: Long, point: Int = 1, withUnit: Boolean = true): String {
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+
+        var size = bytes.toDouble()
+        var unitIndex = 0
+        while (size >= 1024 && unitIndex < units.size - 1) {
+            size /= 1024
+            unitIndex++
+        }
+        val sizeWithoutUnit = String.format("%.{$point}f", size).trimEnd('0').trimEnd('.')
+        return if (withUnit)
+            String.format("%s %s", size, units[unitIndex])
+        else sizeWithoutUnit
+    }
+
+    fun formatBytesSizePair(bytes: Long, point: Int = 1): Pair<String, String> {
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+
+        var size = bytes.toDouble()
+        var unitIndex = 0
+        while (size >= 1024 && unitIndex < units.size - 1) {
+            size /= 1024
+            unitIndex++
+        }
+        val sizeWithoutUnit = String.format("%.{$point}f", size).trimEnd('0').trimEnd('.')
+        return Pair(sizeWithoutUnit, units[unitIndex])
     }
 }

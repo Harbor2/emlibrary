@@ -31,72 +31,26 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-<!--            <TextView-->
-<!--                android:id="@+id/tv_title"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"/>-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/iv_launcher"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:src="@mipmap/ic_launcher"-->
-<!--                android:layout_marginTop="30dp"/>-->
-
-<!--            <com.wyz.emlibrary.custom.RoundedImageView-->
-<!--                android:id="@+id/riv_launcher"-->
-<!--                android:layout_width="100dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                app:riCornerRadius="50dp"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                android:src="@mipmap/ic_launcher"-->
-<!--                android:layout_marginTop="30dp"/>-->
-
-<!--            <com.wyz.emlibrary.custom.RoundedCornerView-->
-<!--                android:id="@+id/rcv_line"-->
-<!--                android:layout_width="100dp"-->
-<!--                android:layout_height="10dp"-->
-<!--                app:rcCornerRadius="5dp"-->
-<!--                app:rcViewColor="@color/black"-->
-<!--                android:layout_marginTop="30dp"/>-->
-
-<!--            <com.wyz.emlibrary.custom.CircularProgressView-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="150dp"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                app:cpbProgress="30"-->
-<!--                app:cpbTrackColor="@color/black_5"-->
-<!--                app:cpbProgressColor="@color/black"-->
-<!--                app:cpbProgressThickness="20dp"-->
-<!--                app:cpbTrackThickness="10dp"/>-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/btn_start"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="48dp"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                android:layout_marginHorizontal="40dp"/>-->
-
-<!--            <FrameLayout-->
-<!--                android:id="@+id/container_btn_end"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="48dp"-->
-<!--                android:layout_marginHorizontal="40dp"-->
-<!--                android:layout_marginVertical="30dp">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/btn_end"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:gravity="center"-->
-<!--                    android:layout_marginBottom="6dp"/>-->
-<!--            </FrameLayout>-->
-
-            <View
-                android:id="@+id/gradient_view"
+            <TextView
+                android:id="@+id/btn_start"
                 android:layout_width="200dp"
-                android:layout_height="400dp"/>
+                android:layout_height="48dp"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="按钮"
+                android:layout_marginTop="100dp"/>
+
+            <TextView
+                android:id="@+id/date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="日期"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"/>
         </LinearLayout>
     </ScrollView>
 

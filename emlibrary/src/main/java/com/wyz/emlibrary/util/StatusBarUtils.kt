@@ -29,11 +29,31 @@ fun Activity.makeStatusBarTransparent(view: View?, isDarkMode: Boolean) {
     }
 }
 
+fun Activity.makeStatusBarTransparent(isDarkMode: Boolean, vararg views: View?) {
+    try {
+        window.decorView.systemUiVisibility = if (isDarkMode) {
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        } else {
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+        window.statusBarColor = Color.TRANSPARENT
+
+        views.forEach { view ->
+            view?.let {  targetView ->
+                val params = targetView.layoutParams as ViewGroup.MarginLayoutParams
+                params.topMargin = getStatusHeight().toInt()
+            }
+        }
+    } catch (e: Throwable) {
+        e.printStackTrace()
+    }
+}
+
 /**
  * 获取状态栏的高度 单位像素
  */
 @SuppressLint("DiscouragedApi", "InternalInsetResource")
-fun getStatusHeight(): Float {
+fun Activity.getStatusHeight(): Float {
     return try {
         EMLibrary.getApplication().resources.let {
             it.getDimension(
