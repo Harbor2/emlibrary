@@ -120,7 +120,7 @@ object EMUtil {
         }
         val sizeWithoutUnit = String.format("%.{$point}f", size).trimEnd('0').trimEnd('.')
         return if (withUnit)
-            String.format("%s %s", size, units[unitIndex])
+            String.format("%.{$point}f %s", size, units[unitIndex])
         else sizeWithoutUnit
     }
 
