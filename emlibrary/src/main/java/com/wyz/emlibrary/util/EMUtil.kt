@@ -118,22 +118,30 @@ object EMUtil {
             size /= 1024
             unitIndex++
         }
-        val sizeWithoutUnit = String.format("%.{$point}f", size).trimEnd('0').trimEnd('.')
-        return if (withUnit)
-            String.format("%.{$point}f %s", size, units[unitIndex])
-        else sizeWithoutUnit
+        // 动态构造格式字符串
+        val formatString = "%.${point}f"
+        // 格式化大小
+        val sizeWithoutUnit = String.format(formatString, size).trimEnd('0').trimEnd('.')
+        return if (withUnit) {
+            // 格式化大小并附加单位
+            "$sizeWithoutUnit ${units[unitIndex]}"
+        } else {
+            sizeWithoutUnit
+        }
     }
 
     fun formatBytesSizePair(bytes: Long, point: Int = 1): Pair<String, String> {
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
-
         var size = bytes.toDouble()
         var unitIndex = 0
         while (size >= 1024 && unitIndex < units.size - 1) {
             size /= 1024
             unitIndex++
         }
-        val sizeWithoutUnit = String.format("%.{$point}f", size).trimEnd('0').trimEnd('.')
+        // 动态构建格式字符串
+        val formatString = "%.${point}f"
+        // 格式化文件大小，并移除不必要的尾随零和小数点
+        val sizeWithoutUnit = String.format(formatString, size).trimEnd('0').trimEnd('.')
         return Pair(sizeWithoutUnit, units[unitIndex])
     }
 }
