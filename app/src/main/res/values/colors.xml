@@ -17,4 +17,10 @@
     <color name="btn_main_color_30">#4D1AC167</color>
     <color name="btn_main_color_80">#CC1AC167</color>
     <color name="red">#FF5500</color>
+
+    <color name="progress_color_1">#FF0000</color>
+    <color name="progress_color_2">#00FF00</color>
+    <color name="progress_color_3">#0000FF</color>
+    <color name="progress_color_4">#FFFF00</color>
+    <color name="progress_color_5">#00FFFF</color>
 </resources>

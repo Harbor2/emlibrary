@@ -1,15 +1,12 @@
 package com.wyz.test.ui
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MotionEvent
+import android.widget.LinearLayout
+import com.wyz.app.R
 import com.wyz.app.databinding.ActivityDemoBinding
-import com.wyz.emlibrary.em.EMManager
-import com.wyz.emlibrary.util.EMUtil
+import com.wyz.emlibrary.custom.RoundedCornerView
 import com.wyz.emlibrary.util.makeStatusBarTransparent
-import java.util.Locale
 
 class DemoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDemoBinding
@@ -24,15 +21,32 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initEvent() {
-        binding.btnStart.setOnClickListener {
-            binding.dateTime.text = EMUtil.formatDateFromTimestamp("yyyy-MM-dd EEEE", locale = Locale.US)
-        }
+
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
-        EMManager.from(binding.btnStart)
-            .setCorner(12f)
-            .setBackGroundRealColor(Color.BLUE)
+        val progress = arrayListOf(28f, 28.5f, 40f, 40.5f, 84f, 84.5f, 100f)
+        val colors = arrayListOf(
+            R.color.progress_color_1,
+            R.color.white,
+            R.color.progress_color_2,
+            R.color.white,
+            R.color.progress_color_3,
+            R.color.white,
+            R.color.white,
+        )
+
+        binding.colorProgress.updateProgress(progress, colors)
+
+
+        val cornerView = RoundedCornerView(this).apply {
+            val params = LinearLayout.LayoutParams(150, 150)
+            params.topMargin = 50
+            setCornerRadius(100f)
+            setViewColor(R.color.progress_color_2)
+            layoutParams = params
+
+            binding.llContainer.addView(this)
+        }
     }
 }
