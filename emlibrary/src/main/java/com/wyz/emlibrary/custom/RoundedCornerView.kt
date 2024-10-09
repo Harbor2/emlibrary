@@ -6,7 +6,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.ColorRes
 import com.wyz.emlibrary.R
+import com.wyz.emlibrary.util.EMUtil
 
 class RoundedCornerView @JvmOverloads constructor(
     context: Context,
@@ -45,5 +47,11 @@ class RoundedCornerView @JvmOverloads constructor(
     fun setCornerRadius(radius: Float) {
         cornerRadius = radius
         invalidate() // 重新绘制 View
+    }
+
+    fun setViewColor(@ColorRes colorRes: Int) {
+        customColor = EMUtil.getColor(colorRes)
+        paint.color = customColor
+        invalidate()
     }
 }
