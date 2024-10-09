@@ -118,15 +118,18 @@ object EMUtil {
             size /= 1024
             unitIndex++
         }
-        // 动态构造格式字符串
-        val formatString = "%.${point}f"
-        // 格式化大小
-        val sizeWithoutUnit = String.format(formatString, size).trimEnd('0').trimEnd('.')
+        // 根据 point 动态设置格式字符串
+        val formatString = if (point > 0) "%.${point}f" else "%.0f"
+        // 按指定格式格式化大小
+        var sizeFormatted = String.format(formatString, size)
+        // 如果有小数位数，则去掉多余的0
+        if (point > 0) {
+            sizeFormatted = sizeFormatted.trimEnd('0').trimEnd('.')
+        }
         return if (withUnit) {
-            // 格式化大小并附加单位
-            "$sizeWithoutUnit ${units[unitIndex]}"
+            "$sizeFormatted ${units[unitIndex]}"
         } else {
-            sizeWithoutUnit
+            sizeFormatted
         }
     }
 
@@ -138,10 +141,14 @@ object EMUtil {
             size /= 1024
             unitIndex++
         }
-        // 动态构建格式字符串
-        val formatString = "%.${point}f"
-        // 格式化文件大小，并移除不必要的尾随零和小数点
-        val sizeWithoutUnit = String.format(formatString, size).trimEnd('0').trimEnd('.')
-        return Pair(sizeWithoutUnit, units[unitIndex])
+        // 根据 point 动态设置格式字符串
+        val formatString = if (point > 0) "%.${point}f" else "%.0f"
+        // 按指定格式格式化大小
+        var sizeFormatted = String.format(formatString, size)
+        // 如果有小数位数，则去掉多余的0
+        if (point > 0) {
+            sizeFormatted = sizeFormatted.trimEnd('0').trimEnd('.')
+        }
+        return Pair(sizeFormatted, units[unitIndex])
     }
 }
