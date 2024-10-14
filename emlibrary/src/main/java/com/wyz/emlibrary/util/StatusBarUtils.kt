@@ -53,7 +53,7 @@ fun Activity.makeStatusBarTransparent(isDarkMode: Boolean, vararg views: View?) 
  * 获取状态栏的高度 单位像素
  */
 @SuppressLint("DiscouragedApi", "InternalInsetResource")
-fun Activity.getStatusHeight(): Float {
+fun getStatusHeight(): Float {
     return try {
         EMLibrary.getApplication().resources.let {
             it.getDimension(
