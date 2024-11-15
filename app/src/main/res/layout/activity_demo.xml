@@ -50,6 +50,26 @@
                     app:rcViewColor="#FBBDAB"
                     android:layout_gravity="center"/>
             </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="200dp"
+                android:layout_height="300dp"
+                android:layout_marginTop="20dp"
+                android:background="#ffeecc"
+                android:padding="10dp">
+
+                <com.wyz.emlibrary.custom.wave.WaveView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    app:solid_start_color="#82F2C7"
+                    app:solid_end_color="#00E58D"
+                    app:wave_blow_color="#6600E58D"
+                    app:wave_height="little"
+                    app:wave_hz="slow"
+                    app:wave_length="large"
+                    app:progress="70" />
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -118,4 +118,29 @@
         <attr format="dimension" name="cornerRadius_BottomRight"/>
         <attr format="dimension" name="cornerRadius"/>
     </declare-styleable>
+
+    <declare-styleable name="Themes">
+        <attr format="reference" name="waveViewStyle"/>
+    </declare-styleable>
+    <declare-styleable name="WaveView">
+        <attr format="color" name="solid_start_color"/>
+        <attr format="color" name="solid_end_color"/>
+        <attr format="color" name="wave_blow_color"/>
+        <attr format="integer" name="progress"/>
+        <attr format="enum" name="wave_length">
+            <enum name="large" value="1"/>
+            <enum name="middle" value="2"/>
+            <enum name="little" value="3"/>
+        </attr>
+        <attr name="wave_height" format="enum">
+            <enum name="large" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="little" value="3" />
+        </attr>
+        <attr name="wave_hz" format="enum">
+            <enum name="fast" value="1" />
+            <enum name="normal" value="2" />
+            <enum name="slow" value="3" />
+        </attr>
+    </declare-styleable>
 </resources>
