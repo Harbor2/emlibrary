@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.wyz.emlibrary.R
 import kotlin.math.max
@@ -77,6 +78,16 @@ class CircularProgressView @JvmOverloads constructor(
             false,
             progressPaint
         )
+    }
+
+    fun updateTrackColor(@ColorInt newColor: Int) {
+        trackPaint.color = newColor
+        invalidate()
+    }
+
+    fun updateIndicationColor(@ColorInt newColor: Int) {
+        progressPaint.color = newColor
+        invalidate()
     }
 
     fun setProgress(value: Int) {
