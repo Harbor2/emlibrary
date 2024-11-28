@@ -1,5 +1,6 @@
 package com.wyz.emlibrary.util
 
+import android.os.Build
 import android.util.Log
 import java.io.File
 import java.io.FileInputStream
@@ -55,7 +56,13 @@ object FileUtil {
         }
         val result = if (file.isDirectory) {
             // 文件目录
-            file.deleteRecursively()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                // 使用系统自带的方法删除目录及内容
+                file.deleteRecursively()
+            } else {
+                deleteRecursively(file)
+                true
+            }
         } else {
             // 文件
             file.delete()
@@ -65,6 +72,19 @@ object FileUtil {
         } else {
             null
         }
+    }
+
+    /**
+     * 递归删除文件或文件夹的方法
+     * api 26以下调用此方法
+     */
+    private fun deleteRecursively(file: File) {
+        if (file.isDirectory) {
+            file.listFiles()?.forEach { child ->
+                deleteRecursively(child) // 递归删除子文件或子文件夹
+            }
+        }
+        file.delete() // 最后删除文件或空文件夹
     }
 
     /**
