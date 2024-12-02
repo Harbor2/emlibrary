@@ -139,7 +139,7 @@ class AdvancedCardView: FrameLayout {
         val DEFAULT_OFFCENTER_X = 0f
         val DEFAULT_OFFCENTER_Y = 0f
         val DEFAULT_RADIUS_MULTIPLIER = 1f
-        val DEFAULT_SHADOW_COLOR = Color.rgb(0, 0, 0)
+        val DEFAULT_SHADOW_COLOR = Color.argb(0, 0, 0, 0)
         val DEFAULT_STROKE_CAP_TYPE = CapType.Butt
         val DEFAULT_STROKE_COLOR_TYPE = ColorType.Solid
         val DEFAULT_STROKE_SIZE = 0f
@@ -444,8 +444,12 @@ class AdvancedCardView: FrameLayout {
         DEBUG_paint_fill.style = Paint.Style.FILL
         DEBUG_paint_stroke.style = Paint.Style.STROKE
         DEBUG_paint_fill.color = DEBUG_fill_color
+        DEBUG_paint_fill.strokeCap = Paint.Cap.ROUND
+        DEBUG_paint_fill.strokeJoin = Paint.Join.ROUND
         DEBUG_paint_stroke.color = DEBUG_stroke_color
         DEBUG_paint_stroke.strokeWidth = DEBUG_stroke_width
+        DEBUG_paint_stroke.strokeCap = Paint.Cap.ROUND
+        DEBUG_paint_stroke.strokeJoin = Paint.Join.ROUND
         DEBUG_path.reset()
         DEBUG_path.addRect(0 + DEBUG_stroke_width / 2, 0 + DEBUG_stroke_width / 2, measuredWidth - DEBUG_stroke_width / 2, measuredHeight - DEBUG_stroke_width / 2, Path.Direction.CW)
     }
@@ -483,6 +487,8 @@ class AdvancedCardView: FrameLayout {
     private fun initShadowOuterPaint(shadow: ShadowObject) {
         shadow.paint.style = Paint.Style.FILL
         shadow.paint.color = Color.rgb(128, 128, 128)
+        shadow.paint.strokeCap = Paint.Cap.ROUND
+        shadow.paint.strokeJoin = Paint.Join.ROUND
         shadow.paint.setShadowLayer(shadow.blur, getDx(shadow.distance, -shadow.angle), getDy(shadow.distance, -shadow.angle), assignColorAlpha(shadow.color, shadow.alpha))
     }
 
@@ -501,7 +507,9 @@ class AdvancedCardView: FrameLayout {
 
     private fun initShadowInnerPaint(shadow: ShadowObject) {
         shadow.paint.style = Paint.Style.FILL
-        shadow.paint.color = Color.rgb(255, 255, 255)
+        shadow.paint.color = Color.argb(0,0, 0, 0)
+        shadow.paint.strokeCap = Paint.Cap.ROUND
+        shadow.paint.strokeJoin = Paint.Join.ROUND
         shadow.paint.setShadowLayer(shadow.blur, getDx(shadow.distance, -shadow.angle), getDy(shadow.distance, -shadow.angle), assignColorAlpha(shadow.color, shadow.alpha))
     }
 
@@ -521,6 +529,8 @@ class AdvancedCardView: FrameLayout {
         background_Paint.style = Paint.Style.FILL
         background_Paint.alpha = mapAlphaTo255(background_Alpha)
         background_Paint.color = background_Color
+        background_Paint.strokeJoin = Paint.Join.ROUND
+        background_Paint.strokeCap = Paint.Cap.ROUND
         when(background_ColorType) {
             ColorType.Gradient_Linear -> background_Paint.shader = getLinearShader(background_Gradient_Colors, background_Gradient_Angle)
             ColorType.Gradient_Radial -> background_Paint.shader = getRadialShader(background_Gradient_Colors, background_Gradient_OffCenter_X, background_Gradient_OffCenter_Y)
@@ -533,6 +543,8 @@ class AdvancedCardView: FrameLayout {
         stroke_Paint.style = Paint.Style.FILL
         stroke_Paint.alpha = mapAlphaTo255(stroke_Alpha)
         stroke_Paint.color = stroke_Color
+        stroke_Paint.strokeCap = Paint.Cap.ROUND
+        stroke_Paint.strokeJoin = Paint.Join.ROUND
         if(isDashed()) {
             stroke_Paint.style = Paint.Style.STROKE
             stroke_Paint.pathEffect = DashPathEffect(floatArrayOf(stroke_DashSize, stroke_GapSize), 0f)
