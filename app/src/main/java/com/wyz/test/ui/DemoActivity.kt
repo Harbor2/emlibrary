@@ -1,11 +1,18 @@
 package com.wyz.test.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.LinearLayout
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.wyz.app.R
 import com.wyz.app.databinding.ActivityDemoBinding
-import com.wyz.emlibrary.custom.RoundedCornerView
+import com.wyz.emlibrary.TAG
+import com.wyz.emlibrary.em.Direction
+import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.makeStatusBarTransparent
 
 class DemoActivity : AppCompatActivity() {
@@ -20,33 +27,63 @@ class DemoActivity : AppCompatActivity() {
         initEvent()
     }
 
-    private fun initEvent() {
-
+    private fun initView() {
+//        EMManager.from(binding.btnStartStroke)
+//            .setCorner(30f)
+//            .setBorderWidth(2f)
+//            .setBorderColor("#111111")
+//            .setBackGroundColor(R.color.transparent)
+        EMManager.from(binding.btnView)
+            .setCorner(36f)
+            .setGradientColor(arrayOf("#282828", "#1B1B1B"), Direction.TOP)
     }
 
-    private fun initView() {
-        val progress = arrayListOf(28f, 28.5f, 40f, 40.5f, 84f, 84.5f, 100f)
-        val colors = arrayListOf(
-            R.color.progress_color_1,
-            R.color.white,
-            R.color.progress_color_2,
-            R.color.white,
-            R.color.progress_color_3,
-            R.color.white,
-            R.color.white,
-        )
-
-        binding.colorProgress.updateProgress(progress, colors)
-
-
-        val cornerView = RoundedCornerView(this).apply {
-            val params = LinearLayout.LayoutParams(150, 150)
-            params.topMargin = 50
-            setCornerRadius(100f)
-            setViewColor(R.color.progress_color_2)
-            layoutParams = params
-
-            binding.llContainer.addView(this)
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initEvent() {
+        binding.btnDown.setOnClickListener {
+            rotateAnimHorizon()
+        }
+        binding.btnCancel.setOnClickListener {
+            rotateAnimHorizon2()
         }
     }
+
+    // 以Z轴为轴心旋转---等价于普通平面旋转动画
+    private fun rotateAnimHorizon() {
+        val centerX: Float = binding.btnView.width / 2.0f
+        val centerY: Float = binding.btnView.height / 2.0f
+        val centerZ = 0f
+        val rotate3dAnimationX = Rotate3dAnimation(
+            0f,
+            -40f,
+            centerX,
+            centerY,
+            centerZ,
+            Rotate3dAnimation.ROTATE_Y_AXIS,
+            false
+        )
+        rotate3dAnimationX.duration = 300
+        rotate3dAnimationX.fillAfter = true
+        binding.btnView.startAnimation(rotate3dAnimationX)
+    }
+
+    private fun rotateAnimHorizon2() {
+        val centerX: Float = binding.btnView.width / 2.0f
+        val centerY: Float = binding.btnView.height / 2.0f
+        val centerZ = 0f
+        val rotate3dAnimationX = Rotate3dAnimation(
+            40f,
+            0f,
+            centerX,
+            centerY,
+            centerZ,
+            Rotate3dAnimation.ROTATE_X_AXIS,
+            false
+        )
+        rotate3dAnimationX.duration = 500
+        rotate3dAnimationX.fillAfter = true
+        binding.btnView.startAnimation(rotate3dAnimationX)
+    }
+
+
 }

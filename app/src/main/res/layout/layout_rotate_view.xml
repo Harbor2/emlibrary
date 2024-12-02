@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="192dp"
+    android:layout_height="192dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.wyz.test.ui.MyButton
+        android:id="@+id/btn_top"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="上"
+        android:gravity="center"
+        android:background="#ffeecc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.wyz.test.ui.MyButton
+        android:id="@+id/btn_bottom"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="下"
+        android:gravity="center"
+        android:background="#ffeecc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.wyz.test.ui.MyButton
+        android:id="@+id/btn_left"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="左"
+        android:gravity="center"
+        android:background="#ffeecc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.wyz.test.ui.MyButton
+        android:id="@+id/btn_right"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="右"
+        android:gravity="center"
+        android:background="#ffeecc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
