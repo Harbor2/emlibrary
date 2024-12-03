@@ -126,7 +126,7 @@ import kotlin.math.*
  *         app:stroke_Gradient_Color2="@color/battery_item_healthy_color"
  *         app:stroke_Gradient_Color3="@color/battery_endurance_end_color" />
  */
-class AdvancedCardView: FrameLayout {
+open class AdvancedCardView: FrameLayout {
 
     companion object {
         const val TAG = "ADVANCED_CARD_VIEW"
