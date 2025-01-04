@@ -21,6 +21,7 @@
         <attr name="cpbProgressColor" format="color" />
         <attr name="cpbTrackThickness" format="dimension" />
         <attr name="cpbProgressThickness" format="dimension" />
+        <attr name="cpbRoundIndication" format="boolean"/>
         <attr name="cpbProgress" format="integer" />
     </declare-styleable>
 

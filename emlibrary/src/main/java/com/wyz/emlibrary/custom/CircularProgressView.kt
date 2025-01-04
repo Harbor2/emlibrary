@@ -8,6 +8,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.wyz.emlibrary.R
+import com.wyz.emlibrary.util.EMUtil
 import kotlin.math.max
 import kotlin.math.min
 
@@ -25,7 +26,6 @@ class CircularProgressView @JvmOverloads constructor(
     private val trackPaint: Paint
     private val progressPaint: Paint
     private var progress = 0
-
     init {
         val typedArray = context.theme.obtainStyledAttributes(
             attrs,
@@ -37,6 +37,7 @@ class CircularProgressView @JvmOverloads constructor(
         val progressColor = typedArray.getColor(R.styleable.CircularProgressView_cpbProgressColor, ContextCompat.getColor(context, android.R.color.holo_blue_light))
         val trackThickness = typedArray.getDimension(R.styleable.CircularProgressView_cpbTrackThickness, 4f)
         val progressThickness = typedArray.getDimension(R.styleable.CircularProgressView_cpbProgressThickness, 6f)
+        val isRoundIndication = typedArray.getBoolean(R.styleable.CircularProgressView_cpbRoundIndication, true)
         progress = typedArray.getInteger(R.styleable.CircularProgressView_cpbProgress, 0)
 
         trackPaint = Paint().apply {
@@ -51,7 +52,7 @@ class CircularProgressView @JvmOverloads constructor(
             style = Paint.Style.STROKE
             strokeWidth = progressThickness
             isAntiAlias = true
-            strokeCap = Paint.Cap.ROUND // Set round cap for rounded edges
+            strokeCap = if (isRoundIndication) Paint.Cap.ROUND else Paint.Cap.BUTT
         }
 
         typedArray.recycle()
@@ -61,18 +62,18 @@ class CircularProgressView @JvmOverloads constructor(
         super.onDraw(canvas)
         val width = width.toFloat()
         val height = height.toFloat()
-        val radius = min(width, height) / 2 - max(trackPaint.strokeWidth, progressPaint.strokeWidth) / 2
+        val radii = min(width, height) / 2 - max(trackPaint.strokeWidth, progressPaint.strokeWidth) / 2
 
         // Draw track
-        canvas.drawCircle(width / 2, height / 2, radius, trackPaint)
+        canvas.drawCircle(width / 2, height / 2, radii, trackPaint)
 
         // Draw progress
         val sweepAngle = 360 * (progress / 100f)
         canvas.drawArc(
-            width / 2 - radius,
-            height / 2 - radius,
-            width / 2 + radius,
-            height / 2 + radius,
+            width / 2 - radii,
+            height / 2 - radii,
+            width / 2 + radii,
+            height / 2 + radii,
             -90f,
             sweepAngle,
             false,
@@ -87,6 +88,11 @@ class CircularProgressView @JvmOverloads constructor(
 
     fun updateIndicationColor(@ColorInt newColor: Int) {
         progressPaint.color = newColor
+        invalidate()
+    }
+
+    fun setRadius(isRound: Boolean) {
+        progressPaint.strokeCap = if (isRound) Paint.Cap.ROUND else Paint.Cap.BUTT
         invalidate()
     }
 

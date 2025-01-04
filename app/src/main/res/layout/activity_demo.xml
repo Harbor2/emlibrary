@@ -30,84 +30,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#222222"
             android:gravity="center_horizontal">
 
-            <com.wyz.emlibrary.custom.AdvancedCardView
-                android:id="@+id/btn_circle"
-                android:layout_width="192dp"
-                android:layout_height="192dp"
-                android:layout_marginTop="50dp"
-                app:cornerRadius="100dp"
-                app:stroke_Width="2dp"
-                app:stroke_Type="solid"
-                app:stroke_ColorType="solid"
-                app:stroke_Gradient_Color0="#111111"
-                app:stroke_Gradient_ColorEnd="#111111"
-                app:background_Type="fill_stroke"
-                android:layout_marginHorizontal="20dp"
-                app:background_Gradient_Color0="#8A58F9"
-                app:background_Gradient_ColorEnd="#5427BA"
-                app:shadow1_Inner_Blur="2.2dp"
-                app:shadow1_Inner_Distance="6dp"
-                app:shadow1_Inner_Color="#1FFFFFFF"
-                app:shadow0_Inner_Blur="18dp"
-                app:shadow0_Inner_Color="#2B0964"
-                app:shadow0_Inner_Distance="-4dp">
-            </com.wyz.emlibrary.custom.AdvancedCardView>
-
-            <com.wyz.emlibrary.custom.AdvancedCardView
-                android:id="@+id/btn_start"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="50dp"
-                app:cornerRadius="30dp"
-                app:background_Type="fill_stroke"
-                app:stroke_Type="solid"
-                app:stroke_Width="2dp"
-                app:stroke_ColorType="solid"
-                app:stroke_Gradient_Color0="#111111"
-                app:stroke_Gradient_ColorEnd="#111111"
-                android:layout_marginHorizontal="20dp"
-                app:background_Gradient_Color0="#8A58F9"
-                app:background_Gradient_ColorEnd="#5427BA"
-                app:shadow0_Inner_Blur="1dp"
-                app:shadow0_Inner_Distance="3dp"
-                app:shadow0_Inner_Color="@color/white_30">
-            </com.wyz.emlibrary.custom.AdvancedCardView>
-
-            <View
-                android:id="@+id/btn_view"
-                android:layout_width="72dp"
-                android:layout_height="158dp"
-                android:layout_marginTop="100dp"/>
-
-            <com.wyz.test.ui.ScaleView
-                android:id="@+id/scale_view"
-                android:layout_width="158dp"
-                android:layout_height="72dp"
-                android:background="#ffeecc"
-                android:layout_marginTop="20dp"/>
+            <com.wyz.emlibrary.custom.CircularProgressView
+                android:id="@+id/view"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                app:cpbTrackThickness="18dp"
+                app:cpbTrackColor="#ffeecc"
+                app:cpbProgressThickness="10dp"
+                app:cpbProgressColor="#ff5500"
+                app:cpbProgress="50"
+                app:cpbRoundIndication="false" />
 
             <Button
-                android:id="@+id/btn_down"
+                android:id="@+id/btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="按下"
-                android:layout_marginTop="100dp"/>
-
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="取消"
+                android:text="hahha"
                 android:layout_marginTop="50dp"/>
-
-            <com.wyz.test.ui.RotateView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="50dp"/>
         </LinearLayout>
     </ScrollView>
 
