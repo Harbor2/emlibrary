@@ -2,6 +2,8 @@ package com.wyz.emlibrary.util
 
 import android.content.Context
 import android.graphics.Color
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.wyz.emlibrary.em.EMLibrary.getApplication
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -150,5 +152,21 @@ object EMUtil {
             sizeFormatted = sizeFormatted.trimEnd('0').trimEnd('.')
         }
         return Pair(sizeFormatted, units[unitIndex])
+    }
+
+    fun showSoftKeyboard(view: EditText, context: Context) {
+        view.postDelayed({
+            view.requestFocus()
+            val inputMethodManager =
+                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.showSoftInput(view, 0)
+        }, 200)
+    }
+
+    fun hideSoftKeyboard(view: EditText, context: Context) {
+        view.clearFocus()
+        val inputMethodManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
