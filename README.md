@@ -9,3 +9,8 @@ implementation("com.github.Harbor2:emlibrary:v1.0.8")
 
 3.使用时需要对EMLibrary做初始化处理：
 EMLibrary.init(this)
+
+4.手动下载aar 替换自己所需版本号
+https://jitpack.io/com/github/Harbor2/emlibrary/v2.1.0/emlibrary-v2.1.0.aar
+
+5.jitpack官网：https://jitpack.io/
