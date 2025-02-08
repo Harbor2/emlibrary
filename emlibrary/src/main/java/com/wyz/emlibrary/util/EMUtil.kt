@@ -79,11 +79,13 @@ object EMUtil {
      * 格式化小数
      */
     fun formatDecimalNumPoint(floatNum: Float, point: Int): Float {
-        return String.format("%.{$point}f", floatNum).trimEnd('0').trimEnd('.').toFloat()
+        val formatString = "%.${point}f"  // 使用模板字符串构造格式化字符串
+        return String.format(formatString, floatNum).trimEnd('0').trimEnd('.').toFloat()
     }
 
-    fun formatDecimalNumPoint(doubleNum: Double, point: Int): Float {
-        return String.format("%.{$point}f", doubleNum).trimEnd('0').trimEnd('.').toFloat()
+    fun formatDecimalNumPoint(doubleNum: Double, point: Int): Double {
+        val formatString = "%.${point}f"  // 使用模板字符串构造格式化字符串
+        return String.format(formatString, doubleNum).trimEnd('0').trimEnd('.').toDouble()
     }
 
     /**
