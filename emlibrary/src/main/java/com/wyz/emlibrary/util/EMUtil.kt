@@ -78,14 +78,28 @@ object EMUtil {
     /**
      * 格式化小数
      */
-    fun formatDecimalNumPoint(floatNum: Float, point: Int): Float {
-        val formatString = "%.${point}f"  // 使用模板字符串构造格式化字符串
-        return String.format(formatString, floatNum).trimEnd('0').trimEnd('.').toFloat()
+    fun formatDecimalNumPoint(floatNum: Float, point: Int, trim: Boolean = true): String {
+        val formatString = "%.${point}f"
+        val formatted = String.format(formatString, floatNum)
+
+        return if (trim) {
+            // 去除尾随零和小数点
+            formatted.trimEnd('0').trimEnd('.').ifEmpty { "0" }
+        } else {
+            formatted
+        }
     }
 
-    fun formatDecimalNumPoint(doubleNum: Double, point: Int): Double {
-        val formatString = "%.${point}f"  // 使用模板字符串构造格式化字符串
-        return String.format(formatString, doubleNum).trimEnd('0').trimEnd('.').toDouble()
+    fun formatDecimalNumPoint(doubleNum: Double , point: Int, trim: Boolean = true): String {
+        val formatString = "%.${point}f"
+        val formatted = String.format(formatString, doubleNum)
+
+        return if (trim) {
+            // 去除尾随零和小数点
+            formatted.trimEnd('0').trimEnd('.').ifEmpty { "0" }
+        } else {
+            formatted
+        }
     }
 
     /**
