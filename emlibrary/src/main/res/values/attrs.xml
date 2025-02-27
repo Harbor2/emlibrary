@@ -144,4 +144,11 @@
             <enum name="slow" value="3" />
         </attr>
     </declare-styleable>
+
+    <!-- 自动横向排列组件 -->
+    <declare-styleable name="AutoWrapLayout">
+        <attr name="awHorSpace" format="dimension" />
+        <attr name="awVerSpace" format="dimension" />
+        <attr name="awIsAdaptive" format="boolean"/>
+    </declare-styleable>
 </resources>
