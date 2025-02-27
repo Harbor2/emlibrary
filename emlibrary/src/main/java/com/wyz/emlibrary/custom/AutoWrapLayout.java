@@ -149,6 +149,19 @@ public class AutoWrapLayout extends ViewGroup {
         }
     }
 
+    public void clearChild(int index) {
+        if (index < 0 || index >= getChildCount()) {
+            return;
+        }
+        removeViewAt(index);
+        requestLayout();
+    }
+
+    public void clearChild() {
+        removeAllViews();
+        requestLayout();
+    }
+
     public void setAdapter(WrapAdapter adapter) {
         this.adapter = adapter;
         removeAllViews();
