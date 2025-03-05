@@ -2,7 +2,9 @@ package com.wyz.emlibrary.util
 
 import android.util.Log
 import com.wyz.emlibrary.TAG
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -14,8 +16,13 @@ object EMFileUtil {
      * 删除文件或者目录
      * 没有回调结果
      */
-    suspend fun delete(file: File, callback: ((File) -> Unit)? = null) {
+    suspend fun delete(
+        file: File,
+        callback: ((File) -> Unit)? = null,
+        onComposeCallback: (() -> Unit)? = null
+    ) {
         if (!file.exists()) {
+            onComposeCallback?.invoke()
             return
         }
         if (file.isDirectory) {
@@ -25,6 +32,9 @@ object EMFileUtil {
             // 文件
             file.delete()
             callback?.invoke(file)
+        }
+        withContext(Dispatchers.Main) {
+            onComposeCallback?.invoke()
         }
     }
 
@@ -58,17 +68,25 @@ object EMFileUtil {
      * @param destinationPath 目标路径
      * @param callback 拷贝回调 每个文件、文件夹回调一次
      */
-    suspend fun copy(source: File, destinationPath: String, callback: ((File, File) -> Unit)? = null) {
+    suspend fun copy(
+        source: File,
+        destinationPath: String,
+        progressCallback: ((File, File) -> Unit)? = null,
+        onComposeCallback: (() -> Unit)? = null
+    ) {
         if (source.isDirectory) {
             // 如果是文件夹，递归复制文件夹内容
-            copyDirectory(source, destinationPath, false, callback)
+            copyDirectory(source, destinationPath, false, progressCallback)
         } else {
             // 如果是文件，直接复制文件
-            copyFile(source, destinationPath, callback)
+            copyFile(source, destinationPath, progressCallback)
+        }
+        withContext(Dispatchers.Main) {
+            onComposeCallback?.invoke()
         }
     }
 
-    private fun copyFile(sourceFile: File, copyToPath: String, callback: ((File, File) -> Unit)? = null ) {
+    private fun copyFile(sourceFile: File, copyToPath: String, progressCallback: ((File, File) -> Unit)? = null ) {
         try {
             if (!sourceFile.exists() || copyToPath.isEmpty()) {
                 return
@@ -91,7 +109,7 @@ object EMFileUtil {
             FileInputStream(sourceFile).use { inStream ->
                 FileOutputStream(targetFile).use { outStream ->
                     inStream.copyTo(outStream)
-                    callback?.invoke(sourceFile, targetFile)
+                    progressCallback?.invoke(sourceFile, targetFile)
                 }
             }
         } catch (e: Exception) {
@@ -102,7 +120,7 @@ object EMFileUtil {
     /**
      * @param mergeTheSame 是否合并同名文件夹
      */
-    private suspend fun copyDirectory(sourceDir: File, destinationPath: String, mergeTheSame: Boolean, callback: ((File, File) -> Unit)? = null) {
+    private suspend fun copyDirectory(sourceDir: File, destinationPath: String, mergeTheSame: Boolean, progressCallback: ((File, File) -> Unit)? = null) {
         try {
             // 目标文件父目录
             val targetParentFile = File(destinationPath)
@@ -115,7 +133,7 @@ object EMFileUtil {
             if (!targetDir.exists()) {
                 val result = targetDir.mkdirs()
                 if (result) {
-                    callback?.invoke(sourceDir, targetDir)
+                    progressCallback?.invoke(sourceDir, targetDir)
                 }
             } else {
                 if (!mergeTheSame) {
@@ -124,7 +142,7 @@ object EMFileUtil {
                     targetDir = File(targetParentFile, curTime.plus("_${sourceDir.name}"))
                     val result = targetDir.mkdirs()
                     if (result) {
-                        callback?.invoke(sourceDir, targetDir)
+                        progressCallback?.invoke(sourceDir, targetDir)
                     }
                 }
             }
@@ -135,9 +153,9 @@ object EMFileUtil {
                     return@forEach
                 }
                 if (file.isDirectory) {
-                    copyDirectory(file, targetDir.path, true, callback)  // 递归拷贝子文件夹
+                    copyDirectory(file, targetDir.path, true, progressCallback)  // 递归拷贝子文件夹
                 } else {
-                    copyFile(file, targetDir.path, callback)  // 拷贝文件
+                    copyFile(file, targetDir.path, progressCallback)  // 拷贝文件
                 }
             }
         } catch (e: Exception) {
