@@ -2,6 +2,7 @@ package com.wyz.emlibrary.util
 
 import android.content.Context
 import android.graphics.Color
+import android.os.IBinder
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.wyz.emlibrary.em.EMLibrary.getApplication
@@ -170,13 +171,13 @@ object EMUtil {
         return Pair(sizeFormatted, units[unitIndex])
     }
 
-    fun showSoftKeyboard(view: EditText, context: Context) {
+    fun showSoftKeyboard(view: EditText, context: Context, delay: Long = 200) {
         view.postDelayed({
             view.requestFocus()
             val inputMethodManager =
                 context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.showSoftInput(view, 0)
-        }, 200)
+        }, delay)
     }
 
     fun hideSoftKeyboard(view: EditText, context: Context) {
@@ -184,5 +185,11 @@ object EMUtil {
         val inputMethodManager =
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun hideSoftKeyboard(windowToken: IBinder, context: Context) {
+        val inputMethodManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }
