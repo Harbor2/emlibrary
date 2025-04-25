@@ -116,7 +116,7 @@ object EMUtil {
      * HH:mm:ss：10:35:23
      * yyyy-MM-dd HH:mm:ss：2024-09-13 10:35:23
      */
-    fun formatDateFromTimestamp(pattern: String, timestamp: Long = System.currentTimeMillis(), locale: Locale = Locale.CHINA): String {
+    fun formatDateFromTimestamp(pattern: String, timestamp: Long = System.currentTimeMillis(), locale: Locale = Locale.ENGLISH): String {
         // 创建 SimpleDateFormat 实例，传入日期格式
         val sdf = SimpleDateFormat(pattern, locale)
         // 将时间戳转换为 Date 对象
