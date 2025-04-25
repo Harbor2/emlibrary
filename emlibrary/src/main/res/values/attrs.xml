@@ -151,4 +151,12 @@
         <attr name="awVerSpace" format="dimension" />
         <attr name="awIsAdaptive" format="boolean"/>
     </declare-styleable>
+
+    <!-- 圆角cardView -->
+    <declare-styleable name="RadiusCardView">
+        <attr name="rcvTopLeftRadius" format="dimension" />
+        <attr name="rcvTopRightRadius" format="dimension" />
+        <attr name="rcvBottomRightRadius" format="dimension" />
+        <attr name="rcvBottomLeftRadius" format="dimension" />
+    </declare-styleable>
 </resources>
