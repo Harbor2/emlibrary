@@ -43,23 +43,17 @@ object EMFileUtil {
      * api 26以下调用此方法
      */
     private suspend fun deleteRecursively(file: File, callback: ((File) -> Unit)? = null) {
+        if (!coroutineContext.isActive) return
+
         if (file.isDirectory) {
             file.listFiles()?.forEach { child ->
-                if (!coroutineContext.isActive) {
-                    return@forEach
-                }
-                deleteRecursively(child, callback) // 递归删除子文件或子文件夹
+                deleteRecursively(child, callback)
             }
-            // 最后删除文件或空文件夹
-            if (getDirTotalChildCountAndSize(file).first == 0) {
-                file.delete()
-                callback?.invoke(file)
-            }
-        } else {
-            file.delete()
+        }
+        // 无论是文件还是空目录，都直接删除
+        if (file.delete()) {
             callback?.invoke(file)
         }
-
     }
 
     /**
@@ -165,16 +159,17 @@ object EMFileUtil {
 
     /**
      * 获取文件夹内的所有子文件
-     * @param containDir 是否包含文件夹(不包含文件夹时，其内部子文件也能扫描)
+     * @param containerSubFile 是否包含子文件夹
+     * @param containDir 是否包含文件夹
      * @param containerHiddenFile 是否包含隐藏文件
      */
-    fun getDirFiles(source: File, containDir: Boolean = false, containerHiddenFile: Boolean = false): List<File> {
+    fun getDirFilesList(source: File, containerSubFile: Boolean = false, containDir: Boolean = false, containerHiddenFile: Boolean = false): ArrayList<File> {
         // 如果文件不存在或者是文件，直接返回空列表
-        if (!source.exists() || source.isFile) return emptyList()
+        if (!source.exists() || source.isFile) return arrayListOf()
         // 获取当前目录下的所有文件
-        val files = source.listFiles() ?: return emptyList()
+        val files = source.listFiles() ?: return arrayListOf()
         // 用于存放所有的文件
-        val result = mutableListOf<File>()
+        val result = arrayListOf<File>()
         // 遍历文件并根据条件过滤
         for (file in files) {
             // 判断文件是否隐藏
@@ -186,11 +181,49 @@ object EMFileUtil {
                 result.add(file)
             }
             // 如果是目录，则递归获取该目录下的文件
-            if (file.isDirectory) {
-                result.addAll(getDirFiles(file, containDir, containerHiddenFile)) // 递归调用
+            if (file.isDirectory && containerSubFile) {
+                result.addAll(getDirFilesList(file, containerSubFile, containDir, containerHiddenFile)) // 递归调用
             }
         }
         return result
+    }
+
+    /**
+     * 获取文件夹内的所有子文件数量
+     * @param containerSubFile 是否包含子文件夹
+     * @param containDir 是否包含文件夹
+     * @param containerHiddenFile 是否包含隐藏文件
+     */
+    fun getDirFilesCount(
+        source: File,
+        containerSubFile: Boolean = false,
+        containDir: Boolean = false,
+        containerHiddenFile: Boolean = false
+    ): Pair<Int, Long> {
+        if (!source.exists() || source.isFile) return Pair(0, 0L)
+
+        val files = source.listFiles() ?: return Pair(0, 0L)
+        var count = 0
+        var size = 0L
+
+        for (file in files) {
+            if (!containerHiddenFile && file.isHidden) continue
+
+            if (containDir && (file.isFile || file.isDirectory)) {
+                count++
+                if (file.isFile) size += file.length()
+            } else if (!containDir && file.isFile) {
+                count++
+                size += file.length()
+            }
+
+            if (file.isDirectory && containerSubFile) {
+                val (subCount, subSize) = getDirFilesCount(file, containerSubFile, containDir, containerHiddenFile)
+                count += subCount
+                size += subSize
+            }
+        }
+        return Pair(count, size)
     }
 
     /**
@@ -302,44 +335,6 @@ object EMFileUtil {
             return default
         }
         return getFileExtension(file.absolutePath, default)
-    }
-
-    /**
-     * 获取文件夹的子文件数量
-     */
-    fun getDirChildCount(file: File): Int {
-        if (!file.exists() || file.isFile) {
-            return 0
-        }
-        return file.listFiles()?.size ?: 0
-    }
-
-    /**
-     * 获取文件夹子文件的数量和大小
-     * 只计算文件不计算文件夹
-     */
-    fun getDirTotalChildCountAndSize(file: File): Pair<Int, Long> {
-        var totalCount = 0
-        var totalSize = 0L
-        if (!file.exists()) {
-            return Pair(0, 0)
-        }
-        return if (file.isFile) {
-            Pair(0, 0)
-        } else {
-            file.listFiles()?.forEach {
-                if (it.isFile) {
-                    totalCount ++
-                    totalSize += it.length()
-                } else if (it.isDirectory) {
-                    // 递归获取子文件夹的文件数量和大小
-                    val subPair = getDirTotalChildCountAndSize(it)
-                    totalCount += subPair.first
-                    totalSize += subPair.second
-                }
-            }
-            Pair(totalCount, totalSize)
-        }
     }
 
     /**
