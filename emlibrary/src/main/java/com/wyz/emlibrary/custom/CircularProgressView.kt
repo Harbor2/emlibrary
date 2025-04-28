@@ -17,6 +17,9 @@ import kotlin.math.min
  * 圆角进度条
  * 进度的宽度可超过轨道宽度
  * 进度两端为半圆形
+ *
+ * 当设置渐变色时（整个弧形为渐变区域，不是indication为渐变区域）：
+ * 如果两端为弧形，开始端会限制两个颜色（首位颜色相同可避免此问题|不使用弧形两端|端点自己盖View）
  */
 class CircularProgressView @JvmOverloads constructor(
     context: Context,
