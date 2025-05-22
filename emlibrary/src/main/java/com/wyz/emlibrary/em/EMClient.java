@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.view.View;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import com.wyz.emlibrary.util.EMUtil;
 
 /**
@@ -18,7 +20,7 @@ public class EMClient {
     /**
      * 通过SkinManager根据日夜黑模式获取对应的元素资源
      */
-    public static int getColor(int colorId) {
+    public static int getColor(@ColorRes int colorId) {
         return EMUtil.INSTANCE.getColor(colorId);
     }
 
@@ -83,47 +85,13 @@ public class EMClient {
     /**
      * 获取纯色背景Drawable
      */
-    public static Drawable getColorBackGround(Drawable background, int colorId) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable.setBgColor(getColor(colorId));
-    }
-
-    /**
-     * 获取纯色背景Drawable
-     */
-    public static Drawable getRealColorBackGround(Drawable background, int color) {
+    public static Drawable getRealColorBackGround(Drawable background, @ColorInt int color) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable.setBgColor(color);
     }
 
-    /**
-     * 通过colorString获取纯色背景Drawable
-     */
-    public static Drawable getColorBackGround(Drawable background, String colorString) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable.setBgColor(EMUtil.INSTANCE.getColor(colorString));
-    }
-
-    /**
-     * 获取渐变色背景Drawable
-     */
-    public static Drawable getGradientColorBackGround(Drawable background,
-                                                      Direction direction, int[] colorIds) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable
-                .setBgColor(getGradientColorById(colorIds))
-                .setDirection(direction);
-    }
-
-    public static Drawable getGradientColorBackGround(Drawable background, Direction direction, String[] colors) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable
-                .setBgColor(getGradientColorByRGB(colors))
-                .setDirection(direction);
-    }
-
     public static Drawable getGradientRealColorBackGround(Drawable background,
-                                                      Direction direction, int[] colorIds) {
+                                                      Direction direction, @ColorInt int[] colorIds) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
                 .setBgColor(colorIds)
@@ -149,53 +117,17 @@ public class EMClient {
     /**
      * 获取阴影背景Drawable
      */
-    public static Drawable getShadowBackGround(View view, Drawable background, int shadowColorId, float shadowRadius, float offX, float offY) {
+    public static Drawable getShadowRealBackGround(View view, Drawable background, @ColorInt int shadowColorId, float shadowRadius, float offX, float offY) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
-                .setShadowColor(EMUtil.INSTANCE.getColor(shadowColorId))
+                .setShadowColor(shadowColorId)
                 .setShadowRadius(EMUtil.INSTANCE.dp2px(shadowRadius))
                 .setOffsetX(EMUtil.INSTANCE.dp2px(offX))
                 .setOffsetY(EMUtil.INSTANCE.dp2px(offY))
                 .dealShadow(view);
     }
 
-    public static Drawable getShadowBackGround(View view, Drawable background, String shadowColorStr, float shadowRadius, float offX, float offY) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable
-                .setShadowColor(EMUtil.INSTANCE.getColor(shadowColorStr))
-                .setShadowRadius(EMUtil.INSTANCE.dp2px(shadowRadius))
-                .setOffsetX(EMUtil.INSTANCE.dp2px(offX))
-                .setOffsetY(EMUtil.INSTANCE.dp2px(offY))
-                .dealShadow(view);
-    }
-
-
-    /**
-     * 获取渐变背景Drawable
-     * 蒙层资源的定义为字符串数组，必须有3项
-     * <string-array name="Mask_X001">
-     *     <item>CAM_X0604,CAM_X0604,CAM_X0601</item>
-     *     <item>0.0,0.2,1.0</item>
-     *     <item>bottom</item>
-     * </string-array>
-     */
-    public static Drawable getGradientPositionsBackGround(Drawable background, int[] colors, float[] positions, Direction direction) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable
-                .setBgColor(getGradientColorById(colors))
-                .setPositions(positions)
-                .setDirection(direction);
-    }
-
-    public static Drawable getGradientPositionsBackGround(Drawable background, String[] colors, float[] positions, Direction direction) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable
-                .setBgColor(getGradientColorByRGB(colors))
-                .setPositions(positions)
-                .setDirection(direction);
-    }
-
-    public static Drawable getGradientPositionsRealColorBackGround(Drawable background, int[] colors, float[] positions, Direction direction) {
+    public static Drawable getGradientPositionsRealColorBackGround(Drawable background, @ColorInt int[] colors, float[] positions, Direction direction) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable
                 .setBgColor(colors)
@@ -240,25 +172,9 @@ public class EMClient {
     }
 
     /**
-     * 获取边框颜色类型Drawable
-     */
-    public static Drawable getBorderColorBackGround(Drawable background, int colorId) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable.setBorderColor(getColor(colorId));
-    }
-
-    /**
-     * 获取边框颜色类型Drawable
-     */
-    public static Drawable getBorderColorBackGround(Drawable background, String colorStr) {
-        EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
-        return drawable.setBorderColor(getColor(colorStr));
-    }
-
-    /**
      * 获取边框纯色颜色类型Drawable
      */
-    public static Drawable getRealBorderColorBackGround(Drawable background, int colorId) {
+    public static Drawable getRealBorderColorBackGround(Drawable background, @ColorInt int colorId) {
         EMDrawable drawable = (EMDrawable) EMClient.getBackEMDrawable(background).clone();
         return drawable.setBorderColor(colorId);
     }
@@ -304,7 +220,7 @@ public class EMClient {
     /**
      * 解析color资源id数组获取渐变color资源数组
      */
-    private static int[] getGradientColorById(int[] colorIds) {
+    public static int[] getGradientColorById(@ColorRes int[] colorIds) {
         int len = colorIds.length;
         for (int i = 0; i < len; i++) {
             colorIds[i] = getColor(colorIds[i]);
@@ -312,7 +228,7 @@ public class EMClient {
         return colorIds;
     }
 
-    private static int[] getGradientColorByRGB(String[] colorIds) {
+    public static int[] getGradientColorByRGB(String[] colorIds) {
         int len = colorIds.length;
         int[] colorIdArray = new int[len];
         for (int i = 0; i < len; i++) {

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.IBinder
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.ColorRes
 import com.wyz.emlibrary.em.EMLibrary.getApplication
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,7 +41,7 @@ object EMUtil {
         return (pxVal / getApplication().resources.displayMetrics.density)
     }
 
-    fun getColor(colorId: Int): Int {
+    fun getColor(@ColorRes colorId: Int): Int {
         return getApplication().getColor(colorId)
     }
 

@@ -7,11 +7,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
-
-import com.wyz.emlibrary.util.EMUtil;
 
 /**
  * EM为ElementsMaven的缩写，意为元素专家，期望能够提升大家对UI的效率！
@@ -48,19 +45,19 @@ public class EMManager {
      * 根据编码设置文本颜色
      * @param colorId 颜色资源id
      */
-    public EMManager setTextColor(int colorId) {
-        if (!(fromView instanceof TextView)) {
-            return this;
-        }
-        ((TextView)fromView).setTextColor(EMClient.getColor(colorId));
-        return this;
+    public EMManager setTextColor(@ColorRes int colorId) {
+        return setTextRealColor(EMClient.getColor(colorId));
     }
 
     public EMManager setTextColor(String colorStr) {
+        return setTextRealColor(EMClient.getColor(colorStr));
+    }
+
+    public EMManager setTextRealColor(@ColorInt int colorId) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
-        ((TextView)fromView).setTextColor(EMClient.getColor(colorStr));
+        ((TextView)fromView).setTextColor(colorId);
         return this;
     }
 
@@ -118,11 +115,19 @@ public class EMManager {
      * 设置链接颜色
      * @param colorId 资源id
      */
-    public EMManager setLinkTextColor (int colorId) {
+    public EMManager setLinkTextColor (@ColorRes int colorId) {
+        return setLinkTextRealColor(EMClient.getColor(colorId));
+    }
+
+    public EMManager setLinkTextColor (String colorStr) {
+        return setLinkTextRealColor(EMClient.getColor(colorStr));
+    }
+
+    public EMManager setLinkTextRealColor (@ColorInt int colorId) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
-        ((TextView)fromView).setLinkTextColor(EMClient.getColor(colorId));
+        ((TextView)fromView).setLinkTextColor(colorId);
         return this;
     }
 
@@ -142,7 +147,7 @@ public class EMManager {
      * @param normalColorId 正常态文字颜色id
      * @param pressColorId 点击态文字颜色id
      */
-    public EMManager setTextSelectorColor(int normalColorId, int pressColorId) {
+    public EMManager setTextSelectorColor(@ColorRes int normalColorId, @ColorRes int pressColorId) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
@@ -157,7 +162,7 @@ public class EMManager {
      * @param normalId 正常态背景颜色id
      * @param pressId 点击态背景颜色id
      */
-    public void setBackGroundPressedColor(final int normalId, final int pressId) {
+    public void setBackGroundPressedColor(@ColorRes final int normalId, @ColorRes final int pressId) {
         if (fromView == null) {
             return;
         }
@@ -177,7 +182,7 @@ public class EMManager {
      * @param normalId
      * @param selectedId
      */
-    public void setBackGroundSelectColor(int normalId, int selectedId) {
+    public void setBackGroundSelectColor(@ColorRes int normalId, @ColorRes int selectedId) {
         if (fromView == null) {
             return;
         }
@@ -195,30 +200,14 @@ public class EMManager {
      * @param colorId 色值id
      */
     public void setBackGroundColor(@ColorRes int colorId) {
-        if (fromView == null) {
-            return;
-        }
-        Drawable drawable = EMClient.getColorBackGround(backGroundDrawable, colorId);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+        setBackGroundRealColor(EMClient.getColor(colorId));
     }
 
     /**
      * 设置纯色背景，例：#XXXXXXXX
      */
     public void setBackGroundColor(String colorString) {
-        if (fromView == null) {
-            return;
-        }
-        Drawable drawable = EMClient.getColorBackGround(backGroundDrawable, colorString);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+        setBackGroundRealColor(EMClient.getColor(colorString));
     }
 
     /**
@@ -243,16 +232,8 @@ public class EMManager {
      * @param colorIds 色值id array
      * @param direction 详情{@link Direction#BOTTOM}
      */
-    public void setGradientColor(int[] colorIds, Direction direction) {
-        if (fromView == null) {
-            return;
-        }
-        Drawable drawable = EMClient.getGradientColorBackGround(backGroundDrawable, direction, colorIds);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+    public void setGradientColor(@ColorRes int[] colorIds, Direction direction) {
+        setGradientRealColor(EMClient.getGradientColorById(colorIds), direction);
     }
 
     /**
@@ -261,15 +242,7 @@ public class EMManager {
      * @param direction 详情{@link Direction#BOTTOM}
      */
     public void setGradientColor(String[] colorStrs, Direction direction) {
-        if (fromView == null) {
-            return;
-        }
-        Drawable drawable = EMClient.getGradientColorBackGround(backGroundDrawable, direction, colorStrs);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+        setGradientRealColor(EMClient.getGradientColorByRGB(colorStrs), direction);
     }
 
     /**
@@ -277,7 +250,7 @@ public class EMManager {
      * @param colorIds 色值id array
      * @param direction 详情{@link Direction#BOTTOM}
      */
-    public void setGradientRealColor(int[] colorIds, Direction direction) {
+    public void setGradientRealColor(@ColorInt int[] colorIds, Direction direction) {
         if (fromView == null) {
             return;
         }
@@ -301,6 +274,10 @@ public class EMManager {
         return this;
     }
 
+    public EMManager setCorner(float cornerDim) {
+        return setCorner(new float[]{cornerDim, cornerDim, cornerDim, cornerDim});
+    }
+
     /**
      * 根据元素库编码设置圆角[10,10,10,10] 可以和{@link CardRoundType}搭配使用
      * @param cornerDim 圆角大小数组，单位dp
@@ -311,10 +288,6 @@ public class EMManager {
         }
         backGroundDrawable = EMClient.getCornerBackGround(backGroundDrawable, cornerDim);
         return this;
-    }
-
-    public EMManager setCorner(float cornerDim) {
-        return setCorner(new float[]{cornerDim, cornerDim, cornerDim, cornerDim});
     }
 
     /**
@@ -330,29 +303,21 @@ public class EMManager {
      *   .setShadow(R.color.black, 10, 0, 0)
      *   .setBackGroundColor(R.color.btn_main_color)
      */
-    public EMManager setShadow(int shadowColorId, float shadowRadius, float offX, float offY) {
-        if (fromView == null) {
-            return this;
-        }
-        Drawable drawable = EMClient.getShadowBackGround(fromView,
-                backGroundDrawable,
-                shadowColorId, shadowRadius, offX, offY);
-        if (drawable == null) {
-            return this;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
-        setLayerType(View.LAYER_TYPE_SOFTWARE);
-        return this;
+    public EMManager setShadow(@ColorRes int shadowColorId, float shadowRadius, float offX, float offY) {
+        return setRealShadow(EMClient.getColor(shadowColorId), shadowRadius, offX, offY);
     }
 
     public EMManager setShadow(String shadowColorStr, float shadowRadius, float offX, float offY) {
+        return setRealShadow(EMClient.getColor(shadowColorStr), shadowRadius, offX, offY);
+    }
+
+    public EMManager setRealShadow(@ColorInt int shadowColorId, float shadowRadius, float offX, float offY) {
         if (fromView == null) {
             return this;
         }
-        Drawable drawable = EMClient.getShadowBackGround(fromView,
+        Drawable drawable = EMClient.getShadowRealBackGround(fromView,
                 backGroundDrawable,
-                shadowColorStr, shadowRadius, offX, offY);
+                shadowColorId, shadowRadius, offX, offY);
         if (drawable == null) {
             return this;
         }
@@ -365,62 +330,40 @@ public class EMManager {
     /**
      * 根据编码设置文本外阴影，整个文字背景都会添加阴影
      */
-    public EMManager setTextShadow(int shadowColorId, float shadowRadius, float offX, float offY) {
-        if (!(fromView instanceof TextView)) {
-            return this;
-        }
-        ((TextView) fromView).setShadowLayer(EMUtil.INSTANCE.dp2px(shadowRadius), EMUtil.INSTANCE.dp2px(offX), EMUtil.INSTANCE.dp2px(offY), EMUtil.INSTANCE.getColor(shadowColorId));
-        return this;
+    public EMManager setTextShadow(@ColorRes int shadowColorId, float shadowRadius, float offX, float offY) {
+        return setTextRealShadow(EMClient.getColor(shadowColorId), shadowRadius, offX, offY);
     }
 
     public EMManager setTextShadow(String shadowColorStr, float shadowRadius, float offX, float offY) {
+        return setTextRealShadow(EMClient.getColor(shadowColorStr), shadowRadius, offX, offY);
+    }
+
+    public EMManager setTextRealShadow(@ColorInt int shadowColorId, float shadowRadius, float offX, float offY) {
         if (!(fromView instanceof TextView)) {
             return this;
         }
-        ((TextView) fromView).setShadowLayer(EMUtil.INSTANCE.dp2px(shadowRadius), EMUtil.INSTANCE.dp2px(offX), EMUtil.INSTANCE.dp2px(offY), EMUtil.INSTANCE.getColor(shadowColorStr));
+        ((TextView) fromView).setShadowLayer(EMClient.getDimen(shadowRadius), EMClient.getDimen(offX), EMClient.getDimen(offY), shadowColorId);
         return this;
     }
 
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradientPositionsColor(int[] colors, float[] positions, Direction direction) {
-        if (fromView == null) {
-            return;
-        }
-        if (colors.length != positions.length) {
-            return;
-        }
-        Drawable drawable = EMClient.getGradientPositionsBackGround(backGroundDrawable, colors, positions, direction);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+    public void setGradientPositionsColor(@ColorRes int[] colors, float[] positions, Direction direction) {
+        setGradientPositionsRealColor(EMClient.getGradientColorById(colors), positions, direction);
     }
 
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
     public void setGradientPositionsColor(String[] colors, float[] positions, Direction direction) {
-        if (fromView == null) {
-            return;
-        }
-        if (colors.length != positions.length) {
-            return;
-        }
-        Drawable drawable = EMClient.getGradientPositionsBackGround(backGroundDrawable, colors, positions, direction);
-        if (drawable == null) {
-            return;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
+        setGradientPositionsRealColor(EMClient.getGradientColorByRGB(colors), positions, direction);
     }
 
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradientPositionsRealColor(int[] colors, float[] positions, Direction direction) {
+    public void setGradientPositionsRealColor(@ColorInt int[] colors, float[] positions, Direction direction) {
         if (fromView == null) {
             return;
         }
@@ -439,17 +382,8 @@ public class EMManager {
      * 需要放到setBorderWidth后面使用
      * @param colorId 色值id
      */
-    public EMManager setBorderColor(int colorId) {
-        if (fromView == null) {
-            return this;
-        }
-        Drawable drawable = EMClient.getBorderColorBackGround(backGroundDrawable, colorId);
-        if (drawable == null) {
-            return this;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
-        return this;
+    public EMManager setBorderColor(@ColorRes int colorId) {
+        return setBorderRealColor(EMClient.getColor(colorId));
     }
 
     /**
@@ -457,23 +391,14 @@ public class EMManager {
      * @param colorStr 十六进制色值
      */
     public EMManager setBorderColor(String colorStr) {
-        if (fromView == null) {
-            return this;
-        }
-        Drawable drawable = EMClient.getBorderColorBackGround(backGroundDrawable, colorStr);
-        if (drawable == null) {
-            return this;
-        }
-        backGroundDrawable = drawable;
-        fromView.setBackgroundDrawable(backGroundDrawable);
-        return this;
+        return setBorderRealColor(EMClient.getColor(colorStr));
     }
 
     /**
      * 设置纯色边框颜色
      * @param color 真实色值，非色值id
      */
-    public EMManager setRealBorderColor(int color) {
+    public EMManager setBorderRealColor(@ColorInt int color) {
         if (fromView == null) {
             return this;
         }
@@ -520,21 +445,11 @@ public class EMManager {
      * @param colorId 色值id
      */
     public EMManager setImagePureColor(@ColorRes int colorId) {
-        if (!(fromView instanceof ImageView)) {
-            return this;
-        }
-        int color = EMClient.getColor(colorId);
-        ((ImageView) fromView).setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
-        return this;
+        return setImagePureRealColor(EMClient.getColor(colorId));
     }
 
     public EMManager setImagePureColor(String colorStr) {
-        if (!(fromView instanceof ImageView)) {
-            return this;
-        }
-        int color = EMClient.getColor(colorStr);
-        ((ImageView) fromView).setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP));
-        return this;
+        return setImagePureRealColor(EMClient.getColor(colorStr));
     }
 
     public EMManager setImagePureRealColor(@ColorInt int color) {
