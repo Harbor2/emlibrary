@@ -1,7 +1,12 @@
 package com.wyz.emlibrary.em;
 
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
@@ -57,13 +62,43 @@ public class EMManager {
         if (!(fromView instanceof TextView)) {
             return this;
         }
+        ((TextView)fromView).getPaint().setShader(null);
         ((TextView)fromView).setTextColor(colorId);
+        ((TextView)fromView).invalidate();
+        return this;
+    }
+
+    public EMManager setTextGradientColor(@ColorRes int[] colorIds, Direction direction) {
+        return setTextGradientRealColor(EMClient.getGradientColorById(colorIds), direction);
+    }
+    public EMManager setTextGradientColor(String[] colorStr, Direction direction) {
+        return setTextGradientRealColor(EMClient.getGradientColorByRGB(colorStr), direction);
+    }
+
+    /**
+     * 文字渐变色
+     */
+    public EMManager setTextGradientRealColor(@ColorInt int[] colorIds, Direction direction) {
+        if (!(fromView instanceof TextView)) {
+            return this;
+        }
+        ((TextView) fromView).setTextColor(Color.WHITE);
+        int textLeft = ((TextView) fromView).getPaddingLeft();
+        int textTop = ((TextView) fromView).getPaddingTop();
+        int textRight = ((TextView) fromView).getWidth() - ((TextView) fromView).getPaddingRight();
+        int textBottom = ((TextView) fromView).getHeight() - ((TextView) fromView).getPaddingBottom();
+        RectF textRectF = new RectF(textLeft, textTop, textRight, textBottom);
+        PointF start = EMClient.getGradientStartPoint(textRectF, direction);
+        PointF end = EMClient.getGradientEndPoint(textRectF, direction);
+        // 创建线性渐变
+        Shader shader = new LinearGradient(start.x, start.y, end.x, end.y, colorIds, null, Shader.TileMode.CLAMP);
+        ((TextView)fromView).getPaint().setShader(shader);
+        ((TextView)fromView).invalidate();
         return this;
     }
 
     /**
      * 设置文本字符串
-     * @param c 文案内容
      */
     public EMManager setTextStr(CharSequence c) {
         if (!(fromView instanceof TextView)) {
@@ -128,6 +163,7 @@ public class EMManager {
             return this;
         }
         ((TextView)fromView).setLinkTextColor(colorId);
+        ((TextView)fromView).invalidate();
         return this;
     }
 

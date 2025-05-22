@@ -1,6 +1,8 @@
 package com.wyz.emlibrary.em;
 
 import android.content.res.ColorStateList;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -237,4 +239,37 @@ public class EMClient {
         return colorIdArray;
     }
 
+    /**
+     * 获取渐变的起点坐标
+     */
+    public static PointF getGradientStartPoint(RectF rectF, Direction direction) {
+        return switch (direction) {
+            case LEFT -> new PointF(rectF.left, rectF.top);
+            case LEFT_BOTTOM -> new PointF(rectF.left, rectF.bottom);
+            case TOP -> new PointF(rectF.left, rectF.top);
+            case RIGHT_BOTTOM -> new PointF(rectF.right, rectF.bottom);
+            case RIGHT -> new PointF(rectF.right, rectF.top);
+            case RIGHT_TOP -> new PointF(rectF.right, rectF.top);
+            case BOTTOM -> new PointF(rectF.left, rectF.bottom);
+            case LEFT_TOP -> new PointF(rectF.left, rectF.top);
+            default -> new PointF(rectF.left, rectF.top);
+        };
+    }
+
+    /**
+     * 获取渐变的终点坐标
+     */
+    public static PointF getGradientEndPoint(RectF rectF, Direction direction) {
+        return switch (direction) {
+            case LEFT -> new PointF(rectF.right, rectF.top);
+            case LEFT_BOTTOM -> new PointF(rectF.right, rectF.top);
+            case TOP -> new PointF(rectF.left, rectF.bottom);
+            case RIGHT_BOTTOM -> new PointF(rectF.left, rectF.top);
+            case RIGHT -> new PointF(rectF.left, rectF.top);
+            case RIGHT_TOP -> new PointF(rectF.left, rectF.bottom);
+            case BOTTOM -> new PointF(rectF.left, rectF.top);
+            case LEFT_TOP -> new PointF(rectF.right, rectF.bottom);
+            default -> new PointF(rectF.right, rectF.top);
+        };
+    }
 }

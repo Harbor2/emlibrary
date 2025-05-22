@@ -496,7 +496,7 @@ public class EMDrawable extends Drawable implements Cloneable {
             case RIGHT_TOP -> new PointF(rectF.right, rectF.top);
             case BOTTOM -> new PointF(rectF.left, rectF.bottom);
             case LEFT_TOP -> new PointF(rectF.left, rectF.top);
-            default -> new PointF();
+            default -> new PointF(rectF.left, rectF.top);
         };
     }
 
@@ -513,7 +513,7 @@ public class EMDrawable extends Drawable implements Cloneable {
             case RIGHT_TOP -> new PointF(rectF.left, rectF.bottom);
             case BOTTOM -> new PointF(rectF.left, rectF.top);
             case LEFT_TOP -> new PointF(rectF.right, rectF.bottom);
-            default -> new PointF();
+            default -> new PointF(rectF.left, rectF.top);
         };
     }
 
