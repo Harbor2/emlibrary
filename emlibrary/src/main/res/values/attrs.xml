@@ -27,97 +27,97 @@
 
     <!-- 阴影view -->
     <declare-styleable name="AdvancedCardView">
-        <attr format="enum" name="background_Type">
+        <attr format="enum" name="adv_background_Type">
             <!-- 视图背景填充类型 仅内部填充、仅描边 填充&描边-->
             <enum name="fill" value="0"/>
             <enum name="stroke" value="1"/>
             <enum name="fill_stroke" value="2"/>
         </attr>
-        <attr format="enum" name="background_ColorType">
+        <attr format="enum" name="adv_background_ColorType">
             <enum name="solid" value="0"/>
             <enum name="gradient_linear" value="1"/>
             <enum name="gradient_radial" value="2"/>
             <enum name="gradient_sweep" value="3"/>
         </attr>
-        <attr format="color" name="background_Color"/>
+        <attr format="color" name="adv_background_Color"/>
         <!--        <attr name="background_Src" format="reference"/>-->
-        <attr format="color" name="background_Gradient_Color0"/>
-        <attr format="color" name="background_Gradient_Color1"/>
-        <attr format="color" name="background_Gradient_Color2"/>
-        <attr format="color" name="background_Gradient_Color3"/>
-        <attr format="color" name="background_Gradient_Color4"/>
-        <attr format="color" name="background_Gradient_Color5"/>
-        <attr format="color" name="background_Gradient_Color6"/>
-        <attr format="color" name="background_Gradient_ColorEnd"/>
-        <attr format="float" name="background_Gradient_Angle"/>
-        <attr format="float" name="background_Gradient_OffCenter_X"/>
-        <attr format="float" name="background_Gradient_OffCenter_Y"/>
+        <attr format="color" name="adv_background_Gradient_Color0"/>
+        <attr format="color" name="adv_background_Gradient_Color1"/>
+        <attr format="color" name="adv_background_Gradient_Color2"/>
+        <attr format="color" name="adv_background_Gradient_Color3"/>
+        <attr format="color" name="adv_background_Gradient_Color4"/>
+        <attr format="color" name="adv_background_Gradient_Color5"/>
+        <attr format="color" name="adv_background_Gradient_Color6"/>
+        <attr format="color" name="adv_background_Gradient_ColorEnd"/>
+        <attr format="float" name="adv_background_Gradient_Angle"/>
+        <attr format="float" name="adv_background_Gradient_OffCenter_X"/>
+        <attr format="float" name="adv_background_Gradient_OffCenter_Y"/>
         <!--        <attr name="background_Gradient_Radius_Multiplier" format="float"/>-->
         <!--        <attr name="background_Gradient_Radius" format="dimension"/>-->
-        <attr format="float" name="background_Alpha"/>
-        <attr format="enum" name="stroke_Type">
+        <attr format="float" name="adv_background_Alpha"/>
+        <attr format="enum" name="adv_stroke_Type">
             <enum name="solid" value="0"/>
             <enum name="dash" value="1"/>
         </attr>
-        <attr format="enum" name="stroke_ColorType">
+        <attr format="enum" name="adv_stroke_ColorType">
             <enum name="solid" value="0"/>
             <enum name="gradient_linear" value="1"/>
             <enum name="gradient_sweep" value="3"/>
         </attr>
-        <attr format="color" name="stroke_Color"/>
-        <attr format="color" name="stroke_Gradient_Color0"/>
-        <attr format="color" name="stroke_Gradient_Color1"/>
-        <attr format="color" name="stroke_Gradient_Color2"/>
-        <attr format="color" name="stroke_Gradient_Color3"/>
-        <attr format="color" name="stroke_Gradient_Color4"/>
-        <attr format="color" name="stroke_Gradient_Color5"/>
-        <attr format="color" name="stroke_Gradient_Color6"/>
-        <attr format="color" name="stroke_Gradient_ColorEnd"/>
-        <attr format="float" name="stroke_Gradient_Angle"/>
-        <attr format="float" name="stroke_Gradient_OffCenter_X"/>
-        <attr format="float" name="stroke_Gradient_OffCenter_Y"/>
-        <attr format="float" name="stroke_Alpha"/>
-        <attr format="dimension" name="stroke_Width"/>
-        <attr format="dimension" name="stroke_DashSize"/>
-        <attr format="dimension" name="stroke_GapSize"/>
-        <attr format="enum" name="stroke_CapType">
+        <attr format="color" name="adv_stroke_Color"/>
+        <attr format="color" name="adv_stroke_Gradient_Color0"/>
+        <attr format="color" name="adv_stroke_Gradient_Color1"/>
+        <attr format="color" name="adv_stroke_Gradient_Color2"/>
+        <attr format="color" name="adv_stroke_Gradient_Color3"/>
+        <attr format="color" name="adv_stroke_Gradient_Color4"/>
+        <attr format="color" name="adv_stroke_Gradient_Color5"/>
+        <attr format="color" name="adv_stroke_Gradient_Color6"/>
+        <attr format="color" name="adv_stroke_Gradient_ColorEnd"/>
+        <attr format="float" name="adv_stroke_Gradient_Angle"/>
+        <attr format="float" name="adv_stroke_Gradient_OffCenter_X"/>
+        <attr format="float" name="adv_stroke_Gradient_OffCenter_Y"/>
+        <attr format="float" name="adv_stroke_Alpha"/>
+        <attr format="dimension" name="adv_stroke_Width"/>
+        <attr format="dimension" name="adv_stroke_DashSize"/>
+        <attr format="dimension" name="adv_stroke_GapSize"/>
+        <attr format="enum" name="adv_stroke_CapType">
             <enum name="square" value="0"/>
             <enum name="butt" value="1"/>
             <enum name="round" value="2"/>
         </attr>
-        <attr format="color" name="shadow0_Outer_Color"/>
-        <attr format="float" name="shadow0_Outer_Alpha"/>
-        <attr format="dimension" name="shadow0_Outer_Distance"/>
-        <attr format="dimension" name="shadow0_Outer_Blur"/>
-        <attr format="float" name="shadow0_Outer_Angle"/>
-        <attr format="color" name="shadow1_Outer_Color"/>
-        <attr format="float" name="shadow1_Outer_Alpha"/>
-        <attr format="dimension" name="shadow1_Outer_Distance"/>
-        <attr format="dimension" name="shadow1_Outer_Blur"/>
-        <attr format="float" name="shadow1_Outer_Angle"/>
-        <attr format="color" name="shadow0_Inner_Color"/>
-        <attr format="float" name="shadow0_Inner_Alpha"/>
-        <attr format="dimension" name="shadow0_Inner_Distance"/>
-        <attr format="dimension" name="shadow0_Inner_Blur"/>
-        <attr format="float" name="shadow0_Inner_Angle"/>
-        <attr format="color" name="shadow1_Inner_Color"/>
-        <attr format="float" name="shadow1_Inner_Alpha"/>
-        <attr format="dimension" name="shadow1_Inner_Distance"/>
-        <attr format="dimension" name="shadow1_Inner_Blur"/>
-        <attr format="float" name="shadow1_Inner_Angle"/>
-        <attr format="dimension" name="shadow_Outer_Area"/>
-        <attr format="enum" name="corner_Type">
+        <attr format="color" name="adv_shadow0_Outer_Color"/>
+        <attr format="float" name="adv_shadow0_Outer_Alpha"/>
+        <attr format="dimension" name="adv_shadow0_Outer_Distance"/>
+        <attr format="dimension" name="adv_shadow0_Outer_Blur"/>
+        <attr format="float" name="adv_shadow0_Outer_Angle"/>
+        <attr format="color" name="adv_shadow1_Outer_Color"/>
+        <attr format="float" name="adv_shadow1_Outer_Alpha"/>
+        <attr format="dimension" name="adv_shadow1_Outer_Distance"/>
+        <attr format="dimension" name="adv_shadow1_Outer_Blur"/>
+        <attr format="float" name="adv_shadow1_Outer_Angle"/>
+        <attr format="color" name="adv_shadow0_Inner_Color"/>
+        <attr format="float" name="adv_shadow0_Inner_Alpha"/>
+        <attr format="dimension" name="adv_shadow0_Inner_Distance"/>
+        <attr format="dimension" name="adv_shadow0_Inner_Blur"/>
+        <attr format="float" name="adv_shadow0_Inner_Angle"/>
+        <attr format="color" name="adv_shadow1_Inner_Color"/>
+        <attr format="float" name="adv_shadow1_Inner_Alpha"/>
+        <attr format="dimension" name="adv_shadow1_Inner_Distance"/>
+        <attr format="dimension" name="adv_shadow1_Inner_Blur"/>
+        <attr format="float" name="adv_shadow1_Inner_Angle"/>
+        <attr format="dimension" name="adv_shadow_Outer_Area"/>
+        <attr format="enum" name="adv_corner_Type">
             <enum name="custom" value="0"/>
             <enum name="rectangular" value="1"/>
             <enum name="circular" value="2"/>
             <enum name="third" value="3"/>
             <enum name="quarter" value="4"/>
         </attr>
-        <attr format="dimension" name="cornerRadius_TopLeft"/>
-        <attr format="dimension" name="cornerRadius_TopRight"/>
-        <attr format="dimension" name="cornerRadius_BottomLeft"/>
-        <attr format="dimension" name="cornerRadius_BottomRight"/>
-        <attr format="dimension" name="cornerRadius"/>
+        <attr format="dimension" name="adv_cornerRadius_TopLeft"/>
+        <attr format="dimension" name="adv_cornerRadius_TopRight"/>
+        <attr format="dimension" name="adv_cornerRadius_BottomLeft"/>
+        <attr format="dimension" name="adv_cornerRadius_BottomRight"/>
+        <attr format="dimension" name="adv_cornerRadius"/>
     </declare-styleable>
 
     <declare-styleable name="Themes">
