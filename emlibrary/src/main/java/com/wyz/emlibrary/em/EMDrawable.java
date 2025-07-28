@@ -432,6 +432,7 @@ public class EMDrawable extends Drawable implements Cloneable {
             return this;
         }
         this.mPositions = positions;
+        this.mCopyPositions = positions.clone();
         return this;
     }
 
