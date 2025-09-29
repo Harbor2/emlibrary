@@ -9,7 +9,7 @@ import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.custom.AutoWrapLayout
 import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMUtil
-import com.wyz.emlibrary.util.makeStatusBarTransparent
+import com.wyz.emlibrary.util.immersiveWindow
 
 
 class DemoActivity : AppCompatActivity() {
@@ -20,7 +20,7 @@ class DemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        makeStatusBarTransparent(false, binding.containerNavi)
+        immersiveWindow(binding.root, false, null, null, binding.containerNavi)
 
         initView()
         initEvent()
