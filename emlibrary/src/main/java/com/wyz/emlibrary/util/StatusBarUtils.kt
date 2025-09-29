@@ -5,45 +5,46 @@ import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.wyz.emlibrary.em.EMLibrary
 
 /**
- * @param view 需要添加margin的view
- * @param isDarkMode 是否黑暗模式（黑暗模式使用白色字体反之黑色）
+ * 窗口沉浸式
+ * @param rootView 根布局
+ * @param isDarkMode 是否是暗黑模式，影响顶部状态栏字体颜色
+ * @param views 需要设置 marginTop 的 View
  */
-fun Activity.makeStatusBarTransparent(view: View?, isDarkMode: Boolean) {
+fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int? = null, naviColor: Int? = null, vararg views: View?) {
     try {
         window.decorView.systemUiVisibility = if (isDarkMode) {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         } else {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
-        window.statusBarColor = Color.TRANSPARENT
+        window.statusBarColor = barColor ?: Color.TRANSPARENT
+        window.navigationBarColor = naviColor ?: Color.BLACK
 
-        view?.let { targetView ->
-            val param = targetView.layoutParams as ViewGroup.MarginLayoutParams
-            param.topMargin = getStatusHeight().toInt()
-        }
-    } catch (e: Throwable) {
-        e.printStackTrace()
-    }
-}
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-fun Activity.makeStatusBarTransparent(isDarkMode: Boolean, vararg views: View?) {
-    try {
-        window.decorView.systemUiVisibility = if (isDarkMode) {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        } else {
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
-        window.statusBarColor = Color.TRANSPARENT
-
-        views.forEach { view ->
-            view?.let {  targetView ->
-                val params = targetView.layoutParams as ViewGroup.MarginLayoutParams
-                params.topMargin = getStatusHeight().toInt()
+            views.forEach { viewItem ->
+                viewItem?.let {
+                    val params = it.layoutParams as ViewGroup.MarginLayoutParams
+                    params.topMargin = systemInsets.top
+                }
             }
+
+            view.setPadding(
+                view.paddingLeft,
+                0,
+                view.paddingRight,
+                systemInsets.bottom
+            )
+            WindowInsetsCompat.CONSUMED
         }
+        // 让系统回调生效
+        rootView.requestApplyInsets()
     } catch (e: Throwable) {
         e.printStackTrace()
     }
