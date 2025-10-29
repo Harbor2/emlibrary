@@ -7,17 +7,17 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.view.View
+import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import com.wyz.emlibrary.R
 import com.wyz.emlibrary.util.EMUtil
 
-class RoundedCornerView @JvmOverloads constructor(
+class RoundedCornerFrameLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val path: Path = Path()
@@ -28,18 +28,18 @@ class RoundedCornerView @JvmOverloads constructor(
     private var bottomRightRadius: Float = 0f
     private var customColor: Int = Color.TRANSPARENT // 默认透明
     private val rect = RectF()
-    private var isPathDirty = true // 路径是否需要更新
+    private var isPathDirty = true // 标记路径是否需要更新
 
     init {
-        // 从 AttributeSet 中获取自定义属性值
+        setWillNotDraw(false) // 重要：允许自定义绘制
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.RoundedCornerView)
-            cornerRadius = typedArray.getDimension(R.styleable.RoundedCornerView_rcCornerRadius, 0f)
-            customColor = typedArray.getColor(R.styleable.RoundedCornerView_rcViewColor, Color.TRANSPARENT)
-            topLeftRadius = typedArray.getDimension(R.styleable.RoundedCornerView_rcTopLeftRadius, cornerRadius)
-            topRightRadius = typedArray.getDimension(R.styleable.RoundedCornerView_rcTopRightRadius, cornerRadius)
-            bottomLeftRadius = typedArray.getDimension(R.styleable.RoundedCornerView_rcBottomLeftRadius, cornerRadius)
-            bottomRightRadius = typedArray.getDimension(R.styleable.RoundedCornerView_rcBottomRightRadius, cornerRadius)
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.RoundedCornerFrameLayout)
+            cornerRadius = typedArray.getDimension(R.styleable.RoundedCornerFrameLayout_rfCornerRadius, 0f)
+            customColor = typedArray.getColor(R.styleable.RoundedCornerFrameLayout_rfViewColor, Color.TRANSPARENT)
+            topLeftRadius = typedArray.getDimension(R.styleable.RoundedCornerFrameLayout_rfTopLeftRadius, cornerRadius)
+            topRightRadius = typedArray.getDimension(R.styleable.RoundedCornerFrameLayout_rfTopRightRadius, cornerRadius)
+            bottomLeftRadius = typedArray.getDimension(R.styleable.RoundedCornerFrameLayout_rfBottomLeftRadius, cornerRadius)
+            bottomRightRadius = typedArray.getDimension(R.styleable.RoundedCornerFrameLayout_rfBottomRightRadius, cornerRadius)
             typedArray.recycle()
         }
         paint.color = customColor
@@ -59,11 +59,11 @@ class RoundedCornerView @JvmOverloads constructor(
         path.reset()
 
         val radii = if (cornerRadius > 0f) {
-            // 统一圆角
+            // 使用统一圆角
             floatArrayOf(cornerRadius, cornerRadius, cornerRadius, cornerRadius,
                 cornerRadius, cornerRadius, cornerRadius, cornerRadius)
         } else {
-            // 独立圆角
+            // 使用独立圆角
             floatArrayOf(
                 topLeftRadius, topLeftRadius,
                 topRightRadius, topRightRadius,
@@ -77,12 +77,14 @@ class RoundedCornerView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        // View 的 super.onDraw 是空的，可以省略
+        // 先绘制圆角背景
         updatePath()
         canvas.drawPath(path, paint)
+        // 然后绘制子View
+        super.onDraw(canvas)
     }
 
-    // 设置方法
+    // 设置方法需要标记路径为脏
     fun setCornerRadius(radius: Float) {
         cornerRadius = radius
         isPathDirty = true

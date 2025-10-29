@@ -12,7 +12,21 @@
     <!-- 圆角view -->
     <declare-styleable name="RoundedCornerView">
         <attr name="rcCornerRadius" format="dimension" />
+        <attr name="rcTopLeftRadius" format="dimension" />
+        <attr name="rcTopRightRadius" format="dimension" />
+        <attr name="rcBottomLeftRadius" format="dimension" />
+        <attr name="rcBottomRightRadius" format="dimension" />
         <attr name="rcViewColor" format="color"/>
+    </declare-styleable>
+
+    <!-- 圆角view -->
+    <declare-styleable name="RoundedCornerFrameLayout">
+        <attr name="rfCornerRadius" format="dimension" />
+        <attr name="rfTopLeftRadius" format="dimension" />
+        <attr name="rfTopRightRadius" format="dimension" />
+        <attr name="rfBottomLeftRadius" format="dimension" />
+        <attr name="rfBottomRightRadius" format="dimension" />
+        <attr name="rfViewColor" format="color"/>
     </declare-styleable>
 
     <!-- 圆形进度条 -->
