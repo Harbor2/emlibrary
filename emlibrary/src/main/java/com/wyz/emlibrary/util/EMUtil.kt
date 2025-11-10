@@ -1,5 +1,6 @@
 package com.wyz.emlibrary.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -66,7 +67,7 @@ object EMUtil {
             return if (includeSystemBars)
                 dm.heightPixels
             else {
-                dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context)
+                dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context, 0)
             }
         }
     }
@@ -74,7 +75,8 @@ object EMUtil {
     /**
      * 获取状态栏高度（支持 Android 8～14）
      */
-    fun getStatusBarHeight(context: Context): Int {
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    fun getStatusBarHeight(context: Context, default: Int = 48): Int {
         val wm = context.getSystemService(WindowManager::class.java)
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -83,7 +85,7 @@ object EMUtil {
             insets.top
         } else {
             val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+            if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else default
         }
     }
 
@@ -91,6 +93,7 @@ object EMUtil {
      * 获取导航栏高度
      * 若设备使用全面屏手势或隐藏导航栏，则返回 0
      */
+    @SuppressLint("DiscouragedApi", "InternalInsetResource")
     fun getNavigationBarHeight(context: Context): Int {
         val wm = context.getSystemService(WindowManager::class.java)
 

@@ -1,13 +1,11 @@
 package com.wyz.emlibrary.util
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.wyz.emlibrary.em.EMLibrary
 
 /**
  * 窗口沉浸式
@@ -15,6 +13,10 @@ import com.wyz.emlibrary.em.EMLibrary
  * @param isDarkMode 是否是暗黑模式，影响顶部状态栏字体颜色
  * @param views 需要设置 marginTop 的 View
  */
+fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, vararg views: View?) {
+    immersiveWindow(rootView, isDarkMode, barColor = null, naviColor = null, *views)
+}
+
 fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int? = null, naviColor: Int? = null, vararg views: View?) {
     try {
         window.decorView.systemUiVisibility = if (isDarkMode) {
@@ -47,25 +49,6 @@ fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int?
         rootView.requestApplyInsets()
     } catch (e: Throwable) {
         e.printStackTrace()
-    }
-}
-
-/**
- * 获取状态栏的高度 单位像素
- */
-@SuppressLint("DiscouragedApi", "InternalInsetResource")
-fun getStatusHeight(): Float {
-    return try {
-        EMLibrary.getApplication().resources.let {
-            it.getDimension(
-                it.getIdentifier(
-                    "status_bar_height",
-                    "dimen",
-                    "android")
-            )
-        }
-    } catch (e: Throwable) {
-        48f
     }
 }
 
