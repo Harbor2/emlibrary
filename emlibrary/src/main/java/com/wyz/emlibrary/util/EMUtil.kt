@@ -2,7 +2,14 @@ package com.wyz.emlibrary.util
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.IBinder
+import android.util.DisplayMetrics
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
+import android.view.ViewConfiguration
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.ColorRes
@@ -27,10 +34,75 @@ object EMUtil {
 
     /**
      * 获取屏幕高度
+     * includeSystemBars 是否包含系统栏（状态栏、导航栏）
      */
-    fun getScreenH(context: Context): Int {
-        val dm = context.resources.displayMetrics
-        return dm.heightPixels
+    fun getScreenH(context: Context, includeSystemBars: Boolean = true): Int {
+        val wm = context.getSystemService(WindowManager::class.java)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11 (API 30) 及以上
+            val metrics = wm.currentWindowMetrics
+            if (includeSystemBars) {
+                // 包含状态栏、导航栏
+                metrics.bounds.height()
+            } else {
+                // 不包含系统栏（可用内容高度）
+                val insets = metrics.windowInsets
+                    .getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+                metrics.bounds.height() - (insets.top + insets.bottom)
+            }
+        } else {
+            // Android 10 及以下
+            val dm = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getRealMetrics(dm)
+            return if (includeSystemBars)
+                dm.heightPixels
+            else {
+                dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context)
+            }
+        }
+    }
+
+    /**
+     * 获取状态栏高度（支持 Android 8～14）
+     */
+    fun getStatusBarHeight(context: Context): Int {
+        val wm = context.getSystemService(WindowManager::class.java)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = wm.currentWindowMetrics
+            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.statusBars())
+            insets.top
+        } else {
+            val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+        }
+    }
+
+    /**
+     * 获取导航栏高度
+     * 若设备使用全面屏手势或隐藏导航栏，则返回 0
+     */
+    fun getNavigationBarHeight(context: Context): Int {
+        val wm = context.getSystemService(WindowManager::class.java)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = wm.currentWindowMetrics
+            val insets = metrics.windowInsets
+            val navInsets = insets.getInsets(WindowInsets.Type.navigationBars())
+            val imeVisible = insets.isVisible(WindowInsets.Type.ime()) // 键盘显示时避免误差
+            if (!insets.isVisible(WindowInsets.Type.navigationBars()) || imeVisible) 0 else navInsets.bottom
+        } else {
+            // 旧版本通过资源 ID 获取
+            val hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey()
+            val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+            if (hasMenuKey && hasBackKey) {
+                0 // 没有虚拟导航栏
+            } else {
+                val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+                if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
+            }
+        }
     }
 
     fun dp2px(dpVal: Float): Float {
