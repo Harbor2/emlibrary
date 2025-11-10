@@ -25,11 +25,19 @@ object EMUtil {
     const val RESOURCE_ALPHA_PRESS = 0.5f
 
     /**
-     * 获取屏幕宽度
+     * 获取屏幕宽度（横屏包含状态栏、导航栏）
      */
     fun getScreenW(context: Context): Int {
-        val dm = context.resources.displayMetrics
-        return dm.widthPixels
+        val wm = context.getSystemService(WindowManager::class.java)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            wm.currentWindowMetrics.bounds.width()
+        } else {
+            val dm = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getRealMetrics(dm)
+            dm.widthPixels
+        }
     }
 
     /**
