@@ -1,6 +1,16 @@
 package com.wyz.emlibrary.util
 
+import android.content.ContentValues
+import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.webkit.MimeTypeMap
+import androidx.annotation.RequiresApi
 import com.wyz.emlibrary.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -335,6 +345,241 @@ object EMFileUtil {
             return default
         }
         return getFileExtension(file.absolutePath, default)
+    }
+
+    suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): Any? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveFileToDownloadsQ(context, file, newFileName)
+        } else {
+            saveFileToDownloadsUnderQ(context, file, newFileName)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun saveFileToDownloadsQ(context: Context, oldFile: File, newName: String?): Uri? {
+        val oldFileName = oldFile.name
+        val fileException = getFileExtension(oldFileName, "")
+
+        val newFileName =
+            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}.$fileException")
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileException) ?: "application/octet-stream"
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            put(MediaStore.MediaColumns.IS_PENDING, 1)
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+
+        val resolver = context.contentResolver
+        val collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val uri = resolver.insert(collection, contentValues)
+        if (uri == null) {
+            Log.e(TAG, "MediaStore 保存文件失败, uri 为空")
+            return null
+        }
+
+        return try {
+            resolver.openOutputStream(uri)?.use { output ->
+                oldFile.inputStream().use { input ->
+                    input.copyTo(output, bufferSize = 8 * 1024)
+                }
+            }
+            // 写入完成
+            contentValues.clear()
+            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+            uri
+        } catch (e: Exception) {
+            Log.e(TAG, "MediaStore 保存文件失败: ${e.message}")
+            null
+        }
+    }
+
+    private fun saveFileToDownloadsUnderQ(context: Context, oldFile: File, newName: String?): File? {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (!downloadsDir.exists()) downloadsDir.mkdirs()
+
+        val oldFileName = oldFile.name
+        val fileException = getFileExtension(oldFileName, "")
+
+        val newFileName =
+            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}.$fileException")
+        val targetFile = File(downloadsDir, newFileName)
+        if (targetFile.exists()) {
+            Log.e(TAG, "UnderQ 文件命名重复")
+            return null
+        }
+
+        return try {
+            oldFile.inputStream().use { input ->
+                targetFile.outputStream().use { output ->
+                    input.copyTo(output, bufferSize = 8 * 1024)
+                }
+            }
+            // 通知媒体库刷新
+            MediaScannerConnection.scanFile(context, arrayOf(targetFile.absolutePath), null, null)
+            targetFile
+        } catch (e: Exception) {
+            Log.e(TAG, "UnderQ 保存文件失败: ${e.message}")
+            null
+        }
+    }
+
+    /**
+     * 保存图片到本地Picture目录
+     * android Q以下必须获取Storage权限
+     * @param bitmap 图片
+     * @param typeFormat 图片类型
+     * @param newFileName 新文件名
+     */
+    suspend fun saveBitmapToGallery(context: Context, bitmap: Bitmap, newFileName: String?, typeFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG): Any? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveBitmapToGalleryUpQ(context, bitmap, typeFormat, newFileName)
+        } else {
+            saveBitmapToGalleryUnderQ(context, bitmap, typeFormat, newFileName)
+        }
+    }
+
+    private suspend fun saveBitmapToGalleryUpQ(
+        context: Context,
+        bitmap: Bitmap,
+        typeFormat: Bitmap.CompressFormat,
+        newName: String?
+    ): Any? {
+        val mimeType = when (typeFormat) {
+            Bitmap.CompressFormat.JPEG -> "image/jpeg"
+            Bitmap.CompressFormat.PNG -> "image/png"
+            Bitmap.CompressFormat.WEBP -> "image/webp"
+            else -> "image/png"
+        }
+        val fileName = newName ?: "IMG_${System.currentTimeMillis()}.${typeFormat.name.lowercase()}"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+            put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/picture")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+        val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        if (imageUri == null) {
+            Log.e(TAG, "imageUri 为空")
+            return null
+        }
+
+        try {
+            resolver.openOutputStream(imageUri)?.use { outputStream ->
+                bitmap.compress(typeFormat, 100, outputStream) // 保存图片
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0) // 标记为已完成
+            resolver.update(imageUri, contentValues, null, null)
+            return imageUri
+        } catch (e: Exception) {
+            Log.e(TAG, "保存图片失败: ${e.message}")
+            return null
+        }
+    }
+
+    private suspend fun saveBitmapToGalleryUnderQ(
+        context: Context,
+        bitmap: Bitmap,
+        typeFormat: Bitmap.CompressFormat,
+        newName: String?
+    ): Any? {
+        val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture")
+        if (!dir.exists()) dir.mkdirs()
+
+        val fileName = newName ?: "IMG_${System.currentTimeMillis()}.${typeFormat.name.lowercase()}"
+        val mimeType = when (typeFormat) {
+            Bitmap.CompressFormat.JPEG -> "image/jpeg"
+            Bitmap.CompressFormat.PNG -> "image/png"
+            Bitmap.CompressFormat.WEBP -> "image/webp"
+            else -> "image/*"
+        }
+        val file = File(dir, fileName)
+        if (file.exists()) {
+            Log.e(TAG, "UnderQ 文件命名重复")
+            return null
+        }
+        try {
+            FileOutputStream(file).use { outputStream ->
+                bitmap.compress(typeFormat, 100, outputStream)
+            }
+            // 通知媒体库更新
+            MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), arrayOf(mimeType), null)
+            return file
+        } catch (e: Exception) {
+            Log.e(TAG, "保存图片失败: ${e.message}")
+            return null
+        }
+    }
+
+    /**
+     * 将文件或 Bitmap 保存到应用私有目录
+     *
+     * - 对 File：复制到私有目录
+     * - 对 Bitmap：保存为 PNG/JPEG 文件
+     *
+     * @param context 上下文
+     * @param source  源对象（File 或 Bitmap）
+     * @param newName 新文件名（可选）
+     * @param format  保存格式（仅 Bitmap 时生效）
+     * @return 成功则返回新文件，失败返回 null
+     */
+    suspend fun saveToPrivateDir(
+        context: Context,
+        source: Any,
+        newName: String? = null,
+        format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG
+    ): File? {
+        try {
+            val targetDir = context.getExternalFilesDir(null) ?: context.filesDir
+            if (!targetDir.exists()) targetDir.mkdirs()
+
+            val targetFileName = when (source) {
+                is File -> {
+                    val ext = getFileExtension(source, "")
+                    val suffix = if (ext.isNotEmpty()) ".$ext" else ""
+                    newName ?: ("${source.nameWithoutExtension}_${System.currentTimeMillis()}${suffix}")
+                }
+                is Bitmap -> {
+                    newName ?: "IMG_${System.currentTimeMillis()}.${when (format) {
+                        Bitmap.CompressFormat.PNG -> "png"
+                        Bitmap.CompressFormat.JPEG -> "jpg"
+                        Bitmap.CompressFormat.WEBP -> "webp"
+                        else -> "png"
+                    }}"
+                }
+                else -> return null
+            }
+
+            val targetFile = File(targetDir, targetFileName)
+            if (targetFile.exists()) targetFile.delete()
+
+            when (source) {
+                is File -> {
+                    source.inputStream().use { input ->
+                        FileOutputStream(targetFile).use { output ->
+                            input.copyTo(output, bufferSize = 8 * 1024)
+                        }
+                    }
+                }
+                is Bitmap -> {
+                    FileOutputStream(targetFile).use { output ->
+                        source.compress(format, 100, output)
+                    }
+                }
+                else -> return null
+            }
+
+            Log.d("FileSave", "文件已保存到私有目录: ${targetFile.absolutePath}")
+            return targetFile
+        } catch (e: Exception) {
+            Log.e("FileSave", "保存文件到私有目录失败: ${e.message}")
+            return null
+        }
     }
 
     /**
