@@ -20,7 +20,7 @@ class DemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, null, null, binding.containerNavi)
+        immersiveWindow(binding.root, false, barColor = null, naviColor = null, binding.containerNavi)
 
         initView()
         initEvent()
