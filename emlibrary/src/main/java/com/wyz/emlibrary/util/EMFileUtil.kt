@@ -359,9 +359,10 @@ object EMFileUtil {
     private fun saveFileToDownloadsQ(context: Context, oldFile: File, newName: String?): Uri? {
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
+        val suffix = if (fileException.isNotEmpty()) ".$fileException" else ""
 
         val newFileName =
-            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}.$fileException")
+            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}${suffix}")
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileException) ?: "application/octet-stream"
 
         val contentValues = ContentValues().apply {
@@ -402,9 +403,10 @@ object EMFileUtil {
 
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
+        val suffix = if (fileException.isNotEmpty()) ".$fileException" else ""
 
         val newFileName =
-            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}.$fileException")
+            newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}${suffix}")
         val targetFile = File(downloadsDir, newFileName)
         if (targetFile.exists()) {
             Log.e(TAG, "UnderQ 文件命名重复")
