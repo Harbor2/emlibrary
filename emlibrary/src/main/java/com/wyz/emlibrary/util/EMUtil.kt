@@ -6,9 +6,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.util.DisplayMetrics
-import android.view.KeyCharacterMap
-import android.view.KeyEvent
-import android.view.ViewConfiguration
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -73,47 +70,32 @@ object EMUtil {
     }
 
     /**
-     * 获取状态栏高度（支持 Android 8～14）
+     * 获取状态栏高度
      */
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     fun getStatusBarHeight(context: Context, default: Int = 48): Int {
-        val wm = context.getSystemService(WindowManager::class.java)
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val metrics = wm.currentWindowMetrics
-            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.statusBars())
-            if (insets.top > 0) insets.top else default
-        } else {
+        try {
             val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
             val height = context.resources.getDimensionPixelSize(resourceId)
-            if (height > 0) height else default
+            return if (height > 0) height else default
+        } catch (e: Exception) {
+            return default
         }
     }
 
     /**
      * 获取导航栏高度
      * 若设备使用全面屏手势或隐藏导航栏，则返回 0
+     * 如果有导航栏 但是被隐藏了则返回真实导航栏高度
      */
     @SuppressLint("DiscouragedApi", "InternalInsetResource")
     fun getNavigationBarHeight(context: Context): Int {
-        val wm = context.getSystemService(WindowManager::class.java)
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val metrics = wm.currentWindowMetrics
-            val insets = metrics.windowInsets
-            val navInsets = insets.getInsets(WindowInsets.Type.navigationBars())
-            val imeVisible = insets.isVisible(WindowInsets.Type.ime()) // 键盘显示时避免误差
-            if (!insets.isVisible(WindowInsets.Type.navigationBars()) || imeVisible) 0 else navInsets.bottom
-        } else {
-            // 旧版本通过资源 ID 获取
-            val hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey()
-            val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
-            if (hasMenuKey && hasBackKey) {
-                0 // 没有虚拟导航栏
-            } else {
-                val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
-                if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
-            }
+        try {
+            val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            val height = context.resources.getDimensionPixelSize(resourceId)
+            return if (height >= 0) height else 0
+        } catch (e: Exception) {
+            return 0
         }
     }
 
