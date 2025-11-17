@@ -82,10 +82,11 @@ object EMUtil {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val metrics = wm.currentWindowMetrics
             val insets = metrics.windowInsets.getInsets(WindowInsets.Type.statusBars())
-            insets.top
+            if (insets.top > 0) insets.top else default
         } else {
             val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else default
+            val height = context.resources.getDimensionPixelSize(resourceId)
+            if (height > 0) height else default
         }
     }
 
