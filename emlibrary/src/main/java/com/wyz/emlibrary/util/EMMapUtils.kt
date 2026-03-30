@@ -1,6 +1,6 @@
 package com.wyz.emlibrary.util
 
-internal object EMMapUtils {
+object EMMapUtils {
 
     fun optInt(map: Any?, defaultValue: Int, vararg path: String): Int {
         map ?: return defaultValue
