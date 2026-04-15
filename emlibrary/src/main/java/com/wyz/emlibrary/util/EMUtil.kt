@@ -1,6 +1,7 @@
 package com.wyz.emlibrary.util
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -11,6 +12,8 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.ColorRes
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.wyz.emlibrary.em.EMLibrary.getApplication
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -84,6 +87,19 @@ object EMUtil {
     }
 
     /**
+     * 获取当前实时状态栏高度
+     */
+    fun getCurStatusBarHeight(activity: Activity): Int {
+        // 获取 Insets
+        val insets = ViewCompat.getRootWindowInsets(activity.window.decorView)
+        // 状态栏高度（关键：修复多出来的问题）
+        val statusBarHeight = insets
+            ?.getInsets(WindowInsetsCompat.Type.statusBars())
+            ?.top ?: 0
+        return statusBarHeight
+    }
+
+    /**
      * 获取导航栏高度
      * 若设备使用全面屏手势或隐藏导航栏，则返回 0
      * 如果有导航栏 但是被隐藏了则返回真实导航栏高度
@@ -97,6 +113,19 @@ object EMUtil {
         } catch (e: Exception) {
             return 0
         }
+    }
+
+    /**
+     * 获取当前实时导航栏高度
+     */
+    fun getCurNavigationBarHeight(activity: Activity): Int {
+        // 获取 Insets
+        val insets = ViewCompat.getRootWindowInsets(activity.window.decorView)
+        // 底部导航栏高度（关键：修复多出来的问题）
+        val navBarHeight = insets
+            ?.getInsets(WindowInsetsCompat.Type.navigationBars())
+            ?.bottom ?: 0
+        return navBarHeight
     }
 
     fun dp2px(dpVal: Float): Float {
