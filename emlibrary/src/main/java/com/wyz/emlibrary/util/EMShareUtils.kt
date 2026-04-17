@@ -1,4 +1,4 @@
-package com.wyz.emlibrary.collect
+package com.wyz.emlibrary.util
 
 import android.content.Context
 import android.content.Intent
