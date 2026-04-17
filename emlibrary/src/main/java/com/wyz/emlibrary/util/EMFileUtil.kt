@@ -347,6 +347,20 @@ object EMFileUtil {
         return getFileExtension(file.absolutePath, default)
     }
 
+    fun getFileMimeType(extension: String): String? {
+        if (extension.isEmpty()) return null
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+    }
+
+    /**
+     * 获取文件mime type
+     */
+    fun getFileMimeType(file: File): String? {
+        if (!file.exists()) return null
+        val ext = file.name.substringAfterLast('.', "")
+        return getFileMimeType(ext)
+    }
+
     suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): Any? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             saveFileToDownloadsQ(context, file, newFileName)
