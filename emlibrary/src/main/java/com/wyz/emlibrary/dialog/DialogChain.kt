@@ -1,4 +1,4 @@
-package com.wyz.emlibrary.util.dialog
+package com.wyz.emlibrary.dialog
 
 import android.util.Log
 import com.wyz.emlibrary.TAG

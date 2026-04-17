@@ -1,4 +1,4 @@
-package com.wyz.emlibrary.util.dialog
+package com.wyz.emlibrary.dialog
 
 interface DialogIntercept {
     /**
