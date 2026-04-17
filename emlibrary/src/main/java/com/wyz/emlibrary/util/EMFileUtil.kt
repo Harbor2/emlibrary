@@ -21,6 +21,7 @@ import java.io.FileOutputStream
 import kotlin.coroutines.coroutineContext
 
 object EMFileUtil {
+    const val ERROR_DEFAULT = -1
 
     /**
      * 删除文件或者目录
@@ -28,23 +29,21 @@ object EMFileUtil {
      */
     suspend fun delete(
         file: File,
-        callback: ((File) -> Unit)? = null,
-        onComposeCallback: (() -> Unit)? = null
-    ) {
+        progressCallback: ((File) -> Unit)? = null
+    ) = withContext(Dispatchers.IO) {
         if (!file.exists()) {
-            onComposeCallback?.invoke()
-            return
+            return@withContext
         }
+
         if (file.isDirectory) {
             // 文件目录
-            deleteRecursively(file, callback)
+            deleteRecursively(file, progressCallback)
         } else {
             // 文件
             file.delete()
-            callback?.invoke(file)
-        }
-        withContext(Dispatchers.Main) {
-            onComposeCallback?.invoke()
+            withContext(Dispatchers.Main) {
+                progressCallback?.invoke(file)
+            }
         }
     }
 
@@ -62,7 +61,9 @@ object EMFileUtil {
         }
         // 无论是文件还是空目录，都直接删除
         if (file.delete()) {
-            callback?.invoke(file)
+            withContext(Dispatchers.Main) {
+                callback?.invoke(file)
+            }
         }
     }
 
@@ -76,8 +77,7 @@ object EMFileUtil {
         source: File,
         destinationPath: String,
         progressCallback: ((File, File) -> Unit)? = null,
-        onComposeCallback: (() -> Unit)? = null
-    ) {
+    ) = withContext(Dispatchers.IO) {
         if (source.isDirectory) {
             // 如果是文件夹，递归复制文件夹内容
             copyDirectory(source, destinationPath, false, progressCallback)
@@ -85,12 +85,9 @@ object EMFileUtil {
             // 如果是文件，直接复制文件
             copyFile(source, destinationPath, progressCallback)
         }
-        withContext(Dispatchers.Main) {
-            onComposeCallback?.invoke()
-        }
     }
 
-    private fun copyFile(sourceFile: File, copyToPath: String, progressCallback: ((File, File) -> Unit)? = null ) {
+    private suspend fun copyFile(sourceFile: File, copyToPath: String, progressCallback: ((File, File) -> Unit)? = null ) {
         try {
             if (!sourceFile.exists() || copyToPath.isEmpty()) {
                 return
@@ -113,7 +110,9 @@ object EMFileUtil {
             FileInputStream(sourceFile).use { inStream ->
                 FileOutputStream(targetFile).use { outStream ->
                     inStream.copyTo(outStream)
-                    progressCallback?.invoke(sourceFile, targetFile)
+                    withContext(Dispatchers.Main) {
+                        progressCallback?.invoke(sourceFile, targetFile)
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -137,7 +136,9 @@ object EMFileUtil {
             if (!targetDir.exists()) {
                 val result = targetDir.mkdirs()
                 if (result) {
-                    progressCallback?.invoke(sourceDir, targetDir)
+                    withContext(Dispatchers.Main) {
+                        progressCallback?.invoke(sourceDir, targetDir)
+                    }
                 }
             } else {
                 if (!mergeTheSame) {
@@ -146,7 +147,9 @@ object EMFileUtil {
                     targetDir = File(targetParentFile, curTime.plus("_${sourceDir.name}"))
                     val result = targetDir.mkdirs()
                     if (result) {
-                        progressCallback?.invoke(sourceDir, targetDir)
+                        withContext(Dispatchers.Main) {
+                            progressCallback?.invoke(sourceDir, targetDir)
+                        }
                     }
                 }
             }
@@ -236,19 +239,28 @@ object EMFileUtil {
         return Pair(count, size)
     }
 
+    const val ERROR_CREATE_FOLDER_PARENT_NOT_EXIST = 1001
+    const val ERROR_CREATE_FOLDER_NAME_EMPTY = 1002
+    const val ERROR_CREATE_FOLDER_FILE_EXIST = 1003
+
+    /**
+     * 创建文件夹回调
+     */
+    sealed class CreateFolderResult {
+        data class Success(val folder: File) : CreateFolderResult()
+        data class Error(val error: Int) : CreateFolderResult()
+    }
+
     /**
      * 创建文件夹
-     * @param callback 文件夹 错误信息
      */
-    fun createFileFolder(parentPath: String, fileName: String, callback: ((File?, String) -> Unit)?) {
+    suspend fun createFileFolder(parentPath: String, fileName: String): CreateFolderResult = withContext(Dispatchers.IO){
         try {
             if (parentPath.isEmpty()) {
-                callback?.invoke(null, "Parent folder not exists")
-                return
+                return@withContext CreateFolderResult.Error(ERROR_CREATE_FOLDER_PARENT_NOT_EXIST)
             }
             if (fileName.isEmpty()) {
-                callback?.invoke(null, "File name is empty")
-                return
+                return@withContext CreateFolderResult.Error(ERROR_CREATE_FOLDER_NAME_EMPTY)
             }
 
             // 父目录
@@ -259,50 +271,60 @@ object EMFileUtil {
 
             val folder = File(parentPath, fileName)
             if (folder.exists()) {
-                callback?.invoke(null, "File exists")
-                return
+                return@withContext CreateFolderResult.Error(ERROR_CREATE_FOLDER_FILE_EXIST)
             }
             val result =  folder.mkdirs()
-            callback?.invoke(if (result) folder else null, if (result) "" else "Error")
+            return@withContext if (result) {
+                CreateFolderResult.Success(folder)
+            } else {
+                CreateFolderResult.Error(ERROR_DEFAULT)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "文件夹创建失败, ${e.message}")
-            callback?.invoke(null, "Exception error")
+            return@withContext CreateFolderResult.Error(ERROR_DEFAULT)
         }
+    }
+
+    const val ERROR_RENAME_FILE_NAME_EMPTY = 2001
+    const val ERROR_RENAME_OLD_FILE_NOT_EXIST = 2002
+    const val ERROR_RENAME_NEW_FILE_EXIST = 2003
+
+    sealed class RenameFileResult {
+        data class Success(val oldFile: File, val newFile: File) : RenameFileResult()
+        data class Error(val error: Int) : RenameFileResult()
     }
 
     /**
      * 文件重命名
      * @param callback 原文件 新文件 错误信息
      */
-    fun renameFile(oldFilePath: String, newFileName: String, callback: ((File?, File?, String?) -> Unit)? = null) {
+    suspend fun renameFile(oldFilePath: String, newFileName: String): RenameFileResult = withContext(Dispatchers.IO) {
         if (oldFilePath.isEmpty() || newFileName.isEmpty()) {
-            return
+            return@withContext RenameFileResult.Error(ERROR_RENAME_FILE_NAME_EMPTY)
         }
         // 原文件不存在
         val oldFile = File(oldFilePath)
         if (!oldFile.exists()) {
-            callback?.invoke(null, null, FILE_NOT_EXIST)
-            return
+            return@withContext RenameFileResult.Error(ERROR_RENAME_OLD_FILE_NOT_EXIST)
         }
 
         // 重命名文件已存在
         val newFile = File(oldFile.parent, newFileName)
         if (newFile.exists()) {
-            callback?.invoke(null, null, FILE_ALREADY_EXIST)
-            return
+            return@withContext RenameFileResult.Error(ERROR_RENAME_NEW_FILE_EXIST)
         }
 
         try {
             // 文件夹
             val result = oldFile.renameTo(newFile)
-            if (result) {
-                callback?.invoke(oldFile, newFile, null)
+            return@withContext if (result) {
+                RenameFileResult.Success(oldFile, newFile)
             } else {
-                callback?.invoke(null, null, ERROR)
+                RenameFileResult.Error(ERROR_DEFAULT)
             }
         } catch (e: Exception) {
             Log.e(TAG, "文件重命名失败, ${e.message}")
-            callback?.invoke(null, null, ERROR)
+            return@withContext RenameFileResult.Error(ERROR_DEFAULT)
         }
     }
 
@@ -361,16 +383,24 @@ object EMFileUtil {
         return getFileMimeType(ext)
     }
 
-    suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): Any? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+
+    suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): SaveFileDownloadResult = withContext(Dispatchers.IO) {
+        return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             saveFileToDownloadsQ(context, file, newFileName)
         } else {
             saveFileToDownloadsUnderQ(context, file, newFileName)
         }
     }
 
+    sealed class SaveFileDownloadResult {
+        data class SuccessUri(val uri: Uri) : SaveFileDownloadResult()
+        data class SuccessFile(val file: File) : SaveFileDownloadResult()
+        data class Error(val error: Int) : SaveFileDownloadResult()
+    }
+
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun saveFileToDownloadsQ(context: Context, oldFile: File, newName: String?): Uri? {
+    private fun saveFileToDownloadsQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
         val suffix = if (fileException.isNotEmpty()) ".$fileException" else ""
@@ -391,10 +421,10 @@ object EMFileUtil {
         val uri = resolver.insert(collection, contentValues)
         if (uri == null) {
             Log.e(TAG, "MediaStore 保存文件失败, uri 为空")
-            return null
+            return SaveFileDownloadResult.Error(ERROR_DEFAULT)
         }
 
-        return try {
+        try {
             resolver.openOutputStream(uri)?.use { output ->
                 oldFile.inputStream().use { input ->
                     input.copyTo(output, bufferSize = 8 * 1024)
@@ -404,14 +434,14 @@ object EMFileUtil {
             contentValues.clear()
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
-            uri
+            return SaveFileDownloadResult.SuccessUri(uri)
         } catch (e: Exception) {
             Log.e(TAG, "MediaStore 保存文件失败: ${e.message}")
-            null
+            return SaveFileDownloadResult.Error(ERROR_DEFAULT)
         }
     }
 
-    private fun saveFileToDownloadsUnderQ(context: Context, oldFile: File, newName: String?): File? {
+    private fun saveFileToDownloadsUnderQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         if (!downloadsDir.exists()) downloadsDir.mkdirs()
 
@@ -424,10 +454,10 @@ object EMFileUtil {
         val targetFile = File(downloadsDir, newFileName)
         if (targetFile.exists()) {
             Log.e(TAG, "UnderQ 文件命名重复")
-            return null
+            return SaveFileDownloadResult.Error(ERROR_DEFAULT)
         }
 
-        return try {
+        try {
             oldFile.inputStream().use { input ->
                 targetFile.outputStream().use { output ->
                     input.copyTo(output, bufferSize = 8 * 1024)
@@ -435,12 +465,14 @@ object EMFileUtil {
             }
             // 通知媒体库刷新
             MediaScannerConnection.scanFile(context, arrayOf(targetFile.absolutePath), null, null)
-            targetFile
+            return SaveFileDownloadResult.SuccessFile(targetFile)
         } catch (e: Exception) {
             Log.e(TAG, "UnderQ 保存文件失败: ${e.message}")
-            null
+            return SaveFileDownloadResult.Error(ERROR_DEFAULT)
         }
     }
+
+
 
     /**
      * 保存图片到本地Picture目录
@@ -449,20 +481,31 @@ object EMFileUtil {
      * @param typeFormat 图片类型
      * @param newFileName 新文件名
      */
-    suspend fun saveBitmapToGallery(context: Context, bitmap: Bitmap, newFileName: String?, typeFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG): Any? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    suspend fun saveBitmapToGallery(
+        context: Context,
+        bitmap: Bitmap,
+        newFileName: String?,
+        typeFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG
+    ): SaveBitmapGalleryResult = withContext(Dispatchers.IO) {
+        return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             saveBitmapToGalleryUpQ(context, bitmap, typeFormat, newFileName)
         } else {
             saveBitmapToGalleryUnderQ(context, bitmap, typeFormat, newFileName)
         }
     }
 
-    private suspend fun saveBitmapToGalleryUpQ(
+    sealed class SaveBitmapGalleryResult {
+        data class SuccessUri(val uri: Uri) : SaveBitmapGalleryResult()
+        data class SuccessFile(val file: File) : SaveBitmapGalleryResult()
+        data class Error(val error: Int) : SaveBitmapGalleryResult()
+    }
+
+    private fun saveBitmapToGalleryUpQ(
         context: Context,
         bitmap: Bitmap,
         typeFormat: Bitmap.CompressFormat,
         newName: String?
-    ): Any? {
+    ): SaveBitmapGalleryResult {
         val mimeType = when (typeFormat) {
             Bitmap.CompressFormat.JPEG -> "image/jpeg"
             Bitmap.CompressFormat.PNG -> "image/png"
@@ -481,7 +524,7 @@ object EMFileUtil {
         val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         if (imageUri == null) {
             Log.e(TAG, "imageUri 为空")
-            return null
+            return SaveBitmapGalleryResult.Error(ERROR_DEFAULT)
         }
 
         try {
@@ -491,19 +534,19 @@ object EMFileUtil {
             contentValues.clear()
             contentValues.put(MediaStore.Images.Media.IS_PENDING, 0) // 标记为已完成
             resolver.update(imageUri, contentValues, null, null)
-            return imageUri
+            return SaveBitmapGalleryResult.SuccessUri(imageUri)
         } catch (e: Exception) {
             Log.e(TAG, "保存图片失败: ${e.message}")
-            return null
+            return SaveBitmapGalleryResult.Error(ERROR_DEFAULT)
         }
     }
 
-    private suspend fun saveBitmapToGalleryUnderQ(
+    private fun saveBitmapToGalleryUnderQ(
         context: Context,
         bitmap: Bitmap,
         typeFormat: Bitmap.CompressFormat,
         newName: String?
-    ): Any? {
+    ): SaveBitmapGalleryResult {
         val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "picture")
         if (!dir.exists()) dir.mkdirs()
 
@@ -517,7 +560,7 @@ object EMFileUtil {
         val file = File(dir, fileName)
         if (file.exists()) {
             Log.e(TAG, "UnderQ 文件命名重复")
-            return null
+            return SaveBitmapGalleryResult.Error(ERROR_DEFAULT)
         }
         try {
             FileOutputStream(file).use { outputStream ->
@@ -525,12 +568,230 @@ object EMFileUtil {
             }
             // 通知媒体库更新
             MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), arrayOf(mimeType), null)
-            return file
+            return SaveBitmapGalleryResult.SuccessFile(file)
         } catch (e: Exception) {
             Log.e(TAG, "保存图片失败: ${e.message}")
-            return null
+            return SaveBitmapGalleryResult.Error(ERROR_DEFAULT)
         }
     }
+
+
+
+    /**
+     * 保存图片File到本地相册
+     */
+    suspend fun savePicFileToGallery(
+        context: Context,
+        video: File,
+        newFileName: String?
+    ): SavePicFileGalleryResult = withContext(Dispatchers.IO) {
+        return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            savePicFileToGalleryUpQ(context, video, newFileName)
+        } else {
+            savePicFileToGalleryUnderQ(context, video, newFileName)
+        }
+    }
+
+    sealed class SavePicFileGalleryResult {
+        data class SuccessUri(val uri: Uri) : SavePicFileGalleryResult()
+        data class SuccessFile(val file: File) : SavePicFileGalleryResult()
+        data class Error(val error: Int) : SavePicFileGalleryResult()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun savePicFileToGalleryUpQ(
+        context: Context,
+        pic: File,
+        newName: String?
+    ): SavePicFileGalleryResult {
+
+        val fileName = newName ?: "IMG_${System.currentTimeMillis()}.${pic.extension}"
+
+        val mimeType = getFileMimeType(pic) ?: "image/jpeg"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_DCIM + "/picture")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+
+        val uri = resolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+        if (uri == null) {
+            return SavePicFileGalleryResult.Error(ERROR_DEFAULT)
+        }
+
+        return try {
+            resolver.openOutputStream(uri)?.use { output ->
+                pic.inputStream().use { input ->
+                    input.copyTo(output)
+                }
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+
+            SavePicFileGalleryResult.SuccessUri(uri)
+        } catch (e: Exception) {
+            Log.e(TAG, "保存图片到图库失败: ${e.message}")
+            resolver.delete(uri, null, null)
+            SavePicFileGalleryResult.Error(ERROR_DEFAULT)
+        }
+    }
+
+    private fun savePicFileToGalleryUnderQ(
+        context: Context,
+        pic: File,
+        newName: String?
+    ): SavePicFileGalleryResult {
+
+        val dir = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            "picture"
+        )
+
+        if (!dir.exists()) dir.mkdirs()
+
+        val fileName = newName ?: "IMG_${System.currentTimeMillis()}.${pic.extension}"
+        val targetFile = File(dir, fileName)
+
+        if (targetFile.exists()) {
+            return SavePicFileGalleryResult.Error(ERROR_DEFAULT)
+        }
+
+        return try {
+            pic.inputStream().use { input ->
+                targetFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf(targetFile.absolutePath),
+                arrayOf(getFileMimeType(pic) ?: "image/jpeg"),
+                null
+            )
+            SavePicFileGalleryResult.SuccessFile(targetFile)
+        } catch (e: Exception) {
+            Log.e(TAG, "保存图片到图库失败: ${e.message}")
+            SavePicFileGalleryResult.Error(ERROR_DEFAULT)
+        }
+    }
+
+
+
+    /**
+     * 保存视频到本地相册
+     */
+    suspend fun saveVideoToGallery(
+        context: Context,
+        video: File,
+        newFileName: String?
+    ): SaveVideoGalleryResult = withContext(Dispatchers.IO) {
+        return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveVideoToGalleryUpQ(context, video, newFileName)
+        } else {
+            saveVideoToGalleryUnderQ(context, video, newFileName)
+        }
+    }
+
+    sealed class SaveVideoGalleryResult {
+        data class SuccessUri(val uri: Uri) : SaveVideoGalleryResult()
+        data class SuccessFile(val file: File) : SaveVideoGalleryResult()
+        data class Error(val error: Int) : SaveVideoGalleryResult()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun saveVideoToGalleryUpQ(
+        context: Context,
+        video: File,
+        newName: String?
+    ): SaveVideoGalleryResult {
+
+        val fileName = newName ?: "VID_${System.currentTimeMillis()}.${video.extension}"
+
+        val mimeType = getFileMimeType(video) ?: "video/mp4"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Video.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Video.Media.MIME_TYPE, mimeType)
+            put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_DCIM + "/video")
+            put(MediaStore.Video.Media.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+
+        val uri = resolver.insert(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+        if (uri == null) {
+            return SaveVideoGalleryResult.Error(ERROR_DEFAULT)
+        }
+
+        return try {
+            resolver.openOutputStream(uri)?.use { output ->
+                video.inputStream().use { input ->
+                    input.copyTo(output)
+                }
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Video.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+
+            SaveVideoGalleryResult.SuccessUri(uri)
+        } catch (e: Exception) {
+            Log.e(TAG, "保存视频到图库失败: ${e.message}")
+            resolver.delete(uri, null, null)
+            SaveVideoGalleryResult.Error(ERROR_DEFAULT)
+        }
+    }
+
+    private fun saveVideoToGalleryUnderQ(
+        context: Context,
+        video: File,
+        newName: String?
+    ): SaveVideoGalleryResult {
+
+        val dir = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            "video"
+        )
+
+        if (!dir.exists()) dir.mkdirs()
+
+        val fileName = newName ?: "VID_${System.currentTimeMillis()}.${video.extension}"
+        val targetFile = File(dir, fileName)
+
+        if (targetFile.exists()) {
+            return SaveVideoGalleryResult.Error(ERROR_DEFAULT)
+        }
+
+        return try {
+            video.inputStream().use { input ->
+                targetFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            MediaScannerConnection.scanFile(
+                context,
+                arrayOf(targetFile.absolutePath),
+                arrayOf(getFileMimeType(video) ?: "video/mp4"),
+                null
+            )
+            SaveVideoGalleryResult.SuccessFile(targetFile)
+        } catch (e: Exception) {
+            Log.e(TAG, "保存视频到图库失败: ${e.message}")
+            SaveVideoGalleryResult.Error(ERROR_DEFAULT)
+        }
+    }
+
+
 
     /**
      * 将文件或 Bitmap 保存到应用私有目录
@@ -544,12 +805,12 @@ object EMFileUtil {
      * @param format  保存格式（仅 Bitmap 时生效）
      * @return 成功则返回新文件，失败返回 null
      */
-    suspend fun saveToPrivateDir(
+    suspend fun saveFileToPrivateDir(
         context: Context,
         source: Any,
         newName: String? = null,
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG
-    ): File? {
+    ): SaveFilePrivateResult = withContext(Dispatchers.IO) {
         try {
             val targetDir = context.getExternalFilesDir(null) ?: context.filesDir
             if (!targetDir.exists()) targetDir.mkdirs()
@@ -568,7 +829,7 @@ object EMFileUtil {
                         else -> "png"
                     }}"
                 }
-                else -> return null
+                else -> return@withContext SaveFilePrivateResult.Error(ERROR_DEFAULT)
             }
 
             val targetFile = File(targetDir, targetFileName)
@@ -587,26 +848,20 @@ object EMFileUtil {
                         source.compress(format, 100, output)
                     }
                 }
-                else -> return null
+                else -> return@withContext SaveFilePrivateResult.Error(ERROR_DEFAULT)
             }
 
-            Log.d("FileSave", "文件已保存到私有目录: ${targetFile.absolutePath}")
-            return targetFile
+            Log.d(TAG, "文件已保存到私有目录: ${targetFile.absolutePath}")
+            return@withContext SaveFilePrivateResult.SuccessFile(targetFile)
         } catch (e: Exception) {
-            Log.e("FileSave", "保存文件到私有目录失败: ${e.message}")
-            return null
+            Log.e(TAG, "保存文件到私有目录失败: ${e.message}")
+            return@withContext SaveFilePrivateResult.Error(ERROR_DEFAULT)
         }
     }
 
-    /**
-     * 文件不存在
-     */
-    const val FILE_NOT_EXIST = "file_not_exist"
+    sealed class SaveFilePrivateResult {
+        data class SuccessFile(val file: File) : SaveFilePrivateResult()
+        data class Error(val error: Int) : SaveFilePrivateResult()
+    }
 
-    /**
-     * 文件已存在
-     */
-    const val FILE_ALREADY_EXIST = "file_already_exist"
-
-    const val ERROR = "error"
 }

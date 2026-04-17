@@ -44,20 +44,25 @@ object EMUtil {
     /**
      * 获取屏幕高度
      * includeSystemBars 是否包含系统栏（状态栏、导航栏）
+     *
+     * ⚠️ 当sdk小于30时，如果传入context为非Activity则不能获取实时状态栏高度和导航栏高度
      */
     fun getScreenH(context: Context, includeSystemBars: Boolean = true): Int {
         val wm = context.getSystemService(WindowManager::class.java)
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11 (API 30) 及以上
             val metrics = wm.currentWindowMetrics
+
             if (includeSystemBars) {
-                // 包含状态栏、导航栏
                 metrics.bounds.height()
             } else {
-                // 不包含系统栏（可用内容高度）
-                val insets = metrics.windowInsets
-                    .getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
-                metrics.bounds.height() - (insets.top + insets.bottom)
+                val insets = metrics.windowInsets.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
+                )
+
+                metrics.bounds.height() -
+                        insets.top - insets.bottom -
+                        insets.left - insets.right
             }
         } else {
             // Android 10 及以下
@@ -67,7 +72,13 @@ object EMUtil {
             return if (includeSystemBars)
                 dm.heightPixels
             else {
-                dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context, 0)
+                if (context is Activity) {
+                    // 这里减去的是实时状态栏 导航栏高度（例如隐藏后实时高度是0）
+                    dm.heightPixels - getCurNavigationBarHeight(context) - getCurStatusBarHeight(context, 0)
+                } else {
+                    // 这里减去的是固定状态栏 导航栏高度
+                    dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context, 0)
+                }
             }
         }
     }
@@ -89,13 +100,13 @@ object EMUtil {
     /**
      * 获取当前实时状态栏高度
      */
-    fun getCurStatusBarHeight(activity: Activity): Int {
+    fun getCurStatusBarHeight(activity: Activity, default: Int = 48): Int {
         // 获取 Insets
         val insets = ViewCompat.getRootWindowInsets(activity.window.decorView)
         // 状态栏高度（关键：修复多出来的问题）
         val statusBarHeight = insets
             ?.getInsets(WindowInsetsCompat.Type.statusBars())
-            ?.top ?: 0
+            ?.top ?: default
         return statusBarHeight
     }
 
