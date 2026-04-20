@@ -168,11 +168,11 @@ object EMFileShareUtil {
 
     private fun shareImageFile(context: Context, file: File): Intent {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-            return Intent(Intent.ACTION_SEND).apply {
-                type = "image/*"
-                putExtra(Intent.EXTRA_STREAM, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
+        return Intent(Intent.ACTION_SEND).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
     }
 
     private fun shareZipFile(context: Context, file: File): Intent {
