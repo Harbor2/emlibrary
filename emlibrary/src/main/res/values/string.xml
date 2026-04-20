@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="toast_file_not_exist">File not exist</string>
+    <string name="toast_file_can_not_open">Can not open this file</string>
 </resources>
