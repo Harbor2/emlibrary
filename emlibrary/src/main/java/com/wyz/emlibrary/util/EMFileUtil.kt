@@ -351,7 +351,7 @@ object EMFileUtil {
     /**
      * 获取文件后缀名
      */
-    fun getFileExtension(filePath: String, default: String): String {
+    fun getFileExtension(filePath: String, default: String = ""): String {
         val lastDotIndex = filePath.lastIndexOf('.')
         return if (lastDotIndex == -1) {
             // 如果没有找到点号，说明没有后缀名
