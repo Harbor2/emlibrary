@@ -71,7 +71,7 @@ object EMFileUtil {
      * 文件拷贝
      * @param source 源文件
      * @param destinationPath 目标路径
-     * @param callback 拷贝回调 每个文件、文件夹回调一次
+     * @param progressCallback 拷贝回调 每个文件、文件夹回调一次
      */
     suspend fun copy(
         source: File,
@@ -116,7 +116,7 @@ object EMFileUtil {
                 }
             }
         } catch (e: Exception) {
-            Log.e("EMUtil", "文件${sourceFile.name}拷贝失败, ${e.message}")
+            Log.e(TAG, "文件${sourceFile.name}拷贝失败, ${e.message}")
         }
     }
 
@@ -166,13 +166,13 @@ object EMFileUtil {
                 }
             }
         } catch (e: Exception) {
-            Log.e("EMUtil", "文件夹${sourceDir.name}拷贝失败, ${e.message}")
+            Log.e(TAG, "文件夹${sourceDir.name}拷贝失败, ${e.message}")
         }
     }
 
     /**
      * 获取文件夹内的所有子文件
-     * @param containerSubFile 是否包含子文件夹
+     * @param containerSubFile 是否包含子目录
      * @param containDir 是否包含文件夹
      * @param containerHiddenFile 是否包含隐藏文件
      */
@@ -195,7 +195,7 @@ object EMFileUtil {
             }
             // 如果是目录，则递归获取该目录下的文件
             if (file.isDirectory && containerSubFile) {
-                result.addAll(getDirFilesList(file, containerSubFile, containDir, containerHiddenFile)) // 递归调用
+                result.addAll(getDirFilesList(file, true, containDir, containerHiddenFile)) // 递归调用
             }
         }
         return result
@@ -203,7 +203,7 @@ object EMFileUtil {
 
     /**
      * 获取文件夹内的所有子文件数量
-     * @param containerSubFile 是否包含子文件夹
+     * @param containerSubFile 是否包含子文目录
      * @param containDir 是否包含文件夹
      * @param containerHiddenFile 是否包含隐藏文件
      */
@@ -231,7 +231,7 @@ object EMFileUtil {
             }
 
             if (file.isDirectory && containerSubFile) {
-                val (subCount, subSize) = getDirFilesCount(file, containerSubFile, containDir, containerHiddenFile)
+                val (subCount, subSize) = getDirFilesCount(file, true, containDir, containerHiddenFile)
                 count += subCount
                 size += subSize
             }
@@ -296,7 +296,10 @@ object EMFileUtil {
 
     /**
      * 文件重命名
-     * @param callback 原文件 新文件 错误信息
+     * @param oldFilePath 原文件路径
+     * @param newFileName 新文件名
+     *
+     * @return 重命名结果
      */
     suspend fun renameFile(oldFilePath: String, newFileName: String): RenameFileResult = withContext(Dispatchers.IO) {
         if (oldFilePath.isEmpty() || newFileName.isEmpty()) {
@@ -387,7 +390,7 @@ object EMFileUtil {
 
     suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): SaveFileDownloadResult = withContext(Dispatchers.IO) {
         return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            saveFileToDownloadsQ(context, file, newFileName)
+            saveFileToDownloadsUpQ(context, file, newFileName)
         } else {
             saveFileToDownloadsUnderQ(context, file, newFileName)
         }
@@ -400,14 +403,15 @@ object EMFileUtil {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun saveFileToDownloadsQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
+    private fun saveFileToDownloadsUpQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
         val suffix = if (fileException.isNotEmpty()) ".$fileException" else ""
 
         val newFileName =
             newName ?: ("${oldFileName.substringBeforeLast(".")}_${System.currentTimeMillis()}${suffix}")
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileException) ?: "application/octet-stream"
+        val mimeType = getFileMimeType(fileException)?: "application/octet-stream"
+
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
