@@ -14,7 +14,7 @@ import java.io.File
 /**
  * 分享工具类
  */
-object EMShareUtil {
+object EMFileShareUtil {
 
     /**
      * 分享多个文件
