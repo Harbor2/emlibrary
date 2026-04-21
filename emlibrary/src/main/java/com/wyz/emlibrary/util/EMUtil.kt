@@ -10,12 +10,17 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.ColorRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.em.EMLibrary.getApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -363,5 +368,42 @@ object EMUtil {
             random.nextInt(256),
             random.nextInt(256)
         )
+    }
+
+
+    /**
+     * 清理缓存
+     * @param filePaths 缓存文件路径集合
+     */
+    suspend fun clearCache(filePaths: List<String>): Boolean {
+        return clearCache(filePaths.map { File(it) })
+    }
+
+    /**
+     * 清理缓存
+     * @param files 缓存文件集合
+     */
+    suspend fun clearCache(files: List<File>): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            var allSuccess = true
+            files.forEach { file ->
+                if (file.path.isBlank()) return@forEach
+
+                val result = if (file.exists()) {
+                    file.deleteRecursively()
+                } else {
+                    true
+                }
+
+                if (!result) {
+                    Log.e(TAG, "删除失败: ${file.absolutePath}")
+                    allSuccess = false
+                }
+            }
+            allSuccess
+        } catch (e: Exception) {
+            Log.e(TAG, "缓存清理失败：${e.message}")
+            false
+        }
     }
 }
