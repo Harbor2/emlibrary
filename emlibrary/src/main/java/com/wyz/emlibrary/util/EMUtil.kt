@@ -19,6 +19,7 @@ import com.wyz.emlibrary.em.EMLibrary.getApplication
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Random
 import java.util.regex.Pattern
 
 object EMUtil {
@@ -348,5 +349,19 @@ object EMUtil {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (!clipboard.hasPrimaryClip()) return null
         return clipboard.primaryClip?.getItemAt(0)?.text?.toString()
+    }
+
+    /**
+     * 获取随机颜色
+     */
+    fun getRandomColor(alpha: Int): Int {
+        val resultAlpha = if (alpha > 0 && alpha < 256) alpha else 255
+        val random = Random()
+        return Color.argb(
+            resultAlpha,
+            random.nextInt(256),
+            random.nextInt(256),
+            random.nextInt(256)
+        )
     }
 }
