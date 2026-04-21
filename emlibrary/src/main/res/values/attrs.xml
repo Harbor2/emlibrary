@@ -167,7 +167,7 @@
     </declare-styleable>
 
     <!-- 圆角cardView -->
-    <declare-styleable name="RadiusCardView">
+    <declare-styleable name="RoundedCardView">
         <attr name="rcvTopLeftRadius" format="dimension" />
         <attr name="rcvTopRightRadius" format="dimension" />
         <attr name="rcvBottomRightRadius" format="dimension" />

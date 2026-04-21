@@ -15,7 +15,7 @@ import com.wyz.emlibrary.R
  * 不能修改阴影颜色（如需修改使用AdvancedCardView）
  * 圆角半径可以单独设置
  *
- * <com.wyz.emlibrary.custom.RadiusCardView
+ * <com.wyz.emlibrary.custom.RoundedCardView
  *         android:layout_width="match_parent"
  *         android:layout_height="200dp"
  *         app:rcvTopLeftRadius="40dp"
@@ -31,7 +31,7 @@ import com.wyz.emlibrary.R
  *             android:layout_width="match_parent"
  *             android:layout_height="match_parent"
  *             android:background="#ff5500"/>
- *     </com.wyz.emlibrary.custom.RadiusCardView>
+ *     </com.wyz.emlibrary.custom.RoundedCardView>
  */
 class RoundedCardView @JvmOverloads constructor(
     context: Context,
@@ -44,11 +44,11 @@ class RoundedCardView @JvmOverloads constructor(
     private var blRadius = 0f
 
     init {
-        val attributes = context.theme.obtainStyledAttributes(attrs, R.styleable.RadiusCardView, 0, 0)
-        tlRadius = attributes.getDimension(R.styleable.RadiusCardView_rcvTopLeftRadius, 0f)
-        trRadius = attributes.getDimension(R.styleable.RadiusCardView_rcvTopRightRadius, 0f)
-        blRadius = attributes.getDimension(R.styleable.RadiusCardView_rcvBottomLeftRadius, 0f)
-        brRadius = attributes.getDimension(R.styleable.RadiusCardView_rcvBottomRightRadius, 0f)
+        val attributes = context.theme.obtainStyledAttributes(attrs, R.styleable.RoundedCardView, 0, 0)
+        tlRadius = attributes.getDimension(R.styleable.RoundedCardView_rcvTopLeftRadius, 0f)
+        trRadius = attributes.getDimension(R.styleable.RoundedCardView_rcvTopRightRadius, 0f)
+        blRadius = attributes.getDimension(R.styleable.RoundedCardView_rcvBottomLeftRadius, 0f)
+        brRadius = attributes.getDimension(R.styleable.RoundedCardView_rcvBottomRightRadius, 0f)
 
         attributes.recycle()
     }
