@@ -173,4 +173,20 @@
         <attr name="rcvBottomRightRadius" format="dimension" />
         <attr name="rcvBottomLeftRadius" format="dimension" />
     </declare-styleable>
+
+    <!-- 自由裁剪的图片 -->
+    <declare-styleable name="GravityCropImageView">
+        <!-- 水平对齐 -->
+        <attr name="gciHorizontal" format="enum">
+            <enum name="start" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="end" value="2"/>
+        </attr>
+        <!-- 垂直对齐 -->
+        <attr name="gciVertical" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="bottom" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>
