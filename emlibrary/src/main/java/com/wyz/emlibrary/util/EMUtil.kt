@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.Rect
 import android.os.Build
 import android.os.IBinder
-import android.util.DisplayMetrics
-import android.view.WindowInsets
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.ColorRes
@@ -18,6 +17,7 @@ import com.wyz.emlibrary.em.EMLibrary.getApplication
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.regex.Pattern
 
 object EMUtil {
     /**
@@ -26,61 +26,57 @@ object EMUtil {
     const val RESOURCE_ALPHA_PRESS = 0.5f
 
     /**
-     * 获取屏幕宽度（横屏包含状态栏、导航栏）
+     * 获取屏幕宽高（包含状态栏、导航栏）
      */
-    fun getScreenW(context: Context): Int {
-        val wm = context.getSystemService(WindowManager::class.java)
-
+    fun getScreenSize(activity: Activity): Pair<Int, Int> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            wm.currentWindowMetrics.bounds.width()
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val bounds = windowMetrics.bounds
+            Pair(bounds.width(), bounds.height())
         } else {
-            val dm = DisplayMetrics()
-            @Suppress("DEPRECATION")
-            wm.defaultDisplay.getRealMetrics(dm)
-            dm.widthPixels
+            val display = activity.windowManager.defaultDisplay
+            val point = Point()
+            display.getRealSize(point)
+            Pair(point.x, point.y)
         }
     }
 
     /**
-     * 获取屏幕高度
-     * includeSystemBars 是否包含系统栏（状态栏、导航栏）
-     *
-     * ⚠️ 当sdk小于30时，如果传入context为非Activity则不能获取实时状态栏高度和导航栏高度
+     * 获取屏幕宽度
      */
-    fun getScreenH(context: Context, includeSystemBars: Boolean = true): Int {
-        val wm = context.getSystemService(WindowManager::class.java)
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11 (API 30) 及以上
-            val metrics = wm.currentWindowMetrics
+    fun getScreenW(activity: Activity): Int {
+        return getScreenSize(activity).first
+    }
 
-            if (includeSystemBars) {
-                metrics.bounds.height()
-            } else {
-                val insets = metrics.windowInsets.getInsetsIgnoringVisibility(
-                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
-                )
+    /**
+     * 获取屏幕高度
+     */
+    fun getScreenH(activity: Activity): Int {
+        return getScreenSize(activity).second
+    }
 
-                metrics.bounds.height() -
-                        insets.top - insets.bottom -
-                        insets.left - insets.right
-            }
-        } else {
-            // Android 10 及以下
-            val dm = DisplayMetrics()
-            @Suppress("DEPRECATION")
-            wm.defaultDisplay.getRealMetrics(dm)
-            return if (includeSystemBars)
-                dm.heightPixels
-            else {
-                if (context is Activity) {
-                    // 这里减去的是实时状态栏 导航栏高度（例如隐藏后实时高度是0）
-                    dm.heightPixels - getCurNavigationBarHeight(context) - getCurStatusBarHeight(context, 0)
-                } else {
-                    // 这里减去的是固定状态栏 导航栏高度
-                    dm.heightPixels - getNavigationBarHeight(context) - getStatusBarHeight(context, 0)
-                }
-            }
-        }
+    /**
+     * 获取屏幕可用宽高（不包含状态栏、导航栏）
+     */
+    fun getUsableScreenSize(activity: Activity): Pair<Int, Int> {
+        val rect = Rect()
+        val decorView = activity.window.decorView
+        decorView.getWindowVisibleDisplayFrame(rect)
+        return Pair(rect.width(), rect.height())
+    }
+
+    /**
+     * 获取屏幕宽度
+     */
+    fun getUsableScreenW(activity: Activity): Int {
+        return getUsableScreenSize(activity).first
+    }
+
+    /**
+     * 获取屏幕高度
+     */
+    fun getUsableScreenH(activity: Activity): Int {
+        return getUsableScreenSize(activity).second
     }
 
     /**
@@ -298,5 +294,35 @@ object EMUtil {
         val inputMethodManager =
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    /**
+     * 字符串是否匹配正则
+     *
+     * @param str 文件路径
+     * @param list 正则规则集合
+     */
+    fun isStrMatchRegexList(str: String, list: ArrayList<String>): Boolean {
+        if (list.isEmpty()) {
+            return false
+        }
+        list.forEach {regex ->
+            if (isStrMatchRegex(str, regex)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * 字符串是否匹配正则
+     *
+     * @param str 文件路径
+     * @param regex 正则规则
+     */
+    fun isStrMatchRegex(str: String, regex: String): Boolean {
+        val pattern = Pattern.compile(regex)
+        val matcher = pattern.matcher(str)
+        return matcher.matches()
     }
 }
