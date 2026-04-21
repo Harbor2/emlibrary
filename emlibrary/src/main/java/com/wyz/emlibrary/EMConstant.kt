@@ -13,7 +13,7 @@ val audioExtensionList = arrayOf(
     "mp3", "m4a", "aac", "ogg", "opus", "wav", "flac", "ape", "wma", "wv", "alac", "aiff", "mid", "midi", "mpc", "amr", "dsd", "dts", "ac3", "caf", "ra", "rm", "oga", "spx")
 
 val docExtensionList = arrayOf(
-    "txt", "csv", "log", "md", "rtf", "pdf","doc", "dot", "odt", "wps", "wpt", "docx", "dotm", "dotx", "xls", "xlsx", "xlsb", "xlt", "ods", "xlsm", "xltm", "pptx", "ppt", "pptm", "pot", "potx", "potm", "odp")
+    "txt", "csv", "md", "rtf", "pdf","doc", "dot", "odt", "wps", "wpt", "docx", "dotm", "dotx", "xls", "xlsx", "xlsb", "xlt", "ods", "xlsm", "xltm", "pptx", "ppt", "pptm", "pot", "potx", "potm", "odp")
 val apkExtensionList = arrayListOf("apk")
 val zipExtensionList = arrayOf(
     "zip", "rar", "7z", "gz", "tar", "bz", "bz2", "xz", "lz", "lzma", "zst", "cab", "iso", "tgz", "tar.gz", "tbz2", "ar.bz2", "txz", "tar.xz")
@@ -49,7 +49,6 @@ val docExtensionMap = mapOf(
     // 纯文本
     "txt" to "text/plain",
     "csv" to "text/csv",
-    "log" to "text/plain",
     "md" to "text/markdown",
     "rtf" to "application/rtf",
     // Word 文档
