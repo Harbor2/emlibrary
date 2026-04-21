@@ -2,6 +2,8 @@ package com.wyz.emlibrary.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
@@ -324,5 +326,27 @@ object EMUtil {
         val pattern = Pattern.compile(regex)
         val matcher = pattern.matcher(str)
         return matcher.matches()
+    }
+
+    /**
+     * 复制内容到剪切板
+     */
+    fun copyToClipboard(context: Context, text: String, maxLength: Int = 10000) {
+        val safeText = if (text.length > maxLength) {
+            text.take(maxLength) + "…"
+        } else text
+
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", safeText)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    /**
+     * 读取剪切板内容
+     */
+    fun readFromClipboard(context: Context): String? {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        if (!clipboard.hasPrimaryClip()) return null
+        return clipboard.primaryClip?.getItemAt(0)?.text?.toString()
     }
 }
