@@ -809,14 +809,14 @@ object EMFileUtil {
      * @param format  保存格式（仅 Bitmap 时生效）
      * @return 成功则返回新文件，失败返回 null
      */
-    suspend fun saveFileToPrivateDir(
+    suspend fun saveFileOrBitmapToPrivateDir(
         context: Context,
         source: Any,
         newName: String? = null,
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG
     ): SaveFilePrivateResult = withContext(Dispatchers.IO) {
         try {
-            val targetDir = context.getExternalFilesDir(null) ?: context.filesDir
+            val targetDir = context.getExternalFilesDir(null) ?: context.cacheDir
             if (!targetDir.exists()) targetDir.mkdirs()
 
             val targetFileName = when (source) {
