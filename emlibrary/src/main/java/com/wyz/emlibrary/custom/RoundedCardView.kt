@@ -33,7 +33,7 @@ import com.wyz.emlibrary.R
  *             android:background="#ff5500"/>
  *     </com.wyz.emlibrary.custom.RadiusCardView>
  */
-class RadiusCardView @JvmOverloads constructor(
+class RoundedCardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
