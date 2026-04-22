@@ -375,6 +375,7 @@ object EMUtil {
      * 清理缓存
      * @param filePaths 缓存文件路径集合
      */
+    @JvmName("clearCacheByPath")
     suspend fun clearCache(filePaths: List<String>): Boolean {
         return clearCache(filePaths.map { File(it) })
     }
@@ -383,6 +384,7 @@ object EMUtil {
      * 清理缓存
      * @param files 缓存文件集合
      */
+    @JvmName("clearCacheByFile")
     suspend fun clearCache(files: List<File>): Boolean = withContext(Dispatchers.IO) {
         return@withContext try {
             var allSuccess = true
