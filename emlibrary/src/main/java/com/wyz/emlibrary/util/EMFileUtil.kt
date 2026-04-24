@@ -388,7 +388,12 @@ object EMFileUtil {
 
 
 
-    suspend fun saveFileToDownload(context: Context, file: File, subDir: String?, newFileName: String?): SaveFileDownloadResult = withContext(Dispatchers.IO) {
+    suspend fun saveFileToDownload(
+        context: Context,
+        file: File,
+        subDir: String?,
+        newFileName: String?
+    ): SaveFileDownloadResult = withContext(Dispatchers.IO) {
         return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             saveFileToDownloadsUpQ(context, file, subDir, newFileName)
         } else {
