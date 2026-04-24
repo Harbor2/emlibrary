@@ -388,11 +388,11 @@ object EMFileUtil {
 
 
 
-    suspend fun saveFileToDownload(context: Context, file: File, newFileName: String?): SaveFileDownloadResult = withContext(Dispatchers.IO) {
+    suspend fun saveFileToDownload(context: Context, file: File, subDir: String?, newFileName: String?): SaveFileDownloadResult = withContext(Dispatchers.IO) {
         return@withContext if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            saveFileToDownloadsUpQ(context, file, newFileName)
+            saveFileToDownloadsUpQ(context, file, subDir, newFileName)
         } else {
-            saveFileToDownloadsUnderQ(context, file, newFileName)
+            saveFileToDownloadsUnderQ(context, file, subDir, newFileName)
         }
     }
 
@@ -403,7 +403,7 @@ object EMFileUtil {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun saveFileToDownloadsUpQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
+    private fun saveFileToDownloadsUpQ(context: Context, oldFile: File, subDir: String?, newName: String?): SaveFileDownloadResult {
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
         val suffix = if (fileException.isNotEmpty()) ".$fileException" else ""
@@ -417,7 +417,11 @@ object EMFileUtil {
             put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             put(MediaStore.MediaColumns.IS_PENDING, 1)
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            if (subDir.isNullOrEmpty()) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            } else {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/${subDir}")
+            }
         }
 
         val resolver = context.contentResolver
@@ -445,9 +449,17 @@ object EMFileUtil {
         }
     }
 
-    private fun saveFileToDownloadsUnderQ(context: Context, oldFile: File, newName: String?): SaveFileDownloadResult {
-        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        if (!downloadsDir.exists()) downloadsDir.mkdirs()
+    private fun saveFileToDownloadsUnderQ(context: Context, oldFile: File, subDir: String?, newName: String?): SaveFileDownloadResult {
+        val rootDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val downloadsDir = if (subDir.isNullOrEmpty()) {
+            rootDownloadDir
+        } else {
+            File(rootDownloadDir, subDir)
+        }
+        if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
+            Log.e(TAG,"目录创建失败")
+            return SaveFileDownloadResult.Error(ERROR_DEFAULT)
+        }
 
         val oldFileName = oldFile.name
         val fileException = getFileExtension(oldFileName, "")
