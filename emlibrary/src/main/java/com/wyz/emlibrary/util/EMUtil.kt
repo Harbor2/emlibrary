@@ -1,5 +1,6 @@
 package com.wyz.emlibrary.util
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipData
@@ -8,12 +9,16 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresPermission
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.wyz.emlibrary.TAG
@@ -32,6 +37,24 @@ object EMUtil {
      * 通用点击态透明度
      */
     const val RESOURCE_ALPHA_PRESS = 0.5f
+
+    fun showToast(context: Context, str: String) {
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 判断是否有网络连接
+     */
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities != null &&
+                (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+    }
 
     /**
      * 获取屏幕宽高（包含状态栏、导航栏）
