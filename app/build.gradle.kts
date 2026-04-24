@@ -57,4 +57,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // eventbus
     implementation("org.greenrobot:eventbus:3.2.0")
+
+    // OkHttp 库依赖
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
