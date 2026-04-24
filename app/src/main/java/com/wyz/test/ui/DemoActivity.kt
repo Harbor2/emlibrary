@@ -7,6 +7,7 @@ import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.download.interfaces.DownloadManager
 import com.wyz.emlibrary.download.interfaces.DownloadTask
+import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
 import okhttp3.OkHttpClient
@@ -33,25 +34,22 @@ class DemoActivity : AppCompatActivity() {
 
     private fun initEvent() {
         binding.btnPerm.setOnClickListener {
-            startDownloadFile()
+            EMAnimationUtil.viewScaleAnimation(binding.animationView, 1.5f, 0.5f, 800)
         }
 
         binding.btnStartScan.setOnClickListener {
-            DownloadManager.getAllTasks().forEach { (key, value) ->
-                value.pause()
-            }
+            EMAnimationUtil.viewShakeAnimation(binding.animationView)
         }
 
         binding.btnEndScan.setOnClickListener {
-            DownloadManager.getAllTasks().forEach { (key, value) ->
-                value.resume()
-            }
+            EMAnimationUtil.viewBounceAnimation(binding.animationView)
         }
 
         binding.btnStop.setOnClickListener {
-            DownloadManager.getAllTasks().forEach { (key, value) ->
-                value.cancel()
-            }
+            EMAnimationUtil.viewTranslateAnimation(binding.animationView, -100f)
+            binding.root.postDelayed({
+                EMAnimationUtil.viewTranslateAnimation(binding.animationView, 0f)
+            }, 1200)
         }
     }
 
