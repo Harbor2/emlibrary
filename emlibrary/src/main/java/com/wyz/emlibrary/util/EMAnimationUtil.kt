@@ -17,8 +17,9 @@ import com.wyz.emlibrary.R
  * 2️⃣ Property Animation（新动画）（改变view属性view移动后例如点击有效）
  *      取消动画：view.animate().cancel() + 需要手动重置属性
  *
- * 3️⃣ Spring Animation（弹簧动画）
- *      取消动画：springAnimation.cancel() + 需要手动重置属性
+ * 3️⃣ Dynamic Animation（物理动画）
+ *      取消弹簧动画：springAnimation.cancel() + 需要手动重置属性
+ *      除此之外还有惯性动画 FlingAnimation
  */
 object EMAnimationUtil {
     interface AnimationCallback {
