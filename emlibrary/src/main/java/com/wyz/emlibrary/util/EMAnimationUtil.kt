@@ -4,13 +4,22 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
+import com.wyz.emlibrary.R
 
+/**
+ * 动画分三大类：
+ * 1️⃣ View Animation（老动画） 不推荐使用（不改变view属性view移动后例如点击无效），目前代码中也没有
+ *      取消动画：view.clearAnimation() + 不需要手动重置属性
+ *
+ * 2️⃣ Property Animation（新动画）（改变view属性view移动后例如点击有效）
+ *      取消动画：view.animate().cancel() + 需要手动重置属性
+ *
+ * 3️⃣ Spring Animation（弹簧动画）
+ *      取消动画：springAnimation.cancel() + 需要手动重置属性
+ */
 object EMAnimationUtil {
     interface AnimationCallback {
         fun onStart()
@@ -107,6 +116,11 @@ object EMAnimationUtil {
 
     /**
      * 弹簧动画
+     * @param property 动画属性
+     * @see DynamicAnimation.TRANSLATION_Y
+     *
+     * @param finalPos 最终位置
+     *
      * @param startVelocity 初始速度速度越大弹跳越高 有正负之分 可选：-1000 -2000 1000  2000
      *
      * @param damp 阻尼比越大越生硬 范围：0f-1f
@@ -116,9 +130,21 @@ object EMAnimationUtil {
      * @see SpringForce.STIFFNESS_LOW
      *
      * @param callback 动画结束回调
+     *
+     * ⚠️取消动画需要springAnimation.cancel() + 需要手动重置属性
+     * 可再tag中取出spring动画对象
      */
-    fun viewSpringAnimation(view: View, startVelocity: Float = 2000f, damp: Float = 0.2f, stiff: Float = 200f, callback: AnimationCallback? = null) {
-        SpringAnimation(view, DynamicAnimation.TRANSLATION_Y, 0f).apply {
+    fun viewSpringAnimation(
+        view: View,
+        property: DynamicAnimation.ViewProperty = DynamicAnimation.TRANSLATION_X,
+        finalPos: Float = 0f,
+        startVelocity: Float = 2000f,
+        damp: Float = 0.2f,
+        stiff: Float = 200f,
+        callback: AnimationCallback? = null
+    ) {
+        view.clearAnimation()
+        SpringAnimation(view,  property, finalPos).apply {
             spring = SpringForce(0f).apply {
                 // 阻尼比
                 dampingRatio = damp
@@ -130,6 +156,7 @@ object EMAnimationUtil {
             addEndListener { _, _, _, _ ->
                 callback?.onEnd()
             }
+            view.setTag(R.id.spring_animation_tag, this)
             start()
         }
     }
