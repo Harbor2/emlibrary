@@ -42,7 +42,7 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            EMAnimationUtil.viewBounceAnimation(binding.animationView)
+            EMAnimationUtil.viewSpringAnimation(binding.animationView)
         }
 
         binding.btnStop.setOnClickListener {
