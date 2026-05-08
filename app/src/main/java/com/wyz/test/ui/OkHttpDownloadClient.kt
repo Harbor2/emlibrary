@@ -1,6 +1,6 @@
 package com.wyz.test.ui
 
-import com.wyz.emlibrary.download.interfaces.DownloadClient
+import com.wyz.emlibrary.download.DownloadClient
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient

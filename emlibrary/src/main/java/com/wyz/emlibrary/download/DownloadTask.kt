@@ -1,4 +1,4 @@
-package com.wyz.emlibrary.download.interfaces
+package com.wyz.emlibrary.download
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

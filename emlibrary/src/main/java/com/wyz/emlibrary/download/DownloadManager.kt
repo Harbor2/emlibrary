@@ -1,4 +1,4 @@
-package com.wyz.emlibrary.download.interfaces
+package com.wyz.emlibrary.download
 
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap

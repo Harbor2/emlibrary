@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
-import com.wyz.emlibrary.download.interfaces.DownloadManager
-import com.wyz.emlibrary.download.interfaces.DownloadTask
+import com.wyz.emlibrary.download.DownloadManager
+import com.wyz.emlibrary.download.DownloadTask
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
