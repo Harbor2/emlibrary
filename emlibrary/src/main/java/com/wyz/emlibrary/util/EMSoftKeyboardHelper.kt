@@ -13,7 +13,7 @@ import com.wyz.emlibrary.TAG
 /**
  * 软键盘工具类 暂仅支持竖屏
  */
-class SoftKeyboardHelper {
+class EMSoftKeyboardHelper {
     private var lastKeyboardHeight = 0
     private var rootViewVisibleHeight = 0
     private var onGlobalLayoutListener: OnGlobalLayoutListener? = null

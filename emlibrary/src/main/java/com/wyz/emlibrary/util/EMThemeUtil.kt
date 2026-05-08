@@ -32,7 +32,7 @@ import com.wyz.emlibrary.em.EMLibrary
  *    onThemeChanged(theme)
  * }
  */
-object ThemeUtil {
+object EMThemeUtil {
 
     private const val SP_NAME = "theme_prefs"
     private const val KEY_THEME = "theme"

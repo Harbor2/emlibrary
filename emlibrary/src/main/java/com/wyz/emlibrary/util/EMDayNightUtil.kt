@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
  * android日夜间模式工具类
  * xml中如果配置了android:configChanges="uiMode" 则Activity仅通知变化，不会自动切换主题
  */
-object DayNightUtil {
+object EMDayNightUtil {
 
     enum class NightMode {
         MODE_FOLLOW_SYSTEM,
