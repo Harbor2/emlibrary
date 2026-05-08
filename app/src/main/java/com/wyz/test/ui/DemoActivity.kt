@@ -3,10 +3,12 @@ package com.wyz.test.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.download.DownloadManager
 import com.wyz.emlibrary.download.DownloadTask
+import com.wyz.emlibrary.util.Debounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
@@ -29,7 +31,9 @@ class DemoActivity : AppCompatActivity() {
         initEvent()
     }
 
+    private lateinit var debounce: Debounce
     private fun initView() {
+        debounce = Debounce(300, lifecycleScope)
     }
 
     private fun initEvent() {
@@ -42,7 +46,9 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            EMAnimationUtil.viewSpringAnimation(binding.animationView)
+            debounce.submit {
+                EMAnimationUtil.viewSpringAnimation(binding.animationView)
+            }
         }
 
         binding.btnStop.setOnClickListener {
