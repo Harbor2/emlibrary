@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
  * // 可手动取消
  * debounce.cancel()
  */
-class Debounce(
+class EMDebounce(
     private val delayMillis: Long = 300L,
     private val scope: CoroutineScope
 ) {

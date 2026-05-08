@@ -8,7 +8,7 @@ import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.download.DownloadManager
 import com.wyz.emlibrary.download.DownloadTask
-import com.wyz.emlibrary.util.Debounce
+import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
@@ -31,9 +31,9 @@ class DemoActivity : AppCompatActivity() {
         initEvent()
     }
 
-    private lateinit var debounce: Debounce
+    private lateinit var EMDebounce: EMDebounce
     private fun initView() {
-        debounce = Debounce(300, lifecycleScope)
+        EMDebounce = EMDebounce(300, lifecycleScope)
     }
 
     private fun initEvent() {
@@ -46,7 +46,7 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            debounce.submit {
+            EMDebounce.submit {
                 EMAnimationUtil.viewSpringAnimation(binding.animationView)
             }
         }
