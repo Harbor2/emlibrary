@@ -8,12 +8,23 @@ android {
     namespace = "com.wyz.app"
     compileSdk = 34
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.keystore.jks")
+            storePassword = "ark2023@cn1"
+            keyAlias = "key0"
+            keyPassword = "ark2023@cn2"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.wyz.app"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        signingConfig = signingConfigs.getByName("release")
     }
 
     buildTypes {

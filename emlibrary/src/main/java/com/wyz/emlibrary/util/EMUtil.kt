@@ -3,6 +3,7 @@ package com.wyz.emlibrary.util
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,7 +12,9 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.Build
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.ColorRes
@@ -37,6 +40,49 @@ object EMUtil {
 
     fun showToast(context: Context, str: String) {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * WiFi 是否开启
+     * ⚠️需要有 [android.permission.ACCESS_WIFI_STATE] 权限
+     */
+    fun isWifiEnabled(context: Context): Boolean {
+        return try {
+            val wifiManager = context.applicationContext
+                .getSystemService(Context.WIFI_SERVICE) as WifiManager
+            return wifiManager.isWifiEnabled
+        } catch (e: Exception) {
+            Log.e(TAG, "获取wifi打开状态异常：${e.message}")
+            false
+        }
+    }
+
+    /**
+     * 蓝牙是否开启
+     */
+    fun isBluetoothEnabled(): Boolean {
+        val adapter = BluetoothAdapter.getDefaultAdapter()
+        return adapter?.isEnabled == true
+    }
+
+    /**
+     * 移动数据是否开启
+     * ⚠️需要动态申请 [android.permission.READ_PHONE_STATE] 权限
+     */
+    @SuppressLint("MissingPermission")
+    fun isMobileDataEnabled(context: Context): Boolean {
+        return try {
+            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                tm.isDataEnabled
+            } else {
+                val method = TelephonyManager::class.java.getDeclaredMethod("getDataEnabled")
+                method.invoke(tm) as Boolean
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "isMobileDataEnabled error: ${e.message}")
+            false
+        }
     }
 
     /**

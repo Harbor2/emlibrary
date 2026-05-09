@@ -1,8 +1,11 @@
 package com.wyz.test.ui
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
@@ -20,6 +23,9 @@ import kotlin.math.sign
 
 class DemoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDemoBinding
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
