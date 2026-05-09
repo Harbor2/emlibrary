@@ -52,8 +52,17 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            EMDebounce.submit {
-                EMAnimationUtil.viewSpringAnimation(binding.animationView)
+//            EMDebounce.submit {
+//                EMAnimationUtil.viewSpringAnimation(binding.animationView)
+//            }
+//            val infoStr = EMDeviceInfoUtil.deviceInfo(this)
+//            Log.e(TAG, "设备信息：${infoStr}")
+
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                launcher.launch(android.Manifest.permission.READ_PHONE_STATE)
+            } else {
+                val mobileData = EMUtil.isMobileDataEnabled(this)
+                EMUtil.showToast(this, "流量是否开启：${mobileData}")
             }
         }
 
