@@ -13,6 +13,8 @@ import com.wyz.emlibrary.download.EMDownloadManager
 import com.wyz.emlibrary.download.EMDownloadTask
 import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
+import com.wyz.emlibrary.util.EMDeviceInfoUtil
+import com.wyz.emlibrary.util.EMFileUtil
 import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindow
 import okhttp3.OkHttpClient
@@ -58,12 +60,26 @@ class DemoActivity : AppCompatActivity() {
 //            val infoStr = EMDeviceInfoUtil.deviceInfo(this)
 //            Log.e(TAG, "设备信息：${infoStr}")
 
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                launcher.launch(android.Manifest.permission.READ_PHONE_STATE)
-            } else {
-                val mobileData = EMUtil.isMobileDataEnabled(this)
-                EMUtil.showToast(this, "流量是否开启：${mobileData}")
-            }
+//            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                launcher.launch(android.Manifest.permission.READ_PHONE_STATE)
+//            } else {
+//                val mobileData = EMUtil.isMobileDataEnabled(this)
+//                EMUtil.showToast(this, "流量是否开启：${mobileData}")
+//            }
+
+            val storageStatus = EMDeviceInfoUtil.getStorageStatus()
+            val memoryStatus = EMDeviceInfoUtil.getMemoryStatus(this)
+
+            val totalStorage = EMUtil.formatBytesSize(storageStatus.first)
+            val usedStorage = EMUtil.formatBytesSize(storageStatus.second)
+            val availableStorage = EMUtil.formatBytesSize(storageStatus.third)
+
+            val totalMemory = EMUtil.formatBytesSize(memoryStatus.first)
+            val usedMemory = EMUtil.formatBytesSize(memoryStatus.second)
+            val availableMemory = EMUtil.formatBytesSize(memoryStatus.third)
+
+            Log.e(TAG, "totalStorage=$totalStorage, usedStorage=$usedStorage, availableStorage=$availableStorage")
+            Log.e(TAG, "totalMemory=$totalMemory, usedMemory=$usedMemory, availableMemory=$availableMemory")
         }
 
         binding.btnStop.setOnClickListener {
