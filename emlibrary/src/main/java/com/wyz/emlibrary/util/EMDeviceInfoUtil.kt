@@ -1,7 +1,9 @@
 package com.wyz.emlibrary.util
 
+import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
+import android.os.Environment
 
 object EMDeviceInfoUtil {
     // =========================
@@ -47,6 +49,36 @@ object EMDeviceInfoUtil {
      * Android 14 -> 34
      */
     fun sdkInt(): Int = Build.VERSION.SDK_INT
+
+    /**
+     * 存储空间使用情况
+     * 返回总大小、已用大小、可用大小
+     */
+    fun getStorageStatus(): Triple<Long, Long, Long> {
+        // 获取外部存储目录
+        val dataStorageDirectory = Environment.getExternalStorageDirectory()
+        // 获取磁盘总大小
+        val totalSize: Long = dataStorageDirectory.totalSpace
+        // 获取可用磁盘大小
+        val availableSize: Long = dataStorageDirectory.freeSpace
+        // 计算已使用磁盘大小
+        val usedSize = totalSize - availableSize
+        return Triple(totalSize, usedSize, availableSize)
+    }
+
+    /**
+     * 内存使用情况
+     * 返回总内存、已用内存、可用内存
+     */
+    fun getMemoryStatus(context: Context): Triple<Long, Long, Long> {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val memoryInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        val totalMemory = memoryInfo.totalMem
+        val availMemory = memoryInfo.availMem
+        val usedMemory = totalMemory - availMemory
+        return Triple(totalMemory, usedMemory, availMemory)
+    }
 
     // =========================
     // 3. 屏幕信息
