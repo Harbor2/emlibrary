@@ -182,8 +182,6 @@ object EMUtil {
 
     /**
      * 获取导航栏高度
-     * 若设备使用全面屏手势或隐藏导航栏，则返回 0
-     * 如果有导航栏 但是被隐藏了则返回真实导航栏高度
      */
     @SuppressLint("DiscouragedApi", "InternalInsetResource")
     fun getNavigationBarHeight(context: Context): Int {
@@ -198,6 +196,9 @@ object EMUtil {
 
     /**
      * 获取当前实时导航栏高度
+     * ⚠️：
+     * 若设备使用全面屏手势可能返回0或很小的一个高度
+     * 如果有导航栏但是被隐藏了则返回真实导航栏高度
      */
     fun getCurNavigationBarHeight(activity: Activity): Int {
         // 获取 Insets
@@ -209,8 +210,16 @@ object EMUtil {
         return navBarHeight
     }
 
+    fun dp2Px(dpVal: Int): Int {
+        return (dpVal * getApplication().resources.displayMetrics.density).toInt()
+    }
+
     fun dp2px(dpVal: Float): Float {
         return (dpVal * getApplication().resources.displayMetrics.density)
+    }
+
+    fun px2dp(pxVal: Int): Int {
+        return (pxVal / getApplication().resources.displayMetrics.density).toInt()
     }
 
     fun px2dp(pxVal: Float): Float {

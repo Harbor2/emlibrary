@@ -16,7 +16,12 @@ import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
 import com.wyz.emlibrary.util.EMFileUtil
 import com.wyz.emlibrary.util.EMUtil
+import com.wyz.emlibrary.util.delayMillis
 import com.wyz.emlibrary.util.immersiveWindow
+import com.wyz.emlibrary.util.setOnClickListenerDebounce
+import com.wyz.emlibrary.util.startActivity
+import com.wyz.emlibrary.util.toDp
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -39,9 +44,9 @@ class DemoActivity : AppCompatActivity() {
         initEvent()
     }
 
-    private lateinit var EMDebounce: EMDebounce
+    private lateinit var debounce: EMDebounce
     private fun initView() {
-        EMDebounce = EMDebounce(300, lifecycleScope)
+        debounce = EMDebounce(500, lifecycleScope)
     }
 
     private fun initEvent() {
@@ -54,9 +59,9 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-//            EMDebounce.submit {
-//                EMAnimationUtil.viewSpringAnimation(binding.animationView)
-//            }
+            debounce.submitLast {
+                EMAnimationUtil.viewSpringAnimation(binding.animationView)
+            }
 //            val infoStr = EMDeviceInfoUtil.deviceInfo(this)
 //            Log.e(TAG, "设备信息：${infoStr}")
 
@@ -67,19 +72,19 @@ class DemoActivity : AppCompatActivity() {
 //                EMUtil.showToast(this, "流量是否开启：${mobileData}")
 //            }
 
-            val storageStatus = EMDeviceInfoUtil.getStorageStatus()
-            val memoryStatus = EMDeviceInfoUtil.getMemoryStatus(this)
-
-            val totalStorage = EMUtil.formatBytesSize(storageStatus.first)
-            val usedStorage = EMUtil.formatBytesSize(storageStatus.second)
-            val availableStorage = EMUtil.formatBytesSize(storageStatus.third)
-
-            val totalMemory = EMUtil.formatBytesSize(memoryStatus.first)
-            val usedMemory = EMUtil.formatBytesSize(memoryStatus.second)
-            val availableMemory = EMUtil.formatBytesSize(memoryStatus.third)
-
-            Log.e(TAG, "totalStorage=$totalStorage, usedStorage=$usedStorage, availableStorage=$availableStorage")
-            Log.e(TAG, "totalMemory=$totalMemory, usedMemory=$usedMemory, availableMemory=$availableMemory")
+//            val storageStatus = EMDeviceInfoUtil.getStorageStatus()
+//            val memoryStatus = EMDeviceInfoUtil.getMemoryStatus(this)
+//
+//            val totalStorage = EMUtil.formatBytesSize(storageStatus.first)
+//            val usedStorage = EMUtil.formatBytesSize(storageStatus.second)
+//            val availableStorage = EMUtil.formatBytesSize(storageStatus.third)
+//
+//            val totalMemory = EMUtil.formatBytesSize(memoryStatus.first)
+//            val usedMemory = EMUtil.formatBytesSize(memoryStatus.second)
+//            val availableMemory = EMUtil.formatBytesSize(memoryStatus.third)
+//
+//            Log.e(TAG, "totalStorage=$totalStorage, usedStorage=$usedStorage, availableStorage=$availableStorage")
+//            Log.e(TAG, "totalMemory=$totalMemory, usedMemory=$usedMemory, availableMemory=$availableMemory")
         }
 
         binding.btnStop.setOnClickListener {
