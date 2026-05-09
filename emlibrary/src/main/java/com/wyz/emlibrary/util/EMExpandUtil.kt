@@ -14,6 +14,14 @@ import com.wyz.emlibrary.R
 import kotlinx.coroutines.delay
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.nio.charset.Charset
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.min
 
 /**
  * 窗口沉浸式
@@ -109,7 +117,7 @@ fun Context.screenHeight(): Int = resources.displayMetrics.heightPixels
  * 点击事件防抖，只响应第一次点击
  */
 fun View.setOnClickListenerDebounce(
-    interval: Long = 300,
+    interval: Long = 500,
     onClick: (View) -> Unit
 ) {
     setOnClickListener {
@@ -162,19 +170,27 @@ fun RecyclerView.scrollToBottom() {
 }
 
 /*
- * ===================================== 字符串 list  map ===========================================
+ * ===================================== 字符串 list map number ===========================================
  */
 fun String?.isNotNullOrEmpty(): Boolean {
     return !isNullOrEmpty()
 }
 
+fun String.safeSubstring(start: Int, end: Int? = null): String {
+    val safeEnd = min(end ?: length, length)
+    return if (start < safeEnd) substring(start, safeEnd) else ""
+}
+
+/**
+ * 首字母大写
+ */
+fun String.capitalizeFirst(): String =
+    if (isNotEmpty()) this[0].uppercaseChar() + substring(1) else this
+
 fun <T> List<T>?.isNotNullOrEmpty(): Boolean {
     return !isNullOrEmpty()
 }
 
-/*
- * ===================================== number ===========================================
- */
 
 fun Int.toDp(): Int = EMUtil.px2dp(this)
 
@@ -185,3 +201,38 @@ fun Float.toDp(): Float = EMUtil.px2dp(this)
 fun Float.toPx(): Float = EMUtil.dp2px(this)
 
 suspend fun Long.delayMillis() = delay(this)
+
+fun Long.formatDate(pattern: String = "yyyy-MM-dd"): String {
+    val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+    return sdf.format(Date(this))
+}
+
+/*
+ * ===================================== File ===========================================
+ */
+/**
+ * ⚠️小文件读取，文件过大容易oom
+ */
+suspend fun File.readTextSafe(
+    charset: Charset = Charsets.UTF_8
+): String = withContext(Dispatchers.IO) {
+    return@withContext try {
+        if (exists()) readText(charset)
+        else ""
+    } catch (_: Exception) {
+        ""
+    }
+}
+
+
+/*
+ * ===================================== 协程 ===========================================
+ */
+/**
+ * 安全执行协程，忽略异常
+ */
+suspend fun safeRun(block: suspend () -> Unit) {
+    try {
+        block
+    } catch (_: Exception) {}
+}
