@@ -1,6 +1,6 @@
 package com.wyz.test.ui
 
-import com.wyz.emlibrary.download.DownloadClient
+import com.wyz.emlibrary.download.EMDownloadClient
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -56,9 +56,9 @@ import java.io.InputStream
  *         )
  *     }
  */
-class OkHttpDownloadClient(
+class OkHttpEMDownloadClient(
     private val client: OkHttpClient
-) : DownloadClient {
+) : EMDownloadClient {
 
     private var call: Call? = null
 

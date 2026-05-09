@@ -13,8 +13,8 @@ import java.io.FileOutputStream
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 
-class DownloadTask(
-    private val client: DownloadClient,
+class EMDownloadTask(
+    private val client: EMDownloadClient,
     private val url: String,
     val file: File,
 ) {

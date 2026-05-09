@@ -108,17 +108,17 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 文件下载管理器（支持断点续传）
  */
-object DownloadManager {
+object EMDownloadManager {
 
-    private val tasks = ConcurrentHashMap<String, DownloadTask>()
+    private val tasks = ConcurrentHashMap<String, EMDownloadTask>()
 
     fun create(
-        client: DownloadClient,
+        client: EMDownloadClient,
         url: String,
         file: File,
-        callback: DownloadTask.TaskCallback
+        callback: EMDownloadTask.TaskCallback
     ) {
-        val task = DownloadTask(client, url, file).apply {
+        val task = EMDownloadTask(client, url, file).apply {
             addTaskReleaseCallback {
                 tasks.remove(taskId)
             }

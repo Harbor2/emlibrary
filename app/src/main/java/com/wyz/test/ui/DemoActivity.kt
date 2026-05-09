@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
-import com.wyz.emlibrary.download.DownloadManager
-import com.wyz.emlibrary.download.DownloadTask
+import com.wyz.emlibrary.download.EMDownloadManager
+import com.wyz.emlibrary.download.EMDownloadTask
 import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMUtil
@@ -81,18 +81,18 @@ class DemoActivity : AppCompatActivity() {
             .readTimeout(30, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
             .build()
-        val downloadClient = OkHttpDownloadClient(client)
+        val downloadClient = OkHttpEMDownloadClient(client)
 
-        if (DownloadManager.getTasksCount().sign > 5) return
+        if (EMDownloadManager.getTasksCount().sign > 5) return
 
         val file = File(cacheDir, "download_app.apk")
         if (file.exists()) file.delete()
 
-        DownloadManager.create(
+        EMDownloadManager.create(
             client = downloadClient,
             url = "https://downv6.qq.com/qqweb/QQ_1/android_apk/9.2.80_7c7d1008a4510c3d.apk",
             file = file,
-            callback = object : DownloadTask.TaskCallback {
+            callback = object : EMDownloadTask.TaskCallback {
                 override fun onProgress(percent: Int, speedByte: Double, etaSeconds: Long) {
                     Log.d(TAG, "progress=$percent, speed=${EMUtil.formatBytesSize(speedByte.toLong())}, eta=$etaSeconds")
                 }

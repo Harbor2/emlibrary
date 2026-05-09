@@ -2,7 +2,7 @@ package com.wyz.emlibrary.download
 
 import java.io.InputStream
 
-interface DownloadClient {
+interface EMDownloadClient {
 
     fun request(
         url: String,
