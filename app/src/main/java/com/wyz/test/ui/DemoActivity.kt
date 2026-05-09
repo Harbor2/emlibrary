@@ -59,7 +59,7 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            debounce.submitLast {
+            debounce.submitFirst {
                 EMAnimationUtil.viewSpringAnimation(binding.animationView)
             }
 //            val infoStr = EMDeviceInfoUtil.deviceInfo(this)
