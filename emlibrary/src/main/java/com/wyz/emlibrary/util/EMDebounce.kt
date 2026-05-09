@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  * 使用：
  * val debounce = Debounce(500, lifecycleScope)
  *
- * debounce.submit {
+ * debounce.submitLast {
  *     // 事件触发
  * }
  *
@@ -25,19 +25,46 @@ class EMDebounce(
     private val delayMillis: Long = 300L,
     private val scope: CoroutineScope
 ) {
-    private var job: Job? = null
+    private var lastJob: Job? = null
 
-    fun submit(block: suspend () -> Unit) {
-        job?.cancel()
+    private var firstJob: Job? = null
+    private var firstLocked = false
 
-        job = scope.launch {
+    /**
+     * 只响应第一次触发事件
+     */
+    fun submitFirst(block: suspend () -> Unit) {
+        if (firstLocked) return
+        firstLocked = true
+        firstJob?.cancel()
+
+        firstJob = scope.launch {
+            try {
+                block()
+                delay(delayMillis)
+            } finally {
+                firstLocked = false
+            }
+        }
+    }
+
+    /**
+     * 只响应最后一次触发事件
+     */
+    fun submitLast(block: suspend () -> Unit) {
+        lastJob?.cancel()
+
+        lastJob = scope.launch {
             delay(delayMillis)
             block()
         }
     }
 
     fun cancel() {
-        job?.cancel()
-        job = null
+        firstJob?.cancel()
+        lastJob?.cancel()
+        firstJob = null
+        lastJob = null
+        firstLocked = false
     }
 }
