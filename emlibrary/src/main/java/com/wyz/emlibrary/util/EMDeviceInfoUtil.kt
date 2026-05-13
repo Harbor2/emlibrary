@@ -87,14 +87,14 @@ object EMDeviceInfoUtil {
      * 获取屏幕宽度 px
      */
     fun screenWidth(context: Context): Int {
-        return context.resources.displayMetrics.widthPixels
+        return EMUtil.getScreenW(context)
     }
 
     /**
      * 获取屏幕高度 px
      */
     fun screenHeight(context: Context): Int {
-        return context.resources.displayMetrics.heightPixels
+        return EMUtil.getScreenH(context)
     }
 
     /**
@@ -133,6 +133,7 @@ object EMDeviceInfoUtil {
             density: ${density(context)}
             abi: ${primaryAbi()}
             hardware: ${hardware()}
+            memory: ${EMUtil.formatBytesSize(getMemoryStatus(context).first)}
         """.trimIndent()
     }
 }

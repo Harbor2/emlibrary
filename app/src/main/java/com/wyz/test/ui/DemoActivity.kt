@@ -1,11 +1,9 @@
 package com.wyz.test.ui
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
@@ -14,14 +12,9 @@ import com.wyz.emlibrary.download.EMDownloadTask
 import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
-import com.wyz.emlibrary.util.EMFileUtil
 import com.wyz.emlibrary.util.EMUtil
-import com.wyz.emlibrary.util.delayMillis
 import com.wyz.emlibrary.util.immersiveWindow
-import com.wyz.emlibrary.util.setOnClickListenerDebounce
-import com.wyz.emlibrary.util.startActivity
-import com.wyz.emlibrary.util.toDp
-import kotlinx.coroutines.launch
+import com.wyz.test.MyApplication
 import okhttp3.OkHttpClient
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -59,11 +52,17 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnEndScan.setOnClickListener {
-            debounce.submitFirst {
-                EMAnimationUtil.viewSpringAnimation(binding.animationView)
-            }
-//            val infoStr = EMDeviceInfoUtil.deviceInfo(this)
-//            Log.e(TAG, "设备信息：${infoStr}")
+//            debounce.submitFirst {
+//                EMAnimationUtil.viewSpringAnimation(binding.animationView)
+//            }
+            val infoStr = EMDeviceInfoUtil.getDeviceInfo(MyApplication.mContext)
+            Log.e(TAG, "设备信息：${infoStr}")
+
+            val totalSize = EMUtil.getScreenSize(this)
+            Log.e(TAG, "获取屏幕总尺寸：${totalSize.first}x${totalSize.second}")
+
+            val usableSize = EMUtil.getUsableScreenSize(this)
+            Log.e(TAG, "获取屏幕可用尺寸：${usableSize.first}x${usableSize.second}")
 
 //            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 //                launcher.launch(android.Manifest.permission.READ_PHONE_STATE)

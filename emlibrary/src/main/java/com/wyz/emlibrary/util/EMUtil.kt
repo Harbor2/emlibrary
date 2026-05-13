@@ -10,12 +10,15 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
+import android.hardware.display.DisplayManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.view.Display
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresPermission
@@ -102,31 +105,33 @@ object EMUtil {
     /**
      * 获取屏幕宽高（包含状态栏、导航栏）
      */
-    fun getScreenSize(activity: Activity): Pair<Int, Int> {
+    fun getScreenSize(context: Context): Pair<Int, Int> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = activity.windowManager.currentWindowMetrics
-            val bounds = windowMetrics.bounds
-            Pair(bounds.width(), bounds.height())
+            val dm = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+            val display = dm.getDisplay(Display.DEFAULT_DISPLAY)
+            val mode = display?.mode
+            (mode?.physicalWidth ?: 0) to (mode?.physicalHeight ?: 0)
         } else {
-            val display = activity.windowManager.defaultDisplay
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val point = Point()
-            display.getRealSize(point)
-            Pair(point.x, point.y)
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getRealSize(point)
+            point.x to point.y
         }
     }
 
     /**
      * 获取屏幕宽度
      */
-    fun getScreenW(activity: Activity): Int {
-        return getScreenSize(activity).first
+    fun getScreenW(context: Context): Int {
+        return getScreenSize(context).first
     }
 
     /**
      * 获取屏幕高度
      */
-    fun getScreenH(activity: Activity): Int {
-        return getScreenSize(activity).second
+    fun getScreenH(context: Context): Int {
+        return getScreenSize(context).second
     }
 
     /**
