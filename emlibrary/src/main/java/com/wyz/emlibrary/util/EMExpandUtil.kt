@@ -108,6 +108,21 @@ fun Context.screenWidth(): Int = resources.displayMetrics.widthPixels
  */
 fun Context.screenHeight(): Int = resources.displayMetrics.heightPixels
 
+/**
+ * 获取状态栏高度
+ * 配置中的高度
+ */
+fun Context.statusBarHeight(default: Int = 48): Int {
+    return EMUtil.getStatusBarHeight(this, default)
+}
+
+/**
+ * 获取导航栏高度
+ * 配置中的高度
+ */
+fun Context.getNaviBarHeight(): Int {
+    return EMUtil.getNavigationBarHeight(this)
+}
 
 /*
  * ===================================== View ===========================================
