@@ -174,6 +174,8 @@ object EMUtil {
 
     /**
      * 获取当前实时状态栏高度
+     * ⚠️：
+     * 如果有状态栏但是被隐藏了返回0，当滑动让其显示时高度也是0
      */
     fun getCurStatusBarHeight(activity: Activity, default: Int = 48): Int {
         // 获取 Insets
@@ -202,8 +204,7 @@ object EMUtil {
     /**
      * 获取当前实时导航栏高度
      * ⚠️：
-     * 若设备使用全面屏手势可能返回0或很小的一个高度
-     * 如果有导航栏但是被隐藏了则返回真实导航栏高度
+     * 如果有导航栏但是被隐藏了返回0，当滑动让其显示时高度也是0
      */
     fun getCurNavigationBarHeight(activity: Activity): Int {
         // 获取 Insets
