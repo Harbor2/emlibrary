@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.wyz.app"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         create("release") {
@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId = "com.wyz.app"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -52,23 +52,20 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.activity:activity-ktx:1.8.0")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
+    implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
 
     // 添加对emlibrary模块的依赖
     implementation(project(":emlibrary"))
-
-    // coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2")
     // glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // eventbus
     implementation("org.greenrobot:eventbus:3.2.0")
-
     // OkHttp 库依赖
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
