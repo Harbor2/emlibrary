@@ -68,6 +68,34 @@ fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int?
     }
 }
 
+/**
+ * 隐藏底部导航栏
+ */
+fun Activity.hideNaviBar() {
+    window.decorView.systemUiVisibility =
+        (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+}
+
+/**
+ * 隐藏顶部状态栏
+ */
+fun Activity.hideStatusBar() {
+    window.decorView.systemUiVisibility =
+        (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+}
+
+fun Activity.hideStatusNaviBar() {
+    window.decorView.systemUiVisibility =
+        (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+}
+
 /*
  * ===================================== context ===========================================
  */
