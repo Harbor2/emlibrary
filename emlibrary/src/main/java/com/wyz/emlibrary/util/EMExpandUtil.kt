@@ -24,7 +24,13 @@ import java.util.Locale
 import kotlin.math.min
 
 /**
+ * 用于记录activity顶部view间距的id
+ */
+private const val TAG_MARGIN_TOP = -12321
+
+/**
  * 窗口沉浸式
+ * ⚠️：每次都会重置flag 如有搭配其他flag状态需要重新设置
  * @param rootView 根布局
  * @param isDarkMode 是否是暗黑模式，影响顶部状态栏字体颜色
  * @param views 需要设置 marginTop 的 View
@@ -35,12 +41,12 @@ fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, vararg views: 
 
 fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int? = null, naviColor: Int? = null, vararg views: View?) {
     try {
-        window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or
-                if (isDarkMode) {
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                } else {
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                }
+        window.decorView.systemUiVisibility =
+            if (isDarkMode) {
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            } else {
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            }
         window.statusBarColor = barColor ?: Color.TRANSPARENT
         window.navigationBarColor = naviColor ?: Color.BLACK
 
@@ -48,10 +54,14 @@ fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int?
             val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
             views.forEach { viewItem ->
-                viewItem?.let {
-                    val params = it.layoutParams as ViewGroup.MarginLayoutParams
-                    params.topMargin = systemInsets.top
+                viewItem ?: return@forEach
+                val params = viewItem.layoutParams as? ViewGroup.MarginLayoutParams ?: return@forEach
+                // 保存初始 margin
+                val originalTopMargin = (viewItem.getTag(TAG_MARGIN_TOP) as? Int) ?: params.topMargin.also {
+                    viewItem.setTag(TAG_MARGIN_TOP, it)
                 }
+                params.topMargin = originalTopMargin + systemInsets.top
+                viewItem.layoutParams = params
             }
 
             view.setPadding(
@@ -60,7 +70,7 @@ fun Activity.immersiveWindow(rootView: View, isDarkMode: Boolean, barColor: Int?
                 view.paddingRight,
                 systemInsets.bottom
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         // 让系统回调生效
         rootView.requestApplyInsets()
