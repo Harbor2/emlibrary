@@ -13,6 +13,7 @@ import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
 import com.wyz.emlibrary.util.EMUtil
+import com.wyz.emlibrary.util.hideStatusNaviBar
 import com.wyz.emlibrary.util.immersiveWindow
 import com.wyz.test.MyApplication
 import okhttp3.OkHttpClient
@@ -31,7 +32,8 @@ class DemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, barColor = null, naviColor = null, binding.containerNavi)
+        immersiveWindow(binding.root, false, barColor = null, naviColor = null, null)
+        hideStatusNaviBar()
 
         initView()
         initEvent()
@@ -43,6 +45,9 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun initEvent() {
+        binding.containerNavi.setOnClickListener {
+            TestActivity.startActivity(this)
+        }
         binding.btnPerm.setOnClickListener {
             EMAnimationUtil.viewScaleAnimation(binding.animationView, 1.5f, 0.5f, 800)
         }
