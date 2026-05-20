@@ -39,6 +39,13 @@ fun Activity.immersiveWindowC(rootView: View, isDarkFont: Boolean, vararg views:
 
 /**
  * 沉浸式窗口
+ */
+fun Activity.immersiveWindowC(rootView: View, isDarkFont: Boolean, isShowSystemBar: Boolean, vararg views: View?) {
+    immersiveWindowC(rootView, isDarkFont, isShowSystemBar, barColor = null, naviColor = null, *views)
+}
+
+/**
+ * 沉浸式窗口
  * ⚠️：每次都会重置flag 如有搭配其他flag状态需要重新设置
  * @param rootView 根布局
  * @param isDarkFont 是否是黑色字体以及图标icon
