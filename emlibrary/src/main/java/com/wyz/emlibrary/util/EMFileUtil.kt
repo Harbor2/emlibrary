@@ -403,12 +403,36 @@ object EMFileUtil {
         return Uri.fromFile(file)
     }
 
+    /**
+     * 安全写入文件内容
+     * 小文件写入，文件过大容易oom
+     */
+    suspend fun writeTextToFile(str: String, file: File, charset: Charset = Charsets.UTF_8): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            // 确保父目录存在
+            file.parentFile?.takeIf { !it.exists() }?.mkdirs()
+            // 临时文件（避免写一半崩溃导致文件损坏）
+            val tempFile = File(file.absolutePath + ".tmp")
+            tempFile.writeText(str, charset)
+
+            if (file.exists()) {
+                if (!file.delete()) return@withContext false
+            }
+            if (!tempFile.renameTo(file)) {
+                tempFile.delete()
+                return@withContext false
+            }
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
 
     /**
      * 安全读取文件内容
      * ⚠️ 读取小文件，文件过大容易oom
      */
-    suspend fun getReadTextSafe(file: File, charset: Charset = Charsets.UTF_8): String = withContext(Dispatchers.IO) {
+    suspend fun readTextFromFile(file: File, charset: Charset = Charsets.UTF_8): String = withContext(Dispatchers.IO) {
         return@withContext try {
             if (file.exists()) file.readText(charset)
             else ""

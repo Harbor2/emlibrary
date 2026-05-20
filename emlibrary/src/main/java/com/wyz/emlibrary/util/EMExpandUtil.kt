@@ -324,13 +324,26 @@ fun Long.formatDate(pattern: String = "yyyy-MM-dd"): String {
 /*
  * ===================================== File  Uri ===========================================
  */
+
+/**
+ * 安全写入文件内容
+ * ⚠️ 小文件写入，文件过大容易oom
+ */
+suspend fun File.writeTextToFile(
+    str: String,
+    file: File,
+    charset: Charset = Charsets.UTF_8
+): Boolean {
+    return EMFileUtil.writeTextToFile(str, file, charset)
+}
+
 /**
  * ⚠️小文件读取，文件过大容易oom
  */
-suspend fun File.readTextSafe(
+suspend fun File.readTextFromFile(
     charset: Charset = Charsets.UTF_8
 ): String {
-    return EMFileUtil.getReadTextSafe(this, charset)
+    return EMFileUtil.readTextFromFile(this, charset)
 }
 
 
