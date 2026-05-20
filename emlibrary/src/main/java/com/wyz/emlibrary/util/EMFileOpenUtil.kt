@@ -23,20 +23,20 @@ import kotlin.collections.contains
  */
 object EMFileOpenUtil {
 
-    fun openFile(context: Context, file: File): Boolean {
+    fun openFile(context: Context, file: File, authority: String = "${context.packageName}.provider"): Boolean {
         if (!file.exists()) {
             Toast.makeText(context, context.getString(R.string.toast_file_not_exist), Toast.LENGTH_SHORT).show()
             return false
         }
         val intent = try {
             when {
-                imageExtensionList.contains(file.extension) -> openImageFile(context, file)
-                videoExtensionList.contains(file.extension) -> openVideoFile(context, file)
-                audioExtensionList.contains(file.extension) -> openAudioFile(context, file)
-                docExtensionList.contains(file.extension) -> openDocFile(context, file)
-                apkExtensionList.contains(file.extension) -> openApkFile(context, file)
-                zipExtensionList.contains(file.extension) -> openZipFile(context, file)
-                else -> openUnknownFile(context, file)
+                imageExtensionList.contains(file.extension) -> openImageFile(context, file, authority)
+                videoExtensionList.contains(file.extension) -> openVideoFile(context, file, authority)
+                audioExtensionList.contains(file.extension) -> openAudioFile(context, file, authority)
+                docExtensionList.contains(file.extension) -> openDocFile(context, file, authority)
+                apkExtensionList.contains(file.extension) -> openApkFile(context, file, authority)
+                zipExtensionList.contains(file.extension) -> openZipFile(context, file, authority)
+                else -> openUnknownFile(context, file, authority)
             }
         } catch (e: Exception) {
             Log.d(TAG, "openFile error：${e.message}")
@@ -56,10 +56,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openUnknownFile(context: Context, file: File): Intent {
+    private fun openUnknownFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
         return Intent(Intent.ACTION_VIEW).apply {
@@ -68,10 +68,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openImageFile(context: Context, file: File): Intent {
+    private fun openImageFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
 
@@ -81,10 +81,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openVideoFile(context: Context, file: File): Intent {
+    private fun openVideoFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
 
@@ -94,10 +94,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openAudioFile(context: Context, file: File): Intent {
+    private fun openAudioFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
 
@@ -110,10 +110,10 @@ object EMFileOpenUtil {
     /**
      * 需要 REQUEST_INSTALL_PACKAGES 权限
      */
-    private fun openApkFile(context: Context, file: File): Intent {
+    private fun openApkFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
 
@@ -124,10 +124,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openZipFile(context: Context, file: File): Intent {
+    private fun openZipFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
 
@@ -137,10 +137,10 @@ object EMFileOpenUtil {
         }
     }
 
-    private fun openDocFile(context: Context, file: File): Intent {
+    private fun openDocFile(context: Context, file: File, authority: String): Intent {
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName}.provider",
+            authority,
             file
         )
         return Intent(Intent.ACTION_VIEW).apply {
