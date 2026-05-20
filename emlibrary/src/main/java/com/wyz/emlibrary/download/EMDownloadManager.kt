@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap
 //    }
 
 
-// 2.自定义client
+// 2.自定义client (也可使用默认的HttpUrlConnection)
 //  class OkHttpDownloadClient(
 //      private val client: OkHttpClient
 //  ) : DownloadClient {
@@ -113,7 +113,7 @@ object EMDownloadManager {
     private val tasks = ConcurrentHashMap<String, EMDownloadTask>()
 
     fun create(
-        client: EMDownloadClient,
+        client: EMDownloadClient = HttpURLEMDownloadClient(),
         url: String,
         file: File,
         callback: EMDownloadTask.TaskCallback
