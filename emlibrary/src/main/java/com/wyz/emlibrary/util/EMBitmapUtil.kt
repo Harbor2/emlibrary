@@ -25,19 +25,24 @@ object EMBitmapUtil {
 
     /**
      * 图片uri转bitmap
+     * 支持content类型和file类型
      */
-    fun uriToBitmap(context: Context, uriStr: String): Bitmap? {
+    fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
         return try {
-            val uri = uriStr.toUri()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                val source = ImageDecoder.createSource(
+                    context.contentResolver,
+                    uri
+                )
                 ImageDecoder.decodeBitmap(source)
             } else {
-                val inputStream = context.contentResolver.openInputStream(uri)
-                BitmapFactory.decodeStream(inputStream)
+                context.contentResolver
+                    .openInputStream(uri)
+                    ?.use {
+                        BitmapFactory.decodeStream(it)
+                    }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: Exception) {
             null
         }
     }

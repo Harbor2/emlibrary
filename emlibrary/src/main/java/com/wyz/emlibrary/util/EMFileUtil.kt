@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
+import androidx.core.content.FileProvider
 import com.wyz.emlibrary.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -18,7 +19,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.charset.Charset
 import kotlin.coroutines.coroutineContext
+import kotlin.io.readText
 
 object EMFileUtil {
     const val ERROR_DEFAULT = -1
@@ -384,6 +387,34 @@ object EMFileUtil {
         if (!file.exists()) return null
         val ext = file.name.substringAfterLast('.', "")
         return getFileMimeType(ext)
+    }
+
+    /**
+     * 获取文件uri
+     */
+    fun getFileContentUri(context: Context, file: File, authority: String): Uri {
+        return FileProvider.getUriForFile(context, authority, file)
+    }
+
+    /**
+     * 获取文件uri
+     */
+    fun getFileFileUri(context: Context, file: File): Uri {
+        return Uri.fromFile(file)
+    }
+
+
+    /**
+     * 安全读取文件内容
+     * ⚠️ 读取小文件，文件过大容易oom
+     */
+    suspend fun getReadTextSafe(file: File, charset: Charset = Charsets.UTF_8): String = withContext(Dispatchers.IO) {
+        return@withContext try {
+            if (file.exists()) file.readText(charset)
+            else ""
+        } catch (_: Exception) {
+            ""
+        }
     }
 
 

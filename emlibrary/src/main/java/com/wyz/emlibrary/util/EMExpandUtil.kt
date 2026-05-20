@@ -1,13 +1,20 @@
 package com.wyz.emlibrary.util
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.provider.OpenableColumns
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.wyz.emlibrary.R
@@ -19,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -314,22 +322,119 @@ fun Long.formatDate(pattern: String = "yyyy-MM-dd"): String {
 }
 
 /*
- * ===================================== File ===========================================
+ * ===================================== File  Uri ===========================================
  */
 /**
  * ⚠️小文件读取，文件过大容易oom
  */
 suspend fun File.readTextSafe(
     charset: Charset = Charsets.UTF_8
-): String = withContext(Dispatchers.IO) {
-    return@withContext try {
-        if (exists()) readText(charset)
-        else ""
-    } catch (_: Exception) {
-        ""
+): String {
+    return EMFileUtil.getReadTextSafe(this, charset)
+}
+
+
+/**
+ * file转bitmap
+ */
+fun File.toBitmap(): Bitmap? {
+    return EMBitmapUtil.fileToBitmap(this)
+}
+
+/**
+ * file转content类型uri
+ */
+fun File.toContentUri(
+    context: Context,
+    authority: String = "${context.packageName}.fileProvider"
+): Uri {
+    return EMFileUtil.getFileContentUri(context, this, authority)
+}
+
+/**
+ * file转file类型uri
+ */
+fun File.toFileUri(context: Context): Uri {
+    return EMFileUtil.getFileFileUri(context, this)
+}
+
+/**
+ * 获取file的mimeType
+ */
+fun File.mimeType(file: File): String? {
+    return EMFileUtil.getFileMimeType(file)
+}
+
+/**
+ * uri转bitmap
+ * 支持content类型和file类型
+ */
+fun Uri.toBitmap(context: Context): Bitmap? {
+    return EMBitmapUtil.uriToBitmap(context, this)
+}
+
+/**
+ * uri转stream
+ * 支持content uri和file uri
+ */
+fun Uri.inputStream(context: Context): InputStream? {
+    return when (scheme) {
+        ContentResolver.SCHEME_CONTENT -> {
+            context.contentResolver.openInputStream(this)
+        }
+
+        ContentResolver.SCHEME_FILE -> {
+            File(path ?: return null).inputStream()
+        }
+        else -> {
+            try {
+                File(path ?: return null).inputStream()
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 }
 
+/**
+ * uri的文件名
+ * 支持content uri和file uri
+ */
+fun Uri.fileName(context: Context): String? {
+    if (scheme == ContentResolver.SCHEME_CONTENT) {
+        context.contentResolver.query(
+            this,
+            arrayOf(OpenableColumns.DISPLAY_NAME),
+            null,
+            null,
+            null
+        )?.use {
+            val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (it.moveToFirst() && index >= 0) {
+                return it.getString(index)
+            }
+        }
+    }
+    return File(path ?: return null).name
+}
+
+/**
+ * uri 获取mimetype
+ * 支持content uri和file uri
+ */
+fun Uri.mimeType(context: Context): String? {
+    return when (scheme) {
+        ContentResolver.SCHEME_CONTENT -> {
+            context.contentResolver.getType(this)
+        }
+
+        ContentResolver.SCHEME_FILE -> {
+            MimeTypeMap.getSingleton()
+                .getMimeTypeFromExtension(File(path ?: return null).extension.lowercase())
+        }
+        else -> null
+    }
+}
 
 /*
  * ===================================== 协程 ===========================================
