@@ -13,8 +13,7 @@ import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
 import com.wyz.emlibrary.util.EMUtil
-import com.wyz.emlibrary.util.hideStatusNaviBar
-import com.wyz.emlibrary.util.immersiveWindow
+import com.wyz.emlibrary.util.immersiveWindowC
 import com.wyz.test.MyApplication
 import okhttp3.OkHttpClient
 import java.io.File
@@ -32,8 +31,7 @@ class DemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersiveWindow(binding.root, false, barColor = null, naviColor = null, null)
-        hideStatusNaviBar()
+        immersiveWindowC(binding.root, true, false)
 
         initView()
         initEvent()

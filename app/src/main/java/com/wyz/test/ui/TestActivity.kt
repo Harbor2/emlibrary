@@ -5,9 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.wyz.app.databinding.ActivityTestBinding
-import com.wyz.emlibrary.util.hideNaviBar
-import com.wyz.emlibrary.util.hideStatusBar
-import com.wyz.emlibrary.util.immersiveWindow
+import com.wyz.emlibrary.util.immersiveWindowC
 
 
 class TestActivity : AppCompatActivity() {
@@ -23,9 +21,7 @@ class TestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTestBinding.inflate(layoutInflater)
-        immersiveWindow(binding.root, true, barColor = null, naviColor = null, null)
-        hideStatusBar()
-        hideNaviBar()
+        immersiveWindowC(binding.root, true)
 
         setContentView(binding.root)
     }
