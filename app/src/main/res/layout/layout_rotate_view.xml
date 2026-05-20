@@ -4,7 +4,7 @@
     android:layout_height="192dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.wyz.test.ui.MyButton
+    <com.wyz.test.custom.MyButton
         android:id="@+id/btn_top"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.wyz.test.ui.MyButton
+    <com.wyz.test.custom.MyButton
         android:id="@+id/btn_bottom"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.wyz.test.ui.MyButton
+    <com.wyz.test.custom.MyButton
         android:id="@+id/btn_left"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -37,7 +37,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.wyz.test.ui.MyButton
+    <com.wyz.test.custom.MyButton
         android:id="@+id/btn_right"
         android:layout_width="40dp"
         android:layout_height="40dp"

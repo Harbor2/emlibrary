@@ -1,15 +1,16 @@
-package com.wyz.test.ui
+package com.wyz.test.custom
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.appcompat.widget.AppCompatButton
 import com.wyz.app.R
 
 class MyButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : androidx.appcompat.widget.AppCompatButton(context, attrs, defStyleAttr) {
+) : AppCompatButton(context, attrs, defStyleAttr) {
 
     var mCallback: ButtonCallback? = null
     interface ButtonCallback {

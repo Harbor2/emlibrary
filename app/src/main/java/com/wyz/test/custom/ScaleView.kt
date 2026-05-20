@@ -1,4 +1,4 @@
-package com.wyz.test.ui
+package com.wyz.test.custom
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator

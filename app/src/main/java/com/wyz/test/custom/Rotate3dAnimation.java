@@ -1,12 +1,9 @@
-package com.wyz.test.ui;
+package com.wyz.test.custom;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.TextView;
 
 /**
  * 3D旋转动画
