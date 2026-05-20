@@ -43,7 +43,7 @@ object EMFileShareUtil {
      * 分享多个文件
      */
     @JvmName("shareFilesByFile")
-    fun shareFiles(context: Context, fileList: List<File>): ShareResult {
+    fun shareFiles(context: Context, fileList: List<File>, authority: String = "${context.packageName}.provider"): ShareResult {
         return try {
             val validFiles = fileList.filter { it.exists() }
             if (validFiles.isEmpty()) return ShareResult.Success()
@@ -53,7 +53,7 @@ object EMFileShareUtil {
                 uriList.add(
                     FileProvider.getUriForFile(
                         context,
-                        "${context.packageName}.provider",
+                        authority,
                         it
                     )
                 )
@@ -94,15 +94,15 @@ object EMFileShareUtil {
     /**
      * 分享单个文件
      */
-    fun shareSingleFile(context: Context, filePath: String): ShareResult {
+    fun shareSingleFile(context: Context, filePath: String, authority: String = "${context.packageName}.provider"): ShareResult {
         val targetFile = File(filePath)
-        return shareSingleFile(context, targetFile)
+        return shareSingleFile(context, targetFile, authority)
     }
 
     /**
      * 分享单个文件
      */
-    fun shareSingleFile(context: Context, file: File): ShareResult {
+    fun shareSingleFile(context: Context, file: File, authority: String = "${context.packageName}.provider"): ShareResult {
         if (!file.exists()) {
             Toast.makeText(context, context.getString(R.string.toast_file_not_exist), Toast.LENGTH_SHORT).show()
             return ShareResult.Failed(ShareStatus.ERROR_FILE_NOT_EXIST)
@@ -111,24 +111,24 @@ object EMFileShareUtil {
             val fileExtension = file.extension
             val intent = when {
                 imageExtensionList.contains(fileExtension) -> {
-                    shareImageFile(context, file)
+                    shareImageFile(context, file, authority)
                 }
                 videoExtensionList.contains(fileExtension) -> {
-                    shareVideoFile(context, file)
+                    shareVideoFile(context, file, authority)
                 }
                 audioExtensionList.contains(fileExtension) -> {
-                    shareAudioFile(context, file)
+                    shareAudioFile(context, file, authority)
                 }
                 docExtensionList.contains(fileExtension) -> {
-                    shareDocFile(context ,file)
+                    shareDocFile(context ,file, authority)
                 }
                 apkExtensionList.contains(fileExtension) -> {
-                    shareApkFile(context, file)
+                    shareApkFile(context, file, authority)
                 }
                 zipExtensionList.contains(fileExtension) -> {
-                    shareZipFile(context, file)
+                    shareZipFile(context, file, authority)
                 }
-                else -> shareUnknownFile(context, file)
+                else -> shareUnknownFile(context, file, authority)
             }
             context.startActivity(Intent.createChooser(intent, "Share File"))
             ShareResult.Success()
@@ -138,8 +138,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareApkFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareApkFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = "application/vnd.android.package-archive"
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -147,8 +147,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareAudioFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareAudioFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
 
         return Intent(Intent.ACTION_SEND).apply {
             type = "audio/*"
@@ -157,8 +157,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareVideoFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareVideoFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = "video/*"
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -166,8 +166,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareImageFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareImageFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = "image/*"
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -175,8 +175,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareZipFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareZipFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = zipExtensionMap[file.extension.lowercase()] ?: "*/*"
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -184,8 +184,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareDocFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareDocFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = docExtensionMap[file.extension.lowercase()] ?: "*/*"
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -193,8 +193,8 @@ object EMFileShareUtil {
         }
     }
 
-    private fun shareUnknownFile(context: Context, file: File): Intent {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun shareUnknownFile(context: Context, file: File, authority: String): Intent {
+        val uri = FileProvider.getUriForFile(context, authority, file)
         return Intent(Intent.ACTION_SEND).apply {
             type = "*/*"
             putExtra(Intent.EXTRA_STREAM, uri)
