@@ -366,6 +366,21 @@ fun File.mimeType(file: File): String? {
 }
 
 /**
+ * 分享文件
+ */
+fun File.share(context: Context, authority: String = "${context.packageName}.provider"): Boolean {
+    val result = EMFileShareUtil.shareSingleFile(context, this, authority)
+    return result is EMFileShareUtil.ShareResult.Success
+}
+
+/**
+ * 打开文件
+ */
+fun File.open(context: Context, authority: String = "${context.packageName}.provider"): Boolean {
+    return EMFileOpenUtil.openFile(context, this, authority)
+}
+
+/**
  * uri转bitmap
  * 支持content类型和file类型
  */
