@@ -1,6 +1,7 @@
 package com.wyz.emlibrary.em
 
 import android.app.Application
+import com.wyz.emlibrary.db.EMDBManager
 import java.lang.IllegalArgumentException
 
 object EMLibrary {
@@ -8,6 +9,7 @@ object EMLibrary {
 
     fun init(application: Application) {
         sApplication = application
+        EMDBManager.init(application)
     }
 
     fun getApplication(): Application {
