@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
+import com.wyz.emlibrary.db.provider.EMDBKVProvider
 import com.wyz.emlibrary.download.EMDownloadManager
 import com.wyz.emlibrary.download.EMDownloadTask
+import com.wyz.emlibrary.db.provider.EMKVObserver
 import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMAnimationUtil
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
@@ -142,6 +144,20 @@ class DemoActivity : AppCompatActivity() {
                 }
             },
         )
+    }
+
+    val observer = EMKVObserver {
+
+    }
+
+    fun registerObserver() {
+        contentResolver.registerContentObserver(
+            EMDBKVProvider.BASE_URI,
+            true,
+            observer
+        )
+
+        contentResolver.unregisterContentObserver(observer)
     }
 
 }
