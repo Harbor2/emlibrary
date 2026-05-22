@@ -7,7 +7,8 @@ import com.wyz.emlibrary.TAG
 
 /**
  * 数据库管理
- * ⚠️ 同进程的线程同步通过加锁解决，但跨进程调用的线程同步有问题，除非跨进程都使用provider调用数据库（暂不解决）
+ * ⚠️ 同进程的线程同步通过加锁解决，但跨进程调用的线程同步有问题，建议使用provider调用数据库。
+ * ⚠️ 跨进程必须使用provider调用数据库,不能直接调用此类
  * EMLibrary初始化时自动初始化数据库
  * 可跨进程直接调用存取Boolean、String类型数据
  */
@@ -19,7 +20,7 @@ object EMDBManager {
     private const val STR_NUM_ZERO = "0"
 
     @Volatile
-    private var initialized = false
+    var initialized = false
 
     /**
      * 数据库读写锁
@@ -100,6 +101,9 @@ object EMDBManager {
         }
     }
 
+    /**
+     * 删除指定userid下的key
+     */
     fun deleteKeyValue(key: String, userId: String = EMDBDao.DB_USER_DEFAULT): Boolean {
         writeLock.lock()
         try {
@@ -109,6 +113,10 @@ object EMDBManager {
         }
     }
 
+    /**
+     * 1.清空指定userid下的数据
+     * 2.清空所有数据
+     */
     fun clearKeyValue(userId: String? = null): Boolean {
         writeLock.lock()
         try {

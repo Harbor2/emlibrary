@@ -58,16 +58,11 @@ class EMDBDao(private val dbHelper: EMDBHelper) {
      */
     fun getValueByKey(key: String, defaultValue: String = "", userId: String = DB_USER_DEFAULT): String {
         return try {
-            val cursor = getCursorByKey(key, userId)
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    val index = cursor.getColumnIndexOrThrow(EMDBConstant.KEY_VALUE)
-                    cursor.getString(index) ?: defaultValue
-                } else {
-                    defaultValue
-                }
-            }
-            defaultValue
+            getCursorByKey(key, userId)?.use { cursor ->
+                if (!cursor.moveToFirst()) return defaultValue
+                val index = cursor.getColumnIndexOrThrow(EMDBConstant.KEY_VALUE)
+                cursor.getString(index) ?: defaultValue
+            } ?: defaultValue
         } catch (e: Exception) {
             Log.e(TAG, "数据库读取异常：${e.message}")
             defaultValue

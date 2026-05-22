@@ -7,6 +7,7 @@ import android.os.Looper
 
 /**
  * 数据观察者
+ * content://com.emlibrary.db/type?userId=userId&key=key&value=value
  *
  * val observer = EMKVObserver { uri ->
  *
@@ -18,6 +19,13 @@ import android.os.Looper
  *             observer
  *         )
  * contentResolver.unregisterContentObserver(observer)
+ *
+ *
+ * // 解析uri
+ * val type = uri?.pathSegments?.firstOrNull()
+ * val userId = uri?.getQueryParameter(PARAMS_USER_ID)
+ * val key = uri?.getQueryParameter(PARAMS_KEY)
+ * val value = uri?.getQueryParameter(PARAMS_VALUE)
  */
 class EMKVObserver(
     private val onChange: (Uri?) -> Unit
