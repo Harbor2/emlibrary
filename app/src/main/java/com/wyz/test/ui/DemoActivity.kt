@@ -7,20 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.wyz.app.databinding.ActivityDemoBinding
 import com.wyz.emlibrary.TAG
+import com.wyz.emlibrary.db.EMDBManager
 import com.wyz.emlibrary.db.provider.EMDBKVProvider
-import com.wyz.emlibrary.download.EMDownloadManager
-import com.wyz.emlibrary.download.EMDownloadTask
+import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_KEY
+import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_USER_ID
+import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_VALUE
 import com.wyz.emlibrary.db.provider.EMKVObserver
 import com.wyz.emlibrary.util.EMDebounce
-import com.wyz.emlibrary.util.EMAnimationUtil
-import com.wyz.emlibrary.util.EMDeviceInfoUtil
-import com.wyz.emlibrary.util.EMUtil
 import com.wyz.emlibrary.util.immersiveWindowC
-import com.wyz.test.MyApplication
-import okhttp3.OkHttpClient
-import java.io.File
-import java.util.concurrent.TimeUnit
-import kotlin.math.sign
 
 
 class DemoActivity : AppCompatActivity() {
@@ -37,6 +31,7 @@ class DemoActivity : AppCompatActivity() {
 
         initView()
         initEvent()
+        registerObserver()
     }
 
     private lateinit var debounce: EMDebounce
@@ -47,107 +42,51 @@ class DemoActivity : AppCompatActivity() {
     private fun initEvent() {
         binding.containerNavi.setOnClickListener {
             TestActivity.startActivity(this)
+
+            val value = EMDBManager.getValueByKey("enterHome", "222222")
+            Log.d(TAG, "本地读取结果：$value")
         }
+
         binding.btnPerm.setOnClickListener {
-            EMAnimationUtil.viewScaleAnimation(binding.animationView, 1.5f, 0.5f, 800)
+            val bundle = Bundle().apply {
+                putString(PARAMS_KEY, "enterHome")
+                putString(PARAMS_VALUE, "no")
+            }
+            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_PUT_STRING, null, bundle)
+            val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
+            Log.d(TAG, "插入结果：$status")
         }
 
         binding.btnStartScan.setOnClickListener {
-            EMAnimationUtil.viewShakeAnimation(binding.animationView)
+            val bundle = Bundle().apply {
+                putString(PARAMS_KEY, "enterHome")
+                putString(PARAMS_VALUE, "")
+            }
+            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_PUT_STRING, null, bundle)
+            val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
+            Log.d(TAG, "更新结果：$status")
         }
 
         binding.btnEndScan.setOnClickListener {
-//            debounce.submitFirst {
-//                EMAnimationUtil.viewSpringAnimation(binding.animationView)
-//            }
-            val infoStr = EMDeviceInfoUtil.getDeviceInfo(MyApplication.mContext)
-            Log.e(TAG, "设备信息：${infoStr}")
-
-            val totalSize = EMUtil.getScreenSize(this)
-            Log.e(TAG, "获取屏幕总尺寸：${totalSize.first}x${totalSize.second}")
-
-            val usableSize = EMUtil.getUsableScreenSize(this)
-            Log.e(TAG, "获取屏幕可用尺寸：${usableSize.first}x${usableSize.second}")
-
-//            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                launcher.launch(android.Manifest.permission.READ_PHONE_STATE)
-//            } else {
-//                val mobileData = EMUtil.isMobileDataEnabled(this)
-//                EMUtil.showToast(this, "流量是否开启：${mobileData}")
-//            }
-
-//            val storageStatus = EMDeviceInfoUtil.getStorageStatus()
-//            val memoryStatus = EMDeviceInfoUtil.getMemoryStatus(this)
-//
-//            val totalStorage = EMUtil.formatBytesSize(storageStatus.first)
-//            val usedStorage = EMUtil.formatBytesSize(storageStatus.second)
-//            val availableStorage = EMUtil.formatBytesSize(storageStatus.third)
-//
-//            val totalMemory = EMUtil.formatBytesSize(memoryStatus.first)
-//            val usedMemory = EMUtil.formatBytesSize(memoryStatus.second)
-//            val availableMemory = EMUtil.formatBytesSize(memoryStatus.third)
-//
-//            Log.e(TAG, "totalStorage=$totalStorage, usedStorage=$usedStorage, availableStorage=$availableStorage")
-//            Log.e(TAG, "totalMemory=$totalMemory, usedMemory=$usedMemory, availableMemory=$availableMemory")
+            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_CLEAR, null, null)
+            val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
+            Log.d(TAG, "清除结果：$status")
         }
 
         binding.btnStop.setOnClickListener {
-            EMAnimationUtil.viewTranslateAnimation(binding.animationView, -100f)
-            binding.root.postDelayed({
-                EMAnimationUtil.viewTranslateAnimation(binding.animationView, 0f)
-            }, 1200)
         }
     }
 
 
-    private fun startDownloadFile() {
-        val client = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .build()
-        val downloadClient = OkHttpEMDownloadClient(client)
 
-        if (EMDownloadManager.getTasksCount().sign > 5) return
+    val observer = EMKVObserver { uri ->
+        // 解析uri
+        val type = uri?.pathSegments?.firstOrNull()
+        val userId = uri?.getQueryParameter(PARAMS_USER_ID)
+        val key = uri?.getQueryParameter(PARAMS_KEY)
+        val value = uri?.getQueryParameter(PARAMS_VALUE)
 
-        val file = File(cacheDir, "download_app.apk")
-        if (file.exists()) file.delete()
-
-        EMDownloadManager.create(
-            client = downloadClient,
-            url = "https://downv6.qq.com/qqweb/QQ_1/android_apk/9.2.80_7c7d1008a4510c3d.apk",
-            file = file,
-            callback = object : EMDownloadTask.TaskCallback {
-                override fun onProgress(percent: Int, speedByte: Double, etaSeconds: Long) {
-                    Log.d(TAG, "progress=$percent, speed=${EMUtil.formatBytesSize(speedByte.toLong())}, eta=$etaSeconds")
-                }
-
-                override fun onComplete(file: File) {
-                    Log.d(TAG, "done= $file")
-                    file.renameTo(File(file.parent, "relace.app"))
-                }
-
-                override fun onError(error: String) {
-                    Log.d(TAG, "error=$error")
-                }
-
-                override fun onPaused() {
-                    Log.d(TAG, "paused")
-                }
-
-                override fun onResumed() {
-                    Log.d(TAG, "resumed")
-                }
-
-                override fun onCanceled() {
-                    Log.d(TAG, "canceled")
-                }
-            },
-        )
-    }
-
-    val observer = EMKVObserver {
-
+        Log.d(TAG, "解析返回的结果Uri：type = $type, userId = $userId, key = $key, value = $value")
     }
 
     fun registerObserver() {
@@ -156,8 +95,5 @@ class DemoActivity : AppCompatActivity() {
             true,
             observer
         )
-
-        contentResolver.unregisterContentObserver(observer)
     }
-
 }
