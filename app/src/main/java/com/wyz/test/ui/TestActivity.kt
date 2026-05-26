@@ -17,6 +17,8 @@ import com.wyz.emlibrary.util.immersiveWindowC
 import com.wyz.test.ui.viewmodel.TestViewModel
 import com.wyz.test.ui.viewmodel.TestViewModelFactory
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -41,6 +43,10 @@ class TestActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        lifecycleScope.launch {
+            initData()
+        }
+
         update()
         setupObserver()
 
@@ -48,6 +54,16 @@ class TestActivity : AppCompatActivity() {
             delay(1000)
             viewModel.setSharedState("11111")
         }
+    }
+
+    private suspend fun initData() {
+        flowOf(listOf("A", "B", "C", "D", "E"))
+            .map { list ->
+                list.filter { it != "C" }
+            }
+            .collect { it ->
+                Log.d(TAG, "collect接受数据：$it")
+            }
     }
 
     private fun update() {
