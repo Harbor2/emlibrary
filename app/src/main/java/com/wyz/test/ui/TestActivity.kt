@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.wyz.app.databinding.ActivityTestBinding
 import com.wyz.emlibrary.TAG
 import com.wyz.emlibrary.util.immersiveWindowC
+import com.wyz.test.db.UserEntity
 import com.wyz.test.ui.viewmodel.TestViewModel
 import com.wyz.test.ui.viewmodel.TestViewModelFactory
 import kotlinx.coroutines.delay
@@ -43,27 +44,17 @@ class TestActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        lifecycleScope.launch {
-            initData()
-        }
+        initData()
 
         update()
         setupObserver()
-
-        lifecycleScope.launch {
-            delay(1000)
-            viewModel.setSharedState("11111")
-        }
+        initListener()
     }
 
-    private suspend fun initData() {
-        flowOf(listOf("A", "B", "C", "D", "E"))
-            .map { list ->
-                list.filter { it != "C" }
-            }
-            .collect { it ->
-                Log.d(TAG, "collect接受数据：$it")
-            }
+    private fun initData() {
+        viewModel.userLiveData.observe(this) { value ->
+            binding.tvTitle.text = value?.name ?: ""
+        }
     }
 
     private fun update() {
@@ -91,6 +82,17 @@ class TestActivity : AppCompatActivity() {
                     Log.d(TAG, "SHARED 接收到数据：$info")
                 }
             }
+        }
+    }
+
+    private fun initListener() {
+        binding.btn1.setOnClickListener {
+            viewModel.insertUserInfo(
+                UserEntity(
+                    name = "WYZ:${System.currentTimeMillis()}",
+                    age = 1
+                )
+            )
         }
     }
 }
