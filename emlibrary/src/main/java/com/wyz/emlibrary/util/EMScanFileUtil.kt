@@ -405,7 +405,7 @@ class EMScanFileUtil {
          * 扫描名字像它的文件或者文件夹
          */
         fun scanNameLikeIt(like: String) {
-            mNameLikeFilterSet.add(like.toLowerCase(Locale.getDefault()))
+            mNameLikeFilterSet.add(like.lowercase(Locale.getDefault()))
         }
 
         /**
@@ -413,7 +413,7 @@ class EMScanFileUtil {
          * 不要扫描这样的文件
          */
         fun scanNameNotLikeIt(like: String) {
-            mNameNotLikeFilterSet.add(like.toLowerCase(Locale.getDefault()))
+            mNameNotLikeFilterSet.add(like.lowercase(Locale.getDefault()))
         }
 
         /**
@@ -479,7 +479,7 @@ class EMScanFileUtil {
             // 相似名字获取过滤
             if (mNameLikeFilterSet.isNotEmpty()) {
                 mNameLikeFilterSet.map {
-                    if (name.toLowerCase(Locale.getDefault()).contains(it)) {
+                    if (name.lowercase(Locale.getDefault()).contains(it)) {
                         return true
                     }
                 }
@@ -495,7 +495,7 @@ class EMScanFileUtil {
             // 名字不相似顾虑
             if (mNameNotLikeFilterSet.isNotEmpty()) {
                 mNameNotLikeFilterSet.map {
-                    if (name.toLowerCase(Locale.getDefault()).contains(it)) {
+                    if (name.lowercase(Locale.getDefault()).contains(it)) {
                         return false
                     }
                 }
@@ -512,7 +512,7 @@ class EMScanFileUtil {
                 // 获取文件后缀
                 val suffix: String =
                     name.substring(name.indexOfLast { it == '.' } + 1, name.length)
-                        .toLowerCase(Locale.getDefault())
+                        .lowercase(Locale.getDefault())
                 // return 是否包含这个文件
                 mFilesSuffixFilterSet.contains(suffix)
             } else {
