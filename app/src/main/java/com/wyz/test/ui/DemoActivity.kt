@@ -14,6 +14,7 @@ import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_USER_ID
 import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_VALUE
 import com.wyz.emlibrary.db.provider.EMKVObserver
 import com.wyz.emlibrary.util.EMDebounce
+import com.wyz.emlibrary.util.EMDeviceInfoUtil
 import com.wyz.emlibrary.util.immersiveWindowC
 
 
@@ -48,13 +49,8 @@ class DemoActivity : AppCompatActivity() {
         }
 
         binding.btnPerm.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString(PARAMS_KEY, "enterHome")
-                putString(PARAMS_VALUE, "no")
-            }
-            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_PUT_STRING, null, bundle)
-            val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
-            Log.d(TAG, "插入结果：$status")
+            val deviceInfo = EMDeviceInfoUtil.getDeviceInfo(this)
+            Log.d(TAG, "获取设备信息：$deviceInfo")
         }
 
         binding.btnStartScan.setOnClickListener {
