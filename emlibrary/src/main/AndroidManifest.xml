@@ -4,7 +4,7 @@
         <!-- 数据库提供者 -->
         <provider
             android:name="com.wyz.emlibrary.db.provider.EMDBKVProvider"
-            android:authorities="com.emlibrary.db"
+            android:authorities="${applicationId}.emlibrary.db"
             android:exported="false" />
     </application>
 </manifest>
