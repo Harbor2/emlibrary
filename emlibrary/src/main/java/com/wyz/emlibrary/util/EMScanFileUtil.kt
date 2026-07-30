@@ -485,7 +485,7 @@ class EMScanFileUtil {
                 }
                 return false
             }
-            return true
+            return false
         }
 
         /**
@@ -501,7 +501,7 @@ class EMScanFileUtil {
                 }
                 return true
             }
-            return true
+            return false
         }
 
         /**
@@ -516,7 +516,7 @@ class EMScanFileUtil {
                 // return 是否包含这个文件
                 mFilesSuffixFilterSet.contains(suffix)
             } else {
-                true
+                false
             }
         }
 
@@ -527,7 +527,7 @@ class EMScanFileUtil {
             return if (pathRegexList.isNotEmpty()) {
                 EMUtil.isStrMatchRegexList(filePath, pathRegexList)
             } else {
-                true
+                false
             }
         }
 
