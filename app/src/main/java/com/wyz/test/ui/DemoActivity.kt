@@ -58,13 +58,13 @@ class DemoActivity : AppCompatActivity() {
                 putString(PARAMS_KEY, "enterHome")
                 putString(PARAMS_VALUE, "")
             }
-            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_PUT_STRING, null, bundle)
+            val result = contentResolver.call(EMDBKVProvider.getAuthorityUri(this), EMDBKVProvider.METHOD_PUT_STRING, null, bundle)
             val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
             Log.d(TAG, "更新结果：$status")
         }
 
         binding.btnEndScan.setOnClickListener {
-            val result = contentResolver.call(EMDBKVProvider.BASE_URI, EMDBKVProvider.METHOD_CLEAR, null, null)
+            val result = contentResolver.call(EMDBKVProvider.getAuthorityUri(this), EMDBKVProvider.METHOD_CLEAR, null, null)
             val status = result?.getBoolean(EMDBKVProvider.RESULT_STATUS)
             Log.d(TAG, "清除结果：$status")
         }
@@ -87,7 +87,7 @@ class DemoActivity : AppCompatActivity() {
 
     fun registerObserver() {
         contentResolver.registerContentObserver(
-            EMDBKVProvider.BASE_URI,
+            EMDBKVProvider.getAuthorityUri(this),
             true,
             observer
         )

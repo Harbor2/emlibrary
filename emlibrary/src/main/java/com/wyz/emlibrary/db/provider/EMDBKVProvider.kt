@@ -2,6 +2,7 @@ package com.wyz.emlibrary.db.provider
 
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -18,10 +19,9 @@ import com.wyz.emlibrary.util.isNotNullOrEmpty
  *
  * 需要再xml中声明Provider（可不单开进程 已在library中处理）：
  * <provider
- *    android:name="com.wyz.emlibrary.db.provider.EMDBKVProvider"
- *    android:authorities="com.emlibrary.db"
- *    android:exported="false"
- *    android:process=":db"/>
+ *     android:name="com.wyz.emlibrary.db.provider.EMDBKVProvider"
+ *     android:authorities="${applicationId}.emlibrary.db"
+ *     android:exported="false" />
  *
  * insert:
  * val values = ContentValues().apply {
@@ -31,7 +31,7 @@ import com.wyz.emlibrary.util.isNotNullOrEmpty
  * }
  *
  * context.contentResolver.insert(
- *     EMKVProvider.BASE_URI,
+ *     EMDBKVProvider.getAuthorityUri(context),
  *     values
  * )
  *
@@ -41,7 +41,7 @@ import com.wyz.emlibrary.util.isNotNullOrEmpty
  * }
  *
  * context.contentResolver.update(
- *     Uri.parse("content://com.emlibrary.kv/u1/token"),
+ *     Uri.parse("${EMDBKVProvider.getAuthorityString(this)}/u1/token"),
  *     values,
  *     null,
  *     null
@@ -49,7 +49,7 @@ import com.wyz.emlibrary.util.isNotNullOrEmpty
  *
  * delete:
  * context.contentResolver.delete(
- *     EMKVProvider.BASE_URI,
+ *     EMKVProvider.getAuthorityUri(this),
  *     null,
  *     arrayOf(
  *         "u1",
@@ -64,7 +64,7 @@ import com.wyz.emlibrary.util.isNotNullOrEmpty
  * }
  *
  * val result = context.contentResolver.call(
- *     EMDBKVProvider.BASE_URI,
+ *     EMDBKVProvider.getAuthorityUri(this),
  *     EMDBKVProvider.METHOD_GET_STRING,
  *     null,
  *     bundle
@@ -87,18 +87,22 @@ class EMDBKVProvider : ContentProvider() {
         const val PARAMS_DEFAULT_VALUE = "default_value"
 
         // ================= uri =================
-        /**
-         * Provider authority uri
-         */
-        const val AUTHORITY = "com.emlibrary.db"
-
-        // content://com.emlibrary.db/type?userId=userId&key=key&value=value
-        val BASE_URI: Uri = "content://$AUTHORITY".toUri()
+        private const val AUTHORITY_SUFFIX = ".emlibrary.db"
 
         /**
-         * 默认占位符
+         * 动态获取 Provider Base URI
          */
-        const val PLACE_HOLDER = ""
+        fun getAuthorityUri(context: Context): Uri {
+            return "content://${context.packageName}${AUTHORITY_SUFFIX}".toUri()
+        }
+
+        /**
+         * 动态获取 Provider Base String
+         */
+        fun getAuthorityString(context: Context): String {
+            return "content://${context.packageName}${AUTHORITY_SUFFIX}"
+        }
+
         // ================= changed =================
         /**
          * 数据改变通知类型
@@ -359,8 +363,9 @@ class EMDBKVProvider : ContentProvider() {
      * val key = uri.getQueryParameter("key")
      * val value = uri.getQueryParameter("value")
      */
-    private fun notifyChanged(type: String, userId: String?, key: String?, value: String?): Uri {
-        val resultUri = BASE_URI.buildUpon()
+    private fun notifyChanged(type: String, userId: String?, key: String?, value: String?): Uri? {
+        val ctx = context ?: return null
+        val resultUri = getAuthorityUri(ctx).buildUpon()
             .appendPath(type)
             .apply {
                 if (userId.isNotNullOrEmpty()) appendQueryParameter(PARAMS_USER_ID, userId)
@@ -369,7 +374,7 @@ class EMDBKVProvider : ContentProvider() {
             }
             .build()
 
-        context?.contentResolver?.notifyChange(resultUri, null)
+        ctx.contentResolver.notifyChange(resultUri, null)
         return resultUri
     }
 }
