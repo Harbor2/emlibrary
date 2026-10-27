@@ -76,7 +76,7 @@ public class EMManager {
     }
 
     /**
-     * 文字渐变色
+     * 文字渐变色  和文字外阴影同时使用会导致外阴影颜色失效
      */
     public EMManager setTextGradientRealColor(@ColorInt int[] colorIds, Direction direction) {
         if (!(fromView instanceof TextView)) {
@@ -268,8 +268,8 @@ public class EMManager {
      * @param colorIds 色值id array
      * @param direction 详情{@link Direction#BOTTOM}
      */
-    public void setGradientColor(@ColorRes int[] colorIds, Direction direction) {
-        setGradientRealColor(EMClient.getGradientColorById(colorIds), direction);
+    public void setBackGroundGradientColor(@ColorRes int[] colorIds, Direction direction) {
+        setBackGroundGradientRealColor(EMClient.getGradientColorById(colorIds), direction);
     }
 
     /**
@@ -277,8 +277,8 @@ public class EMManager {
      * @param colorStrs 色值String array
      * @param direction 详情{@link Direction#BOTTOM}
      */
-    public void setGradientColor(String[] colorStrs, Direction direction) {
-        setGradientRealColor(EMClient.getGradientColorByRGB(colorStrs), direction);
+    public void setBackGroundGradientColor(String[] colorStrs, Direction direction) {
+        setBackGroundGradientRealColor(EMClient.getGradientColorByRGB(colorStrs), direction);
     }
 
     /**
@@ -286,7 +286,7 @@ public class EMManager {
      * @param colorIds 色值id array
      * @param direction 详情{@link Direction#BOTTOM}
      */
-    public void setGradientRealColor(@ColorInt int[] colorIds, Direction direction) {
+    public void setBackGroundGradientRealColor(@ColorInt int[] colorIds, Direction direction) {
         if (fromView == null) {
             return;
         }
@@ -364,7 +364,7 @@ public class EMManager {
     }
 
     /**
-     * 根据编码设置文本外阴影，整个文字背景都会添加阴影
+     * 根据编码设置文本外阴影 和渐变色文字同时使用会导致文字阴影颜色失效
      */
     public EMManager setTextShadow(@ColorRes int shadowColorId, float shadowRadius, float offX, float offY) {
         return setTextRealShadow(EMClient.getColor(shadowColorId), shadowRadius, offX, offY);
@@ -385,21 +385,21 @@ public class EMManager {
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradientPositionsColor(@ColorRes int[] colors, float[] positions, Direction direction) {
-        setGradientPositionsRealColor(EMClient.getGradientColorById(colors), positions, direction);
+    public void setBackGroundGradientPositionsColor(@ColorRes int[] colors, float[] positions, Direction direction) {
+        setBackGroundGradientPositionsRealColor(EMClient.getGradientColorById(colors), positions, direction);
     }
 
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradientPositionsColor(String[] colors, float[] positions, Direction direction) {
-        setGradientPositionsRealColor(EMClient.getGradientColorByRGB(colors), positions, direction);
+    public void setBackGroundGradientPositionsColor(String[] colors, float[] positions, Direction direction) {
+        setBackGroundGradientPositionsRealColor(EMClient.getGradientColorByRGB(colors), positions, direction);
     }
 
     /**
      * 根据元素库编码设置渐变背景，需要保证colors、postion个数相同
      */
-    public void setGradientPositionsRealColor(@ColorInt int[] colors, float[] positions, Direction direction) {
+    public void setBackGroundGradientPositionsRealColor(@ColorInt int[] colors, float[] positions, Direction direction) {
         if (fromView == null) {
             return;
         }

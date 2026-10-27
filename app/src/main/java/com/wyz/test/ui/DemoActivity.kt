@@ -1,5 +1,6 @@
 package com.wyz.test.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +14,8 @@ import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_KEY
 import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_USER_ID
 import com.wyz.emlibrary.db.provider.EMDBKVProvider.Companion.PARAMS_VALUE
 import com.wyz.emlibrary.db.provider.EMKVObserver
+import com.wyz.emlibrary.em.Direction
+import com.wyz.emlibrary.em.EMManager
 import com.wyz.emlibrary.util.EMDebounce
 import com.wyz.emlibrary.util.EMDeviceInfoUtil
 import com.wyz.emlibrary.util.immersiveWindowC
@@ -38,6 +41,14 @@ class DemoActivity : AppCompatActivity() {
     private lateinit var debounce: EMDebounce
     private fun initView() {
         debounce = EMDebounce(500, lifecycleScope)
+
+        binding.tvTest.post {
+            EMManager.from(binding.tvTest)
+                .setTextShadow("#000000", 2f, 6f, 6f)
+
+            EMManager.from(binding.tvTest)
+                .setTextGradientColor(arrayOf("#EB4749", "#FFE047", "#59EBFF"), Direction.LEFT)
+        }
     }
 
     private fun initEvent() {
