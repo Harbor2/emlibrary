@@ -1,6 +1,32 @@
 package com.wyz.emlibrary.util
 
+import android.util.JsonReader
+import android.util.JsonToken
+import android.util.Log
+import com.wyz.emlibrary.TAG
+import java.io.InputStream
+import java.nio.charset.Charset
+import kotlin.text.isNotEmpty
+
 object EMMapUtil {
+
+    /**
+     * 解析 InputStream 为 Map<String, Any?> 类型
+     */
+    fun parserInputStream(inputStream: InputStream): Map<String, Any?> {
+        var jsonReader: JsonReader? = null
+        try {
+            val reader = inputStream.reader(Charset.forName("utf-8"))
+            jsonReader = JsonReader(reader)
+            return parserObject(jsonReader)
+        } catch (e: Throwable) {
+            Log.d(TAG, "parser(), e = $e")
+        } finally {
+            jsonReader?.close()
+        }
+
+        return LinkedHashMap()
+    }
 
     fun optInt(map: Any?, defaultValue: Int, vararg path: String): Int {
         map ?: return defaultValue
@@ -75,5 +101,48 @@ object EMMapUtil {
         } catch (_: Throwable) {
             return null
         }
+    }
+
+    private fun parserObject(reader: JsonReader): Map<String, Any?> {
+        val map = LinkedHashMap<String, Any?>()
+        reader.beginObject()
+        while (reader.peek() == JsonToken.NAME) {
+            val key = reader.nextName()
+            if (key != null && key.isNotEmpty()) {
+                map[key] = parserValue(reader)
+            } else {
+                reader.skipValue()
+            }
+        }
+        reader.endObject()
+
+        return map
+    }
+
+    private fun parserValue(reader: JsonReader): Any? {
+        return when (reader.peek()) {
+            JsonToken.STRING -> reader.nextString()
+            JsonToken.NUMBER -> reader.nextDouble()
+            JsonToken.BOOLEAN -> reader.nextBoolean()
+            JsonToken.NULL -> reader.nextNull()
+            JsonToken.BEGIN_OBJECT -> parserObject(reader)
+            JsonToken.BEGIN_ARRAY -> parserList(reader)
+            else -> {
+                reader.skipValue()
+                null
+            }
+        }
+    }
+
+    private fun parserList(reader: JsonReader): List<Any?> {
+        val list = ArrayList<Any?>()
+        reader.beginArray()
+        var token = reader.peek()
+        while (token != JsonToken.END_ARRAY) {
+            list.add(parserValue(reader))
+            token = reader.peek()
+        }
+        reader.endArray()
+        return list
     }
 }

@@ -41,15 +41,19 @@ private const val TAG_MARGIN_TOP_WC = -12322
 /**
  * 沉浸式窗口
  */
-fun Activity.immersiveWindowC(rootView: View, isDarkFont: Boolean, vararg views: View?) {
-    immersiveWindowC(rootView, isDarkFont, true, barColor = null, naviColor = null, *views)
+fun Activity.immersiveWindowC(rootView: View, isDarkIcons: Boolean, vararg views: View?) {
+    immersiveWindowC(rootView, isDarkIcons, true, *views)
 }
 
 /**
  * 沉浸式窗口
  */
-fun Activity.immersiveWindowC(rootView: View, isDarkFont: Boolean, isShowSystemBar: Boolean, vararg views: View?) {
-    immersiveWindowC(rootView, isDarkFont, isShowSystemBar, barColor = null, naviColor = null, *views)
+fun Activity.immersiveWindowC(rootView: View, isDarkIcons: Boolean, isShowSystemBar: Boolean, vararg views: View?) {
+    immersiveWindowC(rootView, isDarkIcons, isDarkIcons, isShowSystemBar, *views)
+}
+
+fun Activity.immersiveWindowC(rootView: View, darkStatusBarIcons: Boolean, darkNavigationBarIcons: Boolean, isShowSystemBar: Boolean, vararg views: View?) {
+    immersiveWindowC(rootView, darkStatusBarIcons, darkNavigationBarIcons, isShowSystemBar, barColor = null, naviColor = null, *views)
 }
 
 /**
@@ -62,7 +66,8 @@ fun Activity.immersiveWindowC(rootView: View, isDarkFont: Boolean, isShowSystemB
  */
 fun Activity.immersiveWindowC(
     rootView: View,
-    isDarkFont: Boolean = true,
+    darkStatusBarIcons: Boolean = true,
+    darkNavigationBarIcons: Boolean = true,
     isShowSystemBar: Boolean = true,
     barColor: Int? = null,
     naviColor: Int? = null,
@@ -78,9 +83,9 @@ fun Activity.immersiveWindowC(
         val controller = WindowCompat.getInsetsController(window, window.decorView)
 
         controller?.apply {
-            isAppearanceLightStatusBars = isDarkFont
+            isAppearanceLightStatusBars = darkStatusBarIcons
             // 导航栏图标颜色
-            isAppearanceLightNavigationBars = isDarkFont
+            isAppearanceLightNavigationBars = darkNavigationBarIcons
             // 显示系统栏
             if (isShowSystemBar) {
                 show(WindowInsetsCompat.Type.systemBars())
@@ -492,63 +497,6 @@ suspend fun safeRun(block: suspend () -> Unit) {
 /*
  * ======================================= 废弃逐步删除 ==========================================
  */
-/**
- * 用于记录activity顶部view间距的id
- */
-private const val TAG_MARGIN_TOP = -12321
-
-/**
- * 窗口沉浸式
- * ⚠️：每次都会重置flag 如有搭配其他flag状态需要重新设置
- * @param rootView 根布局
- * @param isDarkFont 是否是黑色字体以及图标icon
- * @param views 需要设置 marginTop 的 View
- */
-@Deprecated("use immersiveWindowC")
-fun Activity.immersiveWindow(rootView: View, isDarkFont: Boolean, vararg views: View?) {
-    immersiveWindow(rootView, isDarkFont, barColor = null, naviColor = null, *views)
-}
-@Deprecated("use immersiveWindowC")
-fun Activity.immersiveWindow(rootView: View, isDarkFont: Boolean, barColor: Int? = null, naviColor: Int? = null, vararg views: View?) {
-    try {
-        window.decorView.systemUiVisibility =
-            if (isDarkFont) {
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            } else {
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            }
-        window.statusBarColor = barColor ?: Color.TRANSPARENT
-        window.navigationBarColor = naviColor ?: Color.BLACK
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
-            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            views.forEach { viewItem ->
-                viewItem ?: return@forEach
-                val params = viewItem.layoutParams as? ViewGroup.MarginLayoutParams ?: return@forEach
-                // 保存初始 margin
-                val originalTopMargin = (viewItem.getTag(TAG_MARGIN_TOP) as? Int) ?: params.topMargin.also {
-                    viewItem.setTag(TAG_MARGIN_TOP, it)
-                }
-                params.topMargin = originalTopMargin + systemInsets.top
-                viewItem.layoutParams = params
-            }
-
-            view.setPadding(
-                view.paddingLeft,
-                0,
-                view.paddingRight,
-                systemInsets.bottom
-            )
-            insets
-        }
-        // 让系统回调生效
-        rootView.requestApplyInsets()
-    } catch (e: Throwable) {
-        e.printStackTrace()
-    }
-}
-
 /**
  * 隐藏底部导航栏
  */
